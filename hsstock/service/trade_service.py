@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 
+from abc import ABC, abstractclassmethod
+
 from futuquant.open_context import *
 
 
@@ -22,11 +24,12 @@ def history_order_list_query(self,statusfilter='', strcode='', start='', end='',
 def history_deal_list_query(self, strcode, start, end, envtype=0):
 def subscribe_order_deal_push(self, order_list, order_deal_push=True, envtype=0):
 '''
-class HKTrade(object):
+
+class Trade(ABC):
     def __init__(self,trade_ctx):
         self.ctx = trade_ctx
 
-    def unlock_trade(self,trade_password, trade_password_md5=None):
+    def unlock_trade(self, trade_password, trade_password_md5=None):
         '''
         功能：交易解锁。
 
@@ -38,10 +41,10 @@ class HKTrade(object):
             交易密码错误
             客户端内部或网络错误
         '''
-        ret_code, ret_data = self.ctx.unlock_trade(trade_password,trade_password_md5)
+        ret_code, ret_data = self.ctx.unlock_trade(trade_password, trade_password_md5)
         print(ret_code, ret_data)
 
-    def login_new_account(self,user_id, login_password_md5, trade_password, trade_password_md5=None):
+    def login_new_account(self, user_id, login_password_md5, trade_password, trade_password_md5=None):
         '''
         功能：切换牛牛号登录
         :param user_id: 需要切换的牛牛号
@@ -52,8 +55,16 @@ class HKTrade(object):
 
 注           :切换牛牛号登录会导致API接口断开重连。
         '''
-        ret_code, ret_data = self.ctx.login_new_account(user_id, login_password_md5, trade_password, trade_password_md5=None)
+        ret_code, ret_data = self.ctx.login_new_account(user_id, login_password_md5, trade_password,
+                                                        trade_password_md5=None)
         print(ret_code, ret_data)
+
+
+
+class HKTrade(Trade):
+    def __init__(self,trade_ctx):
+        super(HKTrade,self).__init__(trade_ctx)
+
 
     def place_order(self, price, qty, strcode, orderside, ordertype=0, envtype=0,
                                                      order_deal_push=False, price_mode=PriceRegularMode.IGNORE):
@@ -438,9 +449,9 @@ class HKTrade(object):
         ret_code = self.ctx.subscribe_order_deal_push(order_list, order_deal_push, envtype)
         print(ret_code)
 
-class USTrade(object):
+class USTrade(Trade):
     def __init__(self,trade_ctx):
-        self.ctx = trade_ctx
+        super(USTrade,self).__init__(trade_ctx)
 
     def unlock_trade(self,trade_password, trade_password_md5=None):
         '''

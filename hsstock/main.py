@@ -77,7 +77,10 @@ if __name__ == "__main__":
     # hf.get_broker_queue('HK.00241')
     # hf.get_multi_points_history_kline( ['HK.00700','HK.00241'],['2017-01-01', '2017-01-02'], '')
 
-
+    hktrade = HKTrade(tradehk_ctx)
+    hktrade.unlock_trade('550517')
+    ustrade = USTrade(tradeus_ctx)
+    ustrade.unlock_trade('550517')
 
     # hktrade.accinfo_query(0)
     # hktrade.accinfo_query(1)
