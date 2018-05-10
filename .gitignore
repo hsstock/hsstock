@@ -2,3 +2,5 @@
 data/app.config
 .idea
 futuquant
+*.pyc
+
