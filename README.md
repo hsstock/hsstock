@@ -187,3 +187,9 @@ Ref: [pylint-in-pycharm](https://pylint.readthedocs.io/en/latest/user_guide/ide-
 Ref: [如何使用 Pylint 来规范 Python 代码风格](https://www.ibm.com/developerworks/cn/linux/l-cn-pylint/index.html)
 
 #### [接口描述](https://futunnopen.github.io/futuquant/api/Market_API_Python_Doc.html#)
+
+#### [unittest](https://docs.python.org/3/library/unittest.html)
+
+Note that the order in which the various test cases will be run is determined by sorting the test function names with respect to the built-in ordering for strings.
+
+#### [ThirdParty Source Code](/Users/hujiabao/anaconda3/lib/python3.6/site-packages)

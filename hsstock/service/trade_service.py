@@ -42,7 +42,8 @@ class Trade(ABC):
             客户端内部或网络错误
         '''
         ret_code, ret_data = self.ctx.unlock_trade(trade_password, trade_password_md5)
-        print(ret_code, ret_data)
+        #print(ret_code, ret_data)
+        return ret_code, ret_data
 
     def login_new_account(self, user_id, login_password_md5, trade_password, trade_password_md5=None):
         '''
@@ -57,8 +58,8 @@ class Trade(ABC):
         '''
         ret_code, ret_data = self.ctx.login_new_account(user_id, login_password_md5, trade_password,
                                                         trade_password_md5=None)
-        print(ret_code, ret_data)
-
+        #print(ret_code, ret_data)
+        return ret_code, ret_data
 
 
 class HKTrade(Trade):
@@ -128,7 +129,8 @@ class HKTrade(Trade):
         '''
         ret_code, ret_data = self.ctx.place_order(price, qty, strcode, orderside, ordertype, envtype,
                                                      order_deal_push, price_mode)
-        print(ret_code, ret_data)
+        #print(ret_code, ret_data)
+        return ret_code, ret_data
 
     def set_order_status(self,status, orderid=0, envtype=0):
         '''
@@ -155,7 +157,8 @@ class HKTrade(Trade):
             订单不存在
         '''
         ret_code, ret_data = self.ctx.set_order_status(status, orderid, envtype)
-        print(ret_code, ret_data)
+        #print(ret_code, ret_data)
+        return ret_code, ret_data
 
     def change_order(self,price, qty, orderid=0, envtype=0):
         '''
@@ -181,7 +184,8 @@ class HKTrade(Trade):
             订单不存在
         '''
         ret_code, ret_data = self.ctx.change_order(price, qty, orderid, envtype)
-        print(ret_code, ret_data)
+        # print(ret_code, ret_data)
+        return ret_code, ret_data
 
     def accinfo_query(self,envtype=0):
         '''
@@ -206,7 +210,9 @@ class HKTrade(Trade):
                 客户端内部或网络错误
         '''
         ret_code, ret_data = self.ctx.accinfo_query(envtype)
-        print(ret_code, ret_data)
+        #print(ret_code)
+        #print(ret_data)
+        return ret_code, ret_data
 
     def order_list_query(self, orderid="", statusfilter="",  strcode='', start='', end='', envtype=0):
         '''
@@ -260,7 +266,8 @@ class HKTrade(Trade):
                 客户端内部或网络错误
         '''
         ret_code, ret_data = self.ctx.order_list_query(orderid, statusfilter, strcode, start, end, envtype)
-        print(ret_code, ret_data)
+        #print(ret_code, ret_data)
+        return ret_code, ret_data
 
     def position_list_query(self, strcode='', stocktype='', pl_ratio_min='', pl_ratio_max='', envtype=0):
         '''
@@ -303,7 +310,8 @@ class HKTrade(Trade):
             客户端内部或网络错误
         '''
         ret_code, ret_data = self.ctx.position_list_query(strcode, stocktype, pl_ratio_min, pl_ratio_max, envtype)
-        print(ret_code, ret_data)
+        #print(ret_code, ret_data)
+        return ret_code, ret_data
 
     def deal_list_query(self, envtype=0):
         '''
@@ -337,7 +345,8 @@ class HKTrade(Trade):
                 客户端内部或网络错误
         '''
         ret_code, ret_data = self.ctx.deal_list_query(envtype)
-        print(ret_code, ret_data)
+        #print(ret_code, ret_data)
+        return ret_code, ret_data
 
     def history_order_list_query(self,statusfilter='', strcode='', start='', end='', envtype=0):
         '''
@@ -394,7 +403,8 @@ class HKTrade(Trade):
             客户端内部或网络错误
         '''
         ret_code, ret_data = self.ctx.history_order_list_query(statusfilter, strcode, start, end, envtype)
-        print(ret_code, ret_data)
+        #print(ret_code, ret_data)
+        return ret_code, ret_data
 
     def history_deal_list_query(self, strcode='', start='', end='', envtype=0):
         '''
@@ -430,7 +440,8 @@ class HKTrade(Trade):
             客户端内部或网络错误
         '''
         ret_code, ret_data = self.ctx.history_deal_list_query(strcode, start, end, envtype)
-        print(ret_code, ret_data)
+        #print(ret_code, ret_data)
+        return ret_code, ret_data
 
     def subscribe_order_deal_push(self, order_list, order_deal_push=True, envtype=0):
         '''
@@ -447,26 +458,12 @@ class HKTrade(Trade):
             客户端内部或网络错误
         '''
         ret_code = self.ctx.subscribe_order_deal_push(order_list, order_deal_push, envtype)
-        print(ret_code)
+        #print(ret_code)
+        return ret_code
 
 class USTrade(Trade):
     def __init__(self,trade_ctx):
         super(USTrade,self).__init__(trade_ctx)
-
-    def unlock_trade(self,trade_password, trade_password_md5=None):
-        '''
-        功能：交易解锁。
-
-        :param trade_password: 用户交易密码。
-        :param trade_password_md5: 交易密码32位MD5加密16进制表示，trade_password和trade_password_md5同时传入时，只使用trade_password_md5
-        :return: ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0, ret_data返回None。
-
-        失败情况：
-            交易密码错误
-            客户端内部或网络错误
-        '''
-        ret_code, ret_data = self.ctx.unlock_trade(trade_password,trade_password_md5)
-        print(ret_code, ret_data)
 
     def place_order(self, price, qty, strcode, orderside, ordertype=1, envtype=0,
                                                      order_deal_push=False):
@@ -521,7 +518,8 @@ class USTrade(Trade):
         '''
         ret_code, ret_data = self.ctx.place_order(price, qty, strcode, orderside, ordertype, envtype,
                                                      order_deal_push)
-        print(ret_code, ret_data)
+        #print(ret_code, ret_data)
+        return ret_code, ret_data
 
     def set_order_status(self,status, orderid=0, envtype=0):
         '''
@@ -568,7 +566,8 @@ class USTrade(Trade):
                 订单不存在
         '''
         ret_code, ret_data = self.ctx.set_order_status(status, orderid, envtype)
-        print(ret_code, ret_data)
+        #print(ret_code, ret_data)
+        return ret_code, ret_data
 
 
     def change_order(self, price, qty, orderid=0, envtype=0):
@@ -595,8 +594,8 @@ class USTrade(Trade):
             订单不存在
         '''
         ret_code, ret_data = self.ctx.change_order(price, qty, orderid, envtype)
-        print(ret_code, ret_data)
-
+        #print(ret_code, ret_data)
+        return ret_code, ret_data
 
     def accinfo_query(self,envtype=0):
         '''
@@ -620,7 +619,8 @@ class USTrade(Trade):
                 客户端内部或网络错误
         '''
         ret_code, ret_data = self.ctx.accinfo_query(envtype)
-        print(ret_code, ret_data)
+        #print(ret_code, ret_data)
+        return ret_code, ret_data
 
 
     def order_list_query(self, orderid="", statusfilter="",  strcode='', start='', end='', envtype=0):
@@ -675,7 +675,8 @@ class USTrade(Trade):
                 客户端内部或网络错误
         '''
         ret_code, ret_data = self.ctx.order_list_query(orderid, statusfilter, strcode, start, end, envtype)
-        print(ret_code, ret_data)
+        #print(ret_code, ret_data)
+        return ret_code, ret_data
 
     def position_list_query(self, strcode='', stocktype='', pl_ratio_min='', pl_ratio_max='', envtype=0):
         '''
@@ -719,7 +720,8 @@ class USTrade(Trade):
             客户端内部或网络错误
         '''
         ret_code, ret_data = self.ctx.position_list_query(strcode, stocktype, pl_ratio_min, pl_ratio_max, envtype)
-        print(ret_code, ret_data)
+        #print(ret_code, ret_data)
+        return ret_code, ret_data
 
     def deal_list_query(self, envtype=0):
         '''
@@ -752,7 +754,8 @@ class USTrade(Trade):
                 客户端内部或网络错误
         '''
         ret_code, ret_data = self.ctx.deal_list_query(envtype)
-        print(ret_code, ret_data)
+        #print(ret_code, ret_data)
+        return ret_code, ret_data
 
 
     def history_order_list_query(self,statusfilter='', strcode='', start='', end='', envtype=0):
@@ -811,7 +814,8 @@ class USTrade(Trade):
             客户端内部或网络错误
         '''
         ret_code, ret_data = self.ctx.history_order_list_query(statusfilter, strcode, start, end, envtype)
-        print(ret_code, ret_data)
+        #print(ret_code, ret_data)
+        return ret_code, ret_data
 
     def history_deal_list_query(self, strcode='', start='', end='', envtype=0):
         '''
@@ -848,7 +852,8 @@ class USTrade(Trade):
             客户端内部或网络错误
         '''
         ret_code, ret_data = self.ctx.history_deal_list_query(strcode, start, end, envtype)
-        print(ret_code, ret_data)
+        #print(ret_code, ret_data)
+        return ret_code, ret_data
 
     def subscribe_order_deal_push(self, order_list, order_deal_push=True, envtype=0):
         '''
@@ -866,4 +871,5 @@ class USTrade(Trade):
             客户端内部或网络错误
         '''
         ret_code = self.ctx.subscribe_order_deal_push(order_list, order_deal_push, envtype)
-        print(ret_code)
+        #print(ret_code)
+        return ret_code

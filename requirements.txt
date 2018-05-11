@@ -1,2 +1,7 @@
 futuquant
 tornado==4.5.3
+vnpy >= 1.7.3
+pandas
+numpy
+matplotlib
+psutil

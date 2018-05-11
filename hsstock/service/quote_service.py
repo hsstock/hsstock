@@ -2,6 +2,7 @@
 from futuquant.constant import RET_ERROR
 from futuquant.constant import RET_OK
 
+
 '''
 行情API
 接口概要
@@ -72,9 +73,9 @@ class LF(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        print("TRADING DAYS")
-        for x in ret_data:
-            print(x)
+        # print("TRADING DAYS")
+        # for x in ret_data:
+        #     print(x)
         return ret_code, ret_data
 
     def get_stock_basicinfo(self, market, stock_type='STOCK'):
@@ -101,7 +102,7 @@ class LF(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        print(ret_data)
+        #print(ret_data)
         return ret_code, ret_data
 
     def get_autype_list(self, code_list):
@@ -136,7 +137,7 @@ class LF(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        print(ret_data)
+        #print(ret_data)
         return ret_code, ret_data
 
     def get_history_kline(self, code, start=None, end=None, ktype='K_DAY', autype='None'):
@@ -202,7 +203,7 @@ class LF(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        print(ret_data)
+        #print(ret_data)
         return ret_code, ret_data
 
 
@@ -315,7 +316,7 @@ class LF(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        print(ret_data)
+        #print(ret_data)
         return ret_code, ret_data
 
     def get_plate_list(self, market, plate_class='ALL'):
@@ -355,7 +356,7 @@ class LF(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        print(ret_data)
+        #print(ret_data)
         return ret_code, ret_data
 
     def get_plate_stock(self, plate_code):
@@ -404,7 +405,7 @@ class LF(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        print(ret_data)
+        #print(ret_data)
         return ret_code, ret_data
 
     def get_global_state(self):
@@ -456,7 +457,7 @@ class LF(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        print(ret_data)
+        #print(ret_data)
         return ret_code, ret_data
 
 
@@ -525,7 +526,7 @@ class HF(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        print(ret_data)
+        #print(ret_data)
         return ret_code, ret_data
 
     def get_rt_ticker(self, code, num):
@@ -581,7 +582,7 @@ class HF(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        print(ret_data)
+        #print(ret_data)
         return ret_code, ret_data
 
     def get_cur_kline(self, code, num, ktype='K_DAY', autype='qfq'):
@@ -617,7 +618,7 @@ class HF(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        print(ret_data)
+        #print(ret_data)
         return ret_code, ret_data
 
     def get_order_book(self, code):
@@ -656,7 +657,7 @@ class HF(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        print(ret_data)
+        #print(ret_data)
         return ret_code, ret_data
 
     def get_rt_data(self,code):
@@ -708,7 +709,7 @@ class HF(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        print(ret_data)
+        #print(ret_data)
         return ret_code, ret_data
 
     def get_broker_queue(self,code):
@@ -752,8 +753,8 @@ class HF(object):
         if ret_code == RET_ERROR:
             print(bid_data)
             exit()
-        print(bid_data)
-        print(ask_data)
+        #print(bid_data)
+        #print(ask_data)
         return ret_code, bid_data, ask_data
 
     def get_multi_points_history_kline(self,codes, dates, fields, ktype='K_DAY'):
@@ -807,7 +808,7 @@ class HF(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        print(ret_data)
+        #print(ret_data)
         return ret_code, ret_data
 
 
@@ -826,9 +827,10 @@ class HF(object):
 # # BrokerHandlerBase     # 经纪队列处理基类
 
 class Subscribe(object):
-    def __init__(self,quote_ctx):
+    def __init__(self,quote_ctx,total, kline,tiker, quote, order_book,  rt_data, broker):
         print('subscribe')
         self.ctx = quote_ctx
+        self.quota = Quota(int(total), int(kline),int(tiker), int(quote), int(order_book),  int(rt_data), int(broker))
 
     def subscribe(self, stock_code, data_type, push=False):
         '''
@@ -848,11 +850,17 @@ class Subscribe(object):
                 订阅额度已满，参考订阅额度表
                 客户端内部或网络错误
         '''
+        ret = self.quota.prefeching_cosume(data_type)
+        if ret == RET_ERROR:
+            print("overquota")
+            return RET_OK,None
+
         ret_code, ret_data = self.ctx.subscribe(stock_code, data_type, push)
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        print(ret_data)
+        #print(ret_data)
+        print( self.quota.cosume(data_type) )
         return ret_code, ret_data
 
     def unsubscribe(self, stock_code, data_type):
@@ -868,11 +876,16 @@ class Subscribe(object):
                 客户端内部或网络错误
         '''
 
+        ret = self.quota.prefeching_recycle(data_type)
+        if ret == RET_ERROR:
+            print("overtotal quota")
+            return RET_OK, None
+
         ret_code, ret_data = self.ctx.unsubscribe(stock_code, data_type)
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        print(ret_data)
+        #print(ret_data)
         return ret_code, ret_data
 
     def query_subscription(self,query=0):
@@ -895,5 +908,80 @@ class Subscribe(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        print(ret_data)
+        #print(ret_data)
         return ret_code, ret_data
+
+
+class Quota(object):
+    def __init__(self,total, kline,ticker, quote, order_book,  rt_data, broker):
+        self.total = total
+        self.kline = kline
+        self.ticker = ticker
+        self.quote = quote
+        self.order_book = order_book
+        self.rt_data = rt_data
+        self.broker = broker
+        self.remaining_quota = self.total
+
+    def cosume(self,subtype):
+        quota = self.enum_quota(subtype)
+        if self.remaining_quota >= quota:
+            self.remaining_quota -= quota
+        else:
+            return RET_ERROR
+        return self.remaining_quota
+
+    def prefeching_cosume(self,s
+        ubtype):
+        quota = self.enum_quota(subtype)
+        if self.remaining_quota >= quota:
+            return self.remaining_quota
+        else:
+            return RET_ERROR
+
+    def recycle(self,subtype):
+        quota = self.enum_quota(subtype)
+        if self.remaining_quota + quota <= self.total:
+            self.remaining_quota += quota
+        else:
+            return RET_ERROR
+        return self.remaining_quota
+
+    def prefeching_recycle(self, subtype):
+        quota = self.enum_quota(subtype)
+        if self.remaining_quota + quota <= self.total:
+            return self.remaining_quota
+        else:
+            return RET_ERROR
+
+    def enum_quota(self,subtype):
+        quota = 0
+        if "TICKER" == subtype:
+            quota = self.ticker
+        elif "QUOTE" == subtype:
+            quota = self.quote
+        elif "ORDER_BOOK" == subtype:
+            quota = self.order_book
+        elif "K_1M" == subtype:
+            quota = self.kline
+        elif "K_5M" == subtype:
+            quota = self.kline
+        elif "K_15M" == subtype:
+            quota = self.kline
+        elif "K_30M" == subtype:
+            quota = self.kline
+        elif "K_60M" == subtype:
+            quota = self.kline
+        elif "K_DAY" == subtype:
+            quota = self.kline
+        elif "K_WEEK" == subtype:
+            quota = self.kline
+        elif "K_MON" == subtype:
+            quota = self.kline
+        elif "RT_DATA" == subtype:
+            quota = self.rt_data
+        elif "BROKER" == subtype:
+            quota = self.broker
+        else:
+            pass
+        return int(quota)

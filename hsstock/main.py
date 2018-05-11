@@ -43,6 +43,15 @@ if __name__ == "__main__":
     tradehk_ctx = ft.OpenHKTradeContext(config.get('ftserver','host'),int(config.get('ftserver','port')))
     tradeus_ctx = ft.OpenUSTradeContext(config.get('ftserver', 'host'), int(config.get('ftserver', 'port')))
 
+    total = config.get('quota', 'total')
+    kline = config.get('quota', 'kline')
+    tiker = config.get('quota', 'ticker')
+    quote = config.get('quota', 'quote')
+    order_book = config.get('quota', 'order_book')
+    rt_data = config.get('quota', 'rt_data')
+    broker = config.get('quota', 'broker')
+
+
     # quote_ctx.start()
     # lf = LF(quote_ctx)
     # lf.get_trading_days('US')
@@ -54,7 +63,7 @@ if __name__ == "__main__":
     # lf.get_plate_stock('US.BK2004')
     # lf.get_global_state()
     #
-    # sub = Subscribe(quote_ctx)
+    # sub = Subscribe(quote_ctx,total, kline, tiker, quote, order_book, rt_data, broker)
     # sub.subscribe('HK.00700', "QUOTE", push=True)
     # sub.subscribe('US.AAPL', 'QUOTE')
     # sub.subscribe('HK.00700', 'TICKER')
@@ -114,3 +123,5 @@ setup_logging()
 # tornado.ioloop.IOLoop.current().start()
 
 quote_ctx.stop()
+tradehk_ctx.stop()
+tradeus_ctx.stop()
