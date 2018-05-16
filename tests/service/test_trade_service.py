@@ -6,6 +6,7 @@ from futuquant.constant import MKT_MAP
 from hsstock.utils.app_config import AppConfig
 from hsstock.service.trade_service import HKTrade
 from hsstock.service.trade_service import USTrade
+from hsstock.utils.tick_deco import clock
 
 from futuquant.constant import RET_ERROR
 from futuquant.constant import RET_OK

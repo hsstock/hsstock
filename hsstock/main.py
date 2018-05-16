@@ -64,7 +64,7 @@ if __name__ == "__main__":
     # lf.get_plate_list('US')
     # lf.get_plate_stock('US.BK2004')
     # lf.get_global_state()
-    lf.get_multi_points_history_kline( ['HK.00700','HK.00241'],['2017-01-01', '2017-01-28'])
+    lf.get_multi_points_history_kline( ['HK.00700','HK.00241'],['2017-01-01', '2017-01-28'],'')
     #
     sub = Subscribe(quote_ctx,total, kline, tiker, quote, order_book, rt_data, broker)
     # sub.subscribe('HK.00700', "QUOTE", push=True)

@@ -4,6 +4,7 @@ from futuquant.constant import RET_OK
 from futuquant.constant import KL_FIELD
 
 from hsstock.model.subscribe import SubItem
+from hsstock.utils.tick_deco import  clock
 
 '''
 行情API
@@ -462,6 +463,7 @@ class LF(object):
         #print(ret_data)
         return ret_code, ret_data
 
+    @clock()
     def get_multi_points_history_kline(self,codes, dates, fields=KL_FIELD.OPEN, ktype='K_DAY'):
         '''
         功能：获取多支股票多个单点历史K线
