@@ -16,10 +16,6 @@ class QuoteServiceTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         config = AppConfig.get_config()
-        cls.ctx = ft.OpenQuoteContext(config.get('ftserver', 'host'), int(config.get('ftserver', 'port')))
-        cls.ctx.start()
-        cls.lf = LF(cls.ctx)
-        cls.hf = HF(cls.ctx)
         total = config.get('quota', 'total')
         kline = config.get('quota', 'kline')
         tiker = config.get('quota', 'ticker')
@@ -27,7 +23,11 @@ class QuoteServiceTestCase(unittest.TestCase):
         order_book = config.get('quota', 'order_book')
         rt_data = config.get('quota', 'rt_data')
         broker = config.get('quota', 'broker')
+        cls.ctx = ft.OpenQuoteContext(config.get('ftserver', 'host'), int(config.get('ftserver', 'port')))
         cls.sub = Subscribe(cls.ctx,total, kline, tiker, quote, order_book, rt_data, broker)
+        cls.ctx.start()
+        cls.lf = LF(cls.ctx)
+        cls.hf = HF(cls.ctx,cls.sub)
 
     @classmethod
     def tearDownClass(cls):
@@ -122,8 +122,7 @@ class QuoteServiceTestCase(unittest.TestCase):
         self.assertTrue(ret_code == RET_OK)
 
     def test_get_multi_points_history_kline(self):
-        ret_code, ret_data = QuoteServiceTestCase.sub.subscribe('HK.00700', "BROKER", push=True)
-        ret_code, ret_data = QuoteServiceTestCase.hf.get_multi_points_history_kline( ['HK.00700','HK.00241'],['2017-01-01', '2017-01-02'], '')
+        ret_code, ret_data = QuoteServiceTestCase.lf.get_multi_points_history_kline( ['HK.00700','HK.00241'],['2017-01-01', '2017-01-02'], '')
         self.assertTrue(ret_code == RET_OK)
 
 

@@ -1,7 +1,9 @@
 # -*- coding: UTF-8 -*-
 from futuquant.constant import RET_ERROR
 from futuquant.constant import RET_OK
+from futuquant.constant import KL_FIELD
 
+from hsstock.model.subscribe import SubItem
 
 '''
 行情API
@@ -460,11 +462,65 @@ class LF(object):
         #print(ret_data)
         return ret_code, ret_data
 
+    def get_multi_points_history_kline(self,codes, dates, fields=KL_FIELD.OPEN, ktype='K_DAY'):
+        '''
+        功能：获取多支股票多个单点历史K线
+
+        :param codes: 单个或多个股票 ‘HK.00700’ or [‘HK.00700’, ‘HK.00001’]
+        :param dates:  单个或多个日期 ‘2017-01-01’ or [‘2017-01-01’, ‘2017-01-02’]
+        :param fields: 单个或多个K线字段类型，指定需要返回的数据 KL_FIELD.ALL or [KL_FIELD.DATE_TIME, KL_FIELD.OPEN]
+        :param ktype: K线类型
+                        autype: 复权类型
+                param no_data_mode: 请求点无数据时，对应的k线数据取值模式
+                取值模式	标识
+                KL_NO_DATA_MODE_NONE	请求点无数据时返回空
+                KL_NO_DATA_MODE_FORWARD	请求点无数据时向前返回
+                KL_NO_DATA_MODE_BACKWARD	请求点无数据时向后返回
+        :return:    ret_code失败时，ret_data为错误描述字符串； 通常情况下，返回DataFrame，DataFrame每一行是一个逐笔记录，包含： code： 股票代码；string
+
+                data_valid： 数据点是否有效；0=无数据，1=请求点有数据，2=请求点无数据，向前取值，3=请求点无数据，向后取值
+
+                time_point： 请求点时间； string “YYYY-MM-DD HH:mm:ss”，暂时最多5个以内时间点。
+
+                time_key： K线时间； string “YYYY-MM-DD HH:mm:ss”
+
+                open： 开盘价；double
+
+                high： 最高价；double
+
+                close： 收盘价；double
+
+                low： 最低价；double
+
+                volume： 成交量；long
+
+                turnover ：成交额；double
+
+                pe_ratio：市盈率；double
+
+                turnover_rate: 换手率；double
+
+                change_rate: 涨跌幅；double
+
+        失败情况：
+
+                code不合法
+                2.请求时间点为空
+
+                3.请求时间点过多
+        '''
+        ret_code, ret_data = self.ctx.get_multi_points_history_kline(codes, dates, fields, ktype)
+        if ret_code == RET_ERROR:
+            print(ret_data)
+            exit()
+        print(ret_data)
+        return ret_code, ret_data
 
 class HF(object):
-    def __init__(self,quote_ctx):
+    def __init__(self,quote_ctx, subservice):
         print('HF')
         self.ctx = quote_ctx
+        self.subservice = subservice
 
     def get_stock_quote(self, code_list):
         '''
@@ -522,6 +578,12 @@ class HF(object):
             codelist包含未对QUOTE类型订阅的股票
             客户端内部或网络错误
         '''
+
+        for code in code_list:
+            isSubscribed = self.subservice.isSubscribed(code,'QUOTE')
+            if isSubscribed == False:
+                self.subservice.subscribe(code,'QUOTE')
+
         ret_code, ret_data = self.ctx.get_stock_quote(code_list)
         if ret_code == RET_ERROR:
             print(ret_data)
@@ -578,6 +640,11 @@ class HF(object):
                 code是未对TICKER类型订阅的股票
                 客户端内部或网络错误
         '''
+        isSubscribed = self.subservice.isSubscribed(code,'TICKER')
+        if isSubscribed == False:
+            self.subservice.subscribe(code,'TICKER')
+
+
         ret_code, ret_data = self.ctx.get_rt_ticker(code,num)
         if ret_code == RET_ERROR:
             print(ret_data)
@@ -614,6 +681,10 @@ class HF(object):
                 该股票未对指定K线类型订阅
                 客户端内部或网络错误
         '''
+        isSubscribed = self.subservice.isSubscribed(code, ktype)
+        if isSubscribed == False:
+            self.subservice.subscribe(code, ktype)
+
         ret_code, ret_data = self.ctx.get_cur_kline(code, num, ktype, autype)
         if ret_code == RET_ERROR:
             print(ret_data)
@@ -653,6 +724,10 @@ class HF(object):
             客户端内部或网络错误
 
         '''
+        isSubscribed = self.subservice.isSubscribed(code, 'ORDER_BOOK')
+        if isSubscribed == False:
+            self.subservice.subscribe(code, 'ORDER_BOOK')
+
         ret_code, ret_data = self.ctx.get_order_book(code)
         if ret_code == RET_ERROR:
             print(ret_data)
@@ -705,6 +780,10 @@ class HF(object):
             code是未对RT_DATA类型订阅的股票
             客户端内部或网络错误
         '''
+        isSubscribed = self.subservice.isSubscribed(code, 'RT_DATA')
+        if isSubscribed == False:
+            self.subservice.subscribe(code, 'RT_DATA')
+
         ret_code, ret_data = self.ctx.get_rt_data(code)
         if ret_code == RET_ERROR:
             print(ret_data)
@@ -749,6 +828,10 @@ class HF(object):
             该股票未对BROKER类型订阅
             客户端内部或网络错误
         '''
+        isSubscribed = self.subservice.isSubscribed(code, 'BROKER')
+        if isSubscribed == False:
+            self.subservice.subscribe(code, 'BROKER')
+
         ret_code, bid_data, ask_data = self.ctx.get_broker_queue(code)
         if ret_code == RET_ERROR:
             print(bid_data)
@@ -757,59 +840,6 @@ class HF(object):
         #print(ask_data)
         return ret_code, bid_data, ask_data
 
-    def get_multi_points_history_kline(self,codes, dates, fields, ktype='K_DAY'):
-        '''
-        功能：获取多支股票多个单点历史K线
-
-        :param codes: 单个或多个股票 ‘HK.00700’ or [‘HK.00700’, ‘HK.00001’]
-        :param dates:  单个或多个日期 ‘2017-01-01’ or [‘2017-01-01’, ‘2017-01-02’]
-        :param fields: 单个或多个K线字段类型，指定需要返回的数据 KL_FIELD.ALL or [KL_FIELD.DATE_TIME, KL_FIELD.OPEN]
-        :param ktype: K线类型
-                        autype: 复权类型
-                param no_data_mode: 请求点无数据时，对应的k线数据取值模式
-                取值模式	标识
-                KL_NO_DATA_MODE_NONE	请求点无数据时返回空
-                KL_NO_DATA_MODE_FORWARD	请求点无数据时向前返回
-                KL_NO_DATA_MODE_BACKWARD	请求点无数据时向后返回
-        :return:    ret_code失败时，ret_data为错误描述字符串； 通常情况下，返回DataFrame，DataFrame每一行是一个逐笔记录，包含： code： 股票代码；string
-
-                data_valid： 数据点是否有效；0=无数据，1=请求点有数据，2=请求点无数据，向前取值，3=请求点无数据，向后取值
-
-                time_point： 请求点时间； string “YYYY-MM-DD HH:mm:ss”，暂时最多5个以内时间点。
-
-                time_key： K线时间； string “YYYY-MM-DD HH:mm:ss”
-
-                open： 开盘价；double
-
-                high： 最高价；double
-
-                close： 收盘价；double
-
-                low： 最低价；double
-
-                volume： 成交量；long
-
-                turnover ：成交额；double
-
-                pe_ratio：市盈率；double
-
-                turnover_rate: 换手率；double
-
-                change_rate: 涨跌幅；double
-
-        失败情况：
-
-                code不合法
-                2.请求时间点为空
-
-                3.请求时间点过多
-        '''
-        ret_code, ret_data = self.ctx.get_multi_points_history_kline(codes, dates, fields, ktype)
-        if ret_code == RET_ERROR:
-            print(ret_data)
-            exit()
-        #print(ret_data)
-        return ret_code, ret_data
 
 
 
@@ -831,6 +861,7 @@ class Subscribe(object):
         print('subscribe')
         self.ctx = quote_ctx
         self.quota = Quota(int(total), int(kline),int(tiker), int(quote), int(order_book),  int(rt_data), int(broker))
+        self.subdict = {}
 
     def subscribe(self, stock_code, data_type, push=False):
         '''
@@ -860,6 +891,8 @@ class Subscribe(object):
             print(ret_data)
             exit()
         #print(ret_data)
+        subitem = SubItem(stock_code, data_type)
+        self.subdict[subitem.stringHash()] = subitem
         print( self.quota.cosume(data_type) )
         return ret_code, ret_data
 
@@ -886,6 +919,8 @@ class Subscribe(object):
             print(ret_data)
             exit()
         #print(ret_data)
+        subitem = SubItem(stock_code, data_type)
+        self.subdict.pop(subitem.stringHash())
         return ret_code, ret_data
 
     def query_subscription(self,query=0):
@@ -908,9 +943,14 @@ class Subscribe(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
+        print( ret_data )
+        print( self.subdict.keys() )
         #print(ret_data)
         return ret_code, ret_data
 
+    def isSubscribed(self,stock_code, data_type):
+        subitem = SubItem(stock_code, data_type)
+        return subitem.stringHash() in self.subdict
 
 class Quota(object):
     def __init__(self,total, kline,ticker, quote, order_book,  rt_data, broker):
@@ -931,8 +971,7 @@ class Quota(object):
             return RET_ERROR
         return self.remaining_quota
 
-    def prefeching_cosume(self,s
-        ubtype):
+    def prefeching_cosume(self,subtype):
         quota = self.enum_quota(subtype)
         if self.remaining_quota >= quota:
             return self.remaining_quota

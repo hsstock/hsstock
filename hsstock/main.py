@@ -43,6 +43,7 @@ if __name__ == "__main__":
     tradehk_ctx = ft.OpenHKTradeContext(config.get('ftserver','host'),int(config.get('ftserver','port')))
     tradeus_ctx = ft.OpenUSTradeContext(config.get('ftserver', 'host'), int(config.get('ftserver', 'port')))
 
+    decipher = config.get('ftserver', 'decipher')
     total = config.get('quota', 'total')
     kline = config.get('quota', 'kline')
     tiker = config.get('quota', 'ticker')
@@ -52,8 +53,9 @@ if __name__ == "__main__":
     broker = config.get('quota', 'broker')
 
 
-    # quote_ctx.start()
-    # lf = LF(quote_ctx)
+
+    quote_ctx.start()
+    lf = LF(quote_ctx)
     # lf.get_trading_days('US')
     # lf.get_stock_basicinfo('US','STOCK')
     # lf.get_autype_list(['HK.00700','US.AAPL'])
@@ -62,8 +64,9 @@ if __name__ == "__main__":
     # lf.get_plate_list('US')
     # lf.get_plate_stock('US.BK2004')
     # lf.get_global_state()
+    lf.get_multi_points_history_kline( ['HK.00700','HK.00241'],['2017-01-01', '2017-01-28'])
     #
-    # sub = Subscribe(quote_ctx,total, kline, tiker, quote, order_book, rt_data, broker)
+    sub = Subscribe(quote_ctx,total, kline, tiker, quote, order_book, rt_data, broker)
     # sub.subscribe('HK.00700', "QUOTE", push=True)
     # sub.subscribe('US.AAPL', 'QUOTE')
     # sub.subscribe('HK.00700', 'TICKER')
@@ -76,20 +79,20 @@ if __name__ == "__main__":
     #
     # sub.query_subscription()
     #
-    # hf = HF(quote_ctx)
-    # hf.get_stock_quote(['US.AAPL','HK.00700'])
-    # hf.get_rt_ticker('HK.00700',500)
-    # hf.get_cur_kline('HK.00700',1000)
-    # hf.get_order_book('HK.00700')
-    # hf.get_rt_data('HK.00700')
-    # hf.get_broker_queue('HK.00700')
+    hf = HF(quote_ctx,sub)
+    #hf.get_stock_quote(['US.AAPL','HK.00700'])
+    #hf.get_rt_ticker('HK.00700',500)
+    #hf.get_cur_kline('HK.00700',1000)
+    #hf.get_order_book('HK.00700')
+    #hf.get_rt_data('HK.00700')
+    #hf.get_broker_queue('HK.00700')
     # hf.get_broker_queue('HK.00241')
-    # hf.get_multi_points_history_kline( ['HK.00700','HK.00241'],['2017-01-01', '2017-01-02'], '')
 
-    hktrade = HKTrade(tradehk_ctx)
-    hktrade.unlock_trade('550517')
-    ustrade = USTrade(tradeus_ctx)
-    ustrade.unlock_trade('550517')
+
+    # hktrade = HKTrade(tradehk_ctx)
+    # hktrade.unlock_trade(decipher)
+    # ustrade = USTrade(tradeus_ctx)
+    # ustrade.unlock_trade(decipher)
 
     # hktrade.accinfo_query(0)
     # hktrade.accinfo_query(1)
@@ -107,14 +110,14 @@ if __name__ == "__main__":
     # ustrade.history_deal_list_query()
     # hktrade.subscribe_order_deal_push(['HK.00700'])
     # ustrade.subscribe_order_deal_push(['US.AAPL'])
-    hktrade.change_order(0.89, 40000, 117343447)
-    ustrade.change_order(0.89, 40000, 117343447)
-    hktrade.set_order_status(0,117343447)
-    hktrade.set_order_status(3, 117343447)
-    ustrade.set_order_status(0, 117343447)
-    ustrade.set_order_status(3, 117343447)
-    hktrade.place_order(0.88, 10000, 'HK.01060', 0, 0)
-    ustrade.place_order(2.88, 10000, 'US.JMEI', 0, 0)
+    # hktrade.change_order(0.89, 40000, 117343447)
+    # ustrade.change_order(0.89, 40000, 117343447)
+    # hktrade.set_order_status(0,117343447)
+    # hktrade.set_order_status(3, 117343447)
+    # ustrade.set_order_status(0, 117343447)
+    # ustrade.set_order_status(3, 117343447)
+    # hktrade.place_order(0.88, 10000, 'HK.01060', 0, 0)
+    # ustrade.place_order(2.88, 10000, 'US.JMEI', 0, 0)
 
 
 app = make_app()
