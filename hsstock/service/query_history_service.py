@@ -52,12 +52,12 @@ class QueryHistory(object):
         dt_last = datetime.now()
         ret_list = []
         ret, data_start = self.quote_context.get_multi_points_history_kline(list_stocks, [start],
-                                                                 [KL_FIELD.DATE_TIME, KL_FIELD.CLOSE], 'K_DAY', 'hfq',
+                                                                 [KL_FIELD.DATE_TIME, KL_FIELD.CLOSE], 'K_DAY', 'None',
                                                                        KL_NO_DATA_MODE_BACKWARD)
         if ret != 0:
             return ret, data_start
         ret, data_end = self.quote_context.get_multi_points_history_kline(list_stocks, [end],
-                                                                 [KL_FIELD.DATE_TIME, KL_FIELD.CLOSE], 'K_DAY', 'hfq',
+                                                                 [KL_FIELD.DATE_TIME, KL_FIELD.CLOSE], 'K_DAY', 'None',
                                                                  KL_NO_DATA_MODE_FORWARD)
         if ret != 0:
             return ret, data_end
@@ -91,23 +91,14 @@ class QueryHistory(object):
                 if data_ok and change_max is not None:
                     data_ok = change_rate <= change_max
                 if data_ok:
-                    ret_list.append({'code': stock, 'change_rate':  float(change_rate / 1000.0), 'real_times': ','.join(real_times)})
+                    ret_list.append({'code': stock, 'change_rate':  float(change_rate / 1000.0), 'real_times': ','.join(real_times),'close_start': close_start,'close_end': close_end})
 
         # 数据排序
         ret_list = sorted(ret_list, key=lambda x: x['change_rate'], reverse=(not ascend))
 
         # 组装返回pdframe数据
-        col_list = ['code', 'change_rate', 'real_times']
+        col_list = ['code', 'change_rate', 'real_times','close_start','close_end']
         pd_frame = pd.DataFrame(ret_list, columns=col_list)
 
         return RET_OK, pd_frame
 
-if __name__ == "__main__":
-    api_ip = '10.242.45.130'  # ''119.29.141.202'
-    api_port = 11111
-    change_min = 10
-    change_max = 30
-
-    self.quote_context = OpenQuoteContext(host=api_ip, port=api_port)
-    print(query_history_change_stocks(self.quote_context, ['SH'], '2017-01-10', '2017-12-01', change_min, change_max,  'STOCK'))
-    self.quote_context.close()

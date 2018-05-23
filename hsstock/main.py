@@ -24,8 +24,6 @@ class MainHandler(RequestHandler):
         self.write('Hello,World!')
 
 '''
-
-        
     def query_history_change_stocks(markets=['HK'], start='2017-01-05', end='2017-12-30', change_min=5.0,
                                 change_max=None, stock_type='STOCK', ascend=True):
 '''
@@ -44,6 +42,7 @@ class QueryHistoryHandler(RequestHandler):
 def path():
     return os.path.dirname(__file__)
 
+#http://127.0.0.1:8888/queryhistory?markets=HK&start=2018-02-01&end=2018-05-30&change_min=1.0&change_max=100.0&stock_type=STOCK&ascend=True， 为什么没有数据
 # http://127.0.0.1:8888/queryhistory?markets=HK&start=2017-01-05&end=2017-12-30&change_min=5.0&change_max=10.0&stock_type=STOCK&ascend=True
 def make_app():
     return tornado.web.Application([
