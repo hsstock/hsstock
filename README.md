@@ -193,3 +193,24 @@ Ref: [如何使用 Pylint 来规范 Python 代码风格](https://www.ibm.com/dev
 Note that the order in which the various test cases will be run is determined by sorting the test function names with respect to the built-in ordering for strings.
 
 #### [ThirdParty Source Code](/Users/hujiabao/anaconda3/lib/python3.6/site-packages)
+
+/Users/hujiabao/anaconda2/lib/python2.7/site-packages/vnpy/
+
+#### Upgrade  pip2.7
+
+```
+curl -0 https://bootstrap.pypa.io/get-pip.py >> get-pip.py
+sudo python2.7 get-pip.py
+```
+```
+cp -rf /Users/hujiabao/anaconda3/lib/python3.6/site-packages/talib /Users/hujiabao/anaconda2/lib/python2.7/site-packages/
+cp -rf /Users/hujiabao/anaconda3/lib/python3.6/site-packages/futuquant /Users/hujiabao/anaconda2/lib/python2.7/site-packages/
+cp -rf /Users/hujiabao/anaconda3/lib/python3.6/site-packages/vnpy /Users/hujiabao/anaconda2/lib/python2.7/site-packages/
+
+conda install -c quantopian ta-lib
+conda install -c quantopian/label/pandas_upgrade ta-lib
+```
+#### 升级OSX High Sierra 10.13遇到一些问题及解决方法
+
+[升级OSX High Sierra 10.13遇到一些问题及解决方法](https://blog.csdn.net/jackymvc/article/details/78256120)
+
