@@ -5,4 +5,4 @@ futuquant
 *.pyc
 
 .cache
-hsstock/vnpy/trader/temp/
+hsstock/vnpy/trader/temp/*

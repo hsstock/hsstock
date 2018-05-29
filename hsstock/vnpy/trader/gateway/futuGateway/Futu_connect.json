@@ -1,7 +1,7 @@
 {
 	"host": "10.242.45.130",
 	"port": 11111,
-	"market": "HK",
-    "password": "123123",
+	"market": "US",
+    "password": "550517",
     "env": 1
 }
