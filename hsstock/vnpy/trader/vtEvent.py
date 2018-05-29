@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 '''
-本文件基于vnpy.event.eventType，并添加更多字段
+本文件基于vnpy.event.event_type，并添加更多字段
 '''
 
 from hsstock.vnpy.event.event_type import *

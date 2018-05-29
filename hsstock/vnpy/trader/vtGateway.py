@@ -2,7 +2,7 @@
 
 import time
 
-from hsstock.vnpy.event import *
+from hsstock.vnpy.event.event_engine import *
 
 from hsstock.vnpy.trader.vtEvent import *
 from hsstock.vnpy.trader.vtConstant import *

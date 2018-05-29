@@ -338,7 +338,7 @@ class StModeComboBox(QtWidgets.QComboBox):
     #----------------------------------------------------------------------
     def setMode(self):
         """设置模式"""
-        mode = unicode(self.currentText())
+        mode = str(self.currentText())
         self.algoEngine.setAlgoMode(self.spreadName, mode)
     
     #----------------------------------------------------------------------
