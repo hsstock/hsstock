@@ -39,10 +39,10 @@ def main():
     me.addGateway(futuGateway)
 
     # 添加上层应用
-    # me.addApp(riskManager)
-    # me.addApp(ctaStrategy)
-    # me.addApp(spreadTrading)
-    
+    #me.addApp(riskManager)
+    #me.addApp(ctaStrategy)
+    #me.addApp(spreadTrading)
+    #
     # 创建主窗口
     mw = MainWindow(me, ee)
     mw.showMaximized()

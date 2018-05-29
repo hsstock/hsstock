@@ -6,4 +6,5 @@ numpy
 matplotlib
 psutil
 pymongo
+tushare
 

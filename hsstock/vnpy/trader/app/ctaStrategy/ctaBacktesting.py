@@ -24,10 +24,10 @@ try:
 except ImportError:
     pass
 
-from vnpy.trader.vtGlobal import globalSetting
-from vnpy.trader.vtObject import VtTickData, VtBarData
-from vnpy.trader.vtConstant import *
-from vnpy.trader.vtGateway import VtOrderData, VtTradeData
+from hsstock.vnpy.trader.vtGlobal import globalSetting
+from hsstock.vnpy.trader.vtObject import VtTickData, VtBarData
+from hsstock.vnpy.trader.vtConstant import *
+from hsstock.vnpy.trader.vtGateway import VtOrderData, VtTradeData
 
 from .ctaBase import *
 
@@ -112,7 +112,7 @@ class BacktestingEngine(object):
     #----------------------------------------------------------------------
     def output(self, content):
         """输出内容"""
-        print str(datetime.now()) + "\t" + content     
+        print( str(datetime.now()) + "\t" + content )
     
     #------------------------------------------------
     # 参数设置相关
@@ -1213,11 +1213,11 @@ class OptimizationSetting(object):
             return 
         
         if end < start:
-            print u'参数起始点必须不大于终止点'
+            print( u'参数起始点必须不大于终止点' )
             return
         
         if step <= 0:
-            print u'参数布进必须大于0'
+            print( u'参数布进必须大于0' )
             return
         
         l = []

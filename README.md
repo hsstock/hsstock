@@ -214,3 +214,10 @@ conda install -c quantopian/label/pandas_upgrade ta-lib
 
 [升级OSX High Sierra 10.13遇到一些问题及解决方法](https://blog.csdn.net/jackymvc/article/details/78256120)
 
+#### 安装第三方软件
+
+```
+brew install zmq
+```
+
+[tushare](http://tushare.org/)
