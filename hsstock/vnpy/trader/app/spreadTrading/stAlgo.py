@@ -2,7 +2,7 @@
 
 from math import floor
 
-from vnpy.trader.vtConstant import (EMPTY_INT, EMPTY_FLOAT, 
+from hsstock.vnpy.trader.vtConstant import (EMPTY_INT, EMPTY_FLOAT,
                                     EMPTY_STRING, EMPTY_UNICODE,
                                     DIRECTION_LONG, DIRECTION_SHORT,
                                     STATUS_ALLTRADED, STATUS_CANCELLED, STATUS_REJECTED)

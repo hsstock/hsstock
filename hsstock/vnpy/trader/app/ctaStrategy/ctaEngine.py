@@ -13,12 +13,12 @@ from collections import OrderedDict
 from datetime import datetime, timedelta
 from copy import copy
 
-from vnpy.event import Event
-from vnpy.trader.vtEvent import *
-from vnpy.trader.vtConstant import *
-from vnpy.trader.vtObject import VtTickData, VtBarData
-from vnpy.trader.vtGateway import VtSubscribeReq, VtOrderReq, VtCancelOrderReq, VtLogData
-from vnpy.trader.vtFunction import todayDate, getJsonPath
+from hsstock.vnpy.event.event_engine import Event
+from hsstock.vnpy.trader.vtEvent import *
+from hsstock.vnpy.trader.vtConstant import *
+from hsstock.vnpy.trader.vtObject import VtTickData, VtBarData
+from hsstock.vnpy.trader.vtGateway import VtSubscribeReq, VtOrderReq, VtCancelOrderReq, VtLogData
+from hsstock.vnpy.trader.vtFunction import todayDate, getJsonPath
 
 from .ctaBase import *
 from .strategy import STRATEGY_CLASS

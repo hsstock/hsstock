@@ -17,9 +17,9 @@ from futuquant.open_context import (RET_ERROR, RET_OK, PriceRegularMode,
                                     USTradeOrderHandlerBase, USTradeDealHandlerBase,
                                     HKTradeOrderHandlerBase, HKTradeDealHandlerBase)
 
-from vnpy.trader.vtGateway import *
-from vnpy.trader.vtConstant import GATEWAYTYPE_INTERNATIONAL
-from vnpy.trader.vtFunction import getJsonPath
+from hsstock.vnpy.trader.vtGateway import *
+from hsstock.vnpy.trader.vtConstant import GATEWAYTYPE_INTERNATIONAL
+from hsstock.vnpy.trader.vtFunction import getJsonPath
 
 
 # 调用一次datetime，保证初始化

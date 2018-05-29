@@ -16,7 +16,8 @@ def loadStrategyModule(moduleName):
     """使用importlib动态载入模块"""
     try:
         module = importlib.import_module(moduleName)
-        
+        print( moduleName )
+
         # 遍历模块下的对象，只有名称中包含'Strategy'的才是策略类
         for k in dir(module):
             if 'Strategy' in k:
@@ -35,7 +36,7 @@ for root, subdirs, files in os.walk(path):
         # 只有文件名中包含strategy且以.py结尾的文件，才是策略文件
         if 'strategy' in name and name[-3:] == '.py':
             # 模块名称需要模块路径前缀
-            moduleName = 'vnpy.trader.app.ctaStrategy.strategy.' + name.replace('.py', '')
+            moduleName = 'hsstock.vnpy.trader.app.ctaStrategy.strategy.' + name.replace('.py', '')
             loadStrategyModule(moduleName)
 
 

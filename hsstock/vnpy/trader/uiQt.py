@@ -4,8 +4,8 @@ import platform
 
 from qtpy import QtWidgets, QtGui, QtCore
 
-from vnpy.trader.vtGlobal import globalSetting
-from vnpy.trader.vtFunction import loadIconPath
+from hsstock.vnpy.trader.vtGlobal import globalSetting
+from hsstock.vnpy.trader.vtFunction import loadIconPath
 
 
 if not hasattr(QtCore, 'pyqtSignal'):

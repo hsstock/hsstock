@@ -7,9 +7,9 @@ CCI（1分钟）：大于10为多头、低于-10为空头
 MA（5分钟）：快速大于慢速为多头、低于慢速为空头
 """
 
-from vnpy.trader.vtObject import VtBarData
-from vnpy.trader.vtConstant import EMPTY_STRING
-from vnpy.trader.app.ctaStrategy.ctaTemplate import (TargetPosTemplate, 
+from hsstock.vnpy.trader.vtObject import VtBarData
+from hsstock.vnpy.trader.vtConstant import EMPTY_STRING
+from hsstock.vnpy.trader.app.ctaStrategy.ctaTemplate import (TargetPosTemplate, 
                                                      CtaSignal,
                                                      BarGenerator, 
                                                      ArrayManager)

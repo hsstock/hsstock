@@ -5,7 +5,7 @@ from __future__ import division
 from math import floor
 from datetime import datetime
 
-from vnpy.trader.vtConstant import (EMPTY_INT, EMPTY_FLOAT, 
+from hsstock.vnpy.trader.vtConstant import (EMPTY_INT, EMPTY_FLOAT,
                                     EMPTY_STRING, EMPTY_UNICODE)
 
 

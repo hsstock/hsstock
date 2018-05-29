@@ -2,9 +2,9 @@
 
 from collections import OrderedDict
 
-from vnpy.event import Event
-from vnpy.trader.uiQt import QtWidgets, QtCore
-from vnpy.trader.uiBasicWidget import (BasicMonitor, BasicCell, PnlCell,
+from hsstock.vnpy.event.event_engine import Event
+from hsstock.vnpy.trader.uiQt import QtWidgets, QtCore
+from hsstock.vnpy.trader.uiBasicWidget import (BasicMonitor, BasicCell, PnlCell,
                                        AskCell, BidCell, BASIC_FONT)
 
 from .stBase import (EVENT_SPREADTRADING_TICK, EVENT_SPREADTRADING_POS,

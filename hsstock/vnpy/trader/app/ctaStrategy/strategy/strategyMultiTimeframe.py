@@ -4,9 +4,9 @@
 一个跨时间周期的策略，基于15分钟K线判断趋势方向，并使用5分钟RSI指标作为入场
 """
 
-from vnpy.trader.vtObject import VtBarData
-from vnpy.trader.vtConstant import EMPTY_STRING
-from vnpy.trader.app.ctaStrategy.ctaTemplate import (CtaTemplate, 
+from hsstock.vnpy.trader.vtObject import VtBarData
+from hsstock.vnpy.trader.vtConstant import EMPTY_STRING
+from hsstock.vnpy.trader.app.ctaStrategy.ctaTemplate import (CtaTemplate,
                                                      BarGenerator, 
                                                      ArrayManager)
 

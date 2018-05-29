@@ -5,7 +5,7 @@
 '''
 
 
-from vnpy.event import Event
+from hsstock.vnpy.event.event_engine import Event
 
 from hsstock.vnpy.trader.uiBasicWidget import QtGui, QtWidgets, QtCore
 from hsstock.vnpy.trader.app.riskManager.language.chinese.text import *

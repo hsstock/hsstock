@@ -3,7 +3,7 @@
 import time
 from logging import INFO
 
-from vnpy.trader.vtConstant import (EMPTY_STRING, EMPTY_UNICODE, 
+from hsstock.vnpy.trader.vtConstant import (EMPTY_STRING, EMPTY_UNICODE,
                                     EMPTY_FLOAT, EMPTY_INT)
 
 

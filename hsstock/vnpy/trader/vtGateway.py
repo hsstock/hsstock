@@ -2,11 +2,11 @@
 
 import time
 
-from vnpy.event import *
+from hsstock.vnpy.event import *
 
-from vnpy.trader.vtEvent import *
-from vnpy.trader.vtConstant import *
-from vnpy.trader.vtObject import *
+from hsstock.vnpy.trader.vtEvent import *
+from hsstock.vnpy.trader.vtConstant import *
+from hsstock.vnpy.trader.vtObject import *
 
 
 ########################################################################

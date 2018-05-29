@@ -7,8 +7,8 @@
 import numpy as np
 import talib
 
-from vnpy.trader.vtConstant import *
-from vnpy.trader.vtObject import VtBarData
+from hsstock.vnpy.trader.vtConstant import *
+from hsstock.vnpy.trader.vtObject import VtBarData
 
 from .ctaBase import *
 

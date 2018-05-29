@@ -6,9 +6,9 @@ DualThrust交易策略
 
 from datetime import time
 
-from vnpy.trader.vtObject import VtBarData
-from vnpy.trader.vtConstant import EMPTY_STRING
-from vnpy.trader.app.ctaStrategy.ctaTemplate import CtaTemplate, BarGenerator
+from hsstock.vnpy.trader.vtObject import VtBarData
+from hsstock.vnpy.trader.vtConstant import EMPTY_STRING
+from hsstock.vnpy.trader.app.ctaStrategy.ctaTemplate import CtaTemplate, BarGenerator
 
 
 ########################################################################

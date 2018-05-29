@@ -6,8 +6,8 @@
 
 from __future__ import division
 
-from vnpy.trader.vtConstant import EMPTY_STRING, EMPTY_FLOAT
-from vnpy.trader.app.ctaStrategy.ctaTemplate import (CtaTemplate, 
+from hsstock.vnpy.trader.vtConstant import EMPTY_STRING, EMPTY_FLOAT
+from hsstock.vnpy.trader.app.ctaStrategy.ctaTemplate import (CtaTemplate,
                                                      BarGenerator,
                                                      ArrayManager)
 

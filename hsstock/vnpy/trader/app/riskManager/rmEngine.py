@@ -13,11 +13,11 @@ import json
 import os
 import platform
 
-from vnpy.event import Event
-from vnpy.trader.vtEvent import *
-from vnpy.trader.vtConstant import *
-from vnpy.trader.vtGateway import VtLogData
-from vnpy.trader.vtFunction import getJsonPath
+from hsstock.vnpy.event.event_engine import Event
+from hsstock.vnpy.trader.vtEvent import *
+from hsstock.vnpy.trader.vtConstant import *
+from hsstock.vnpy.trader.vtGateway import VtLogData
+from hsstock.vnpy.trader.vtFunction import getJsonPath
 
 
 ########################################################################

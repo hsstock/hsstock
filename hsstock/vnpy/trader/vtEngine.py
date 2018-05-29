@@ -12,12 +12,12 @@ from copy import copy
 from pymongo import MongoClient, ASCENDING
 from pymongo.errors import ConnectionFailure
 
-from vnpy.event import Event
-from vnpy.trader.vtGlobal import globalSetting
-from vnpy.trader.vtEvent import *
-from vnpy.trader.vtGateway import *
-from vnpy.trader.language import text
-from vnpy.trader.vtFunction import getTempPath
+from hsstock.vnpy.event.event_engine import Event
+from hsstock.vnpy.trader.vtGlobal import globalSetting
+from hsstock.vnpy.trader.vtEvent import *
+from hsstock.vnpy.trader.vtGateway import *
+from hsstock.vnpy.trader.language import text
+from hsstock.vnpy.trader.vtFunction import getTempPath
 
 
 

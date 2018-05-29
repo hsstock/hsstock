@@ -4,13 +4,13 @@ import json
 import traceback
 import shelve
 
-from vnpy.event import Event
-from vnpy.trader.vtFunction import getJsonPath, getTempPath
-from vnpy.trader.vtEvent import (EVENT_TICK, EVENT_TRADE, EVENT_POSITION, 
+from hsstock.vnpy.event.event_engine import Event
+from hsstock.vnpy.trader.vtFunction import getJsonPath, getTempPath
+from hsstock.vnpy.trader.vtEvent import (EVENT_TICK, EVENT_TRADE, EVENT_POSITION,
                                  EVENT_TIMER, EVENT_ORDER)
-from vnpy.trader.vtObject import (VtSubscribeReq, VtOrderReq, 
+from hsstock.vnpy.trader.vtObject import (VtSubscribeReq, VtOrderReq,
                                   VtCancelOrderReq, VtLogData)
-from vnpy.trader.vtConstant import (DIRECTION_LONG, DIRECTION_SHORT, 
+from hsstock.vnpy.trader.vtConstant import (DIRECTION_LONG, DIRECTION_SHORT,
                                     OFFSET_OPEN, OFFSET_CLOSE, 
                                     PRICETYPE_LIMITPRICE)
 

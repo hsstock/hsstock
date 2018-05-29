@@ -6,7 +6,7 @@ import os
 import platform
 from collections import OrderedDict
 
-from vnpy.event import *
+from hsstock.vnpy.event.event_engine import *
 from .vtEvent import *
 from .vtFunction import *
 from .vtGateway import *
