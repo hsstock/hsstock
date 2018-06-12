@@ -689,7 +689,7 @@ class BacktestingEngine(object):
         
         # 到最后交易日尚未平仓的交易，则以最后价格平仓
         if self.mode == self.BAR_MODE:
-            endPrice = self.bar.close
+            endPrice = 0 if self.bar == None  else self.bar.close
         else:
             endPrice = self.tick.lastPrice
             
@@ -791,7 +791,11 @@ class BacktestingEngine(object):
     def showBacktestingResult(self):
         """显示回测结果"""
         d = self.calculateBacktestingResult()
-        
+
+        ret = 0 if  d else -1
+        if ret == -1:
+            return
+
         # 输出
         self.output('-' * 30)
         self.output(u'第一笔交易：\t%s' % d['timeList'][0])

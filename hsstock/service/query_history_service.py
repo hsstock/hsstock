@@ -7,6 +7,7 @@
 from futuquant.open_context import *
 from datetime import datetime, timedelta
 
+
 class QueryHistory(object):
 
     def __init__(self, quote_ctx):
@@ -101,4 +102,56 @@ class QueryHistory(object):
         pd_frame = pd.DataFrame(ret_list, columns=col_list)
 
         return RET_OK, pd_frame
+
+
+
+    def export_csv_k1m_file(self, code, start='2017-11-01', end=None):
+        '''
+        :param code: futu 股票代码 eg HK.00700 / US.AAPL
+        :param start:历史数据起始时间
+        :param end: 历史数据结束时间
+        :return: 0 = 成功 , 其它失败
+        '''
+        # 得到历史数据
+        kl_fileds = [KL_FIELD.DATE_TIME, KL_FIELD.OPEN, KL_FIELD.CLOSE, KL_FIELD.HIGH, KL_FIELD.LOW, KL_FIELD.TRADE_VOL]
+        ret, ret_data = self.quote_context.get_history_kline(code, start, end, 'K_1M', 'qfq', kl_fileds)
+
+        if 0 != ret:
+            print(ret_data)
+            return ret
+
+        # 增加一列，并修改原列名
+        ret_data['Date'] = ret_data['time_key']
+        ret_data.rename(columns={'time_key': 'Time', 'open': 'Open', 'close': 'Close', 'high': 'High', 'low': 'Low',
+                                 'volume': 'TotalVolume'}, inplace=True)
+        # 修改Date/Time 列数据
+        for ix, row in ret_data.iterrows():
+            date_time = str(row['Date'])
+            date, time = date_time.split(' ')
+            ret_data.loc[ix, 'Date'] = date
+            ret_data.loc[ix, 'Time'] = time
+
+        print(ret_data)
+        # 保存到csv文件中
+        code_name = copy(code)
+        csv_file = code_name + '_1min.csv'
+        ret_data.to_csv(csv_file, index=False, sep=',',
+                        columns=['Date', 'Time', 'Open', 'High', 'Low', 'Close', 'TotalVolume'])
+        return RET_OK
+
+    # if __name__ == "__main__":
+    #     # 参数配置
+    #     ip = '10.242.45.130'
+    #     port = 11111
+    #     code = 'US.NTES'  # 腾讯
+    #     quote_context = OpenQuoteContext(ip, port)
+    #
+    #     # 导出csv文件数据
+    #     export_csv_k1m_file(quote_context, code, '2018-04-01', '2018-05-23')
+    #
+    #     # 正常关闭对象
+    #     quote_context.close()
+
+
+
 
