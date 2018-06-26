@@ -225,3 +225,9 @@ brew install zmq
 
 #### [Python教程](http://www.runoob.com/python3/python3-built-in-functions.html)
 
+[sqlalchemy](https://www.sqlalchemy.org/)
+
+
+#### Tushare
+
+1. "ts_" as the table prefix for tushare server

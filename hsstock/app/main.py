@@ -7,17 +7,10 @@ import logging
 import tornado.web
 from tornado.web import RequestHandler
 import os
-import json
-
-import pandas as pd
-import futuquant as ft
-from futuquant.constant import MKT_MAP
-
-
 
 from hsstock.web.app_logging import setup_logging
 from hsstock.utils.app_config import  AppConfig
-from hsstock.engine import Engine
+from hsstock.service.engine.qeengine import QEEngine
 
 class MainHandler(RequestHandler):
     def get(self):
@@ -68,7 +61,7 @@ def try_exit():
 
 def main():
     global engine
-    engine = Engine()
+    engine = QEEngine()
 
     app = make_app()
     setup_logging()

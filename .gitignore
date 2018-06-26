@@ -7,3 +7,8 @@ futuquant
 .cache
 hsstock/vnpy/trader/temp/*
 hsstock/vnpy/trader/CtaTrading/temp/
+*.log
+*.csv
+*.json
+*.xlsx
+*.h5

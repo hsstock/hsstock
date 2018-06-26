@@ -7,4 +7,4 @@ matplotlib
 psutil
 pymongo
 tushare
-
+mysqlclient

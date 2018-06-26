@@ -15,7 +15,7 @@ from hsstock.service.trade_service import USTrade
 from hsstock.service.query_history_service import QueryHistory
 
 
-class Engine(object):
+class QEEngine(object):
     def __init__(self):
         '''
         QE Engine Init
