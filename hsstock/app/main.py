@@ -8,7 +8,7 @@ import tornado.web
 from tornado.web import RequestHandler
 import os
 
-from hsstock.web.app_logging import setup_logging
+from hsstock.utils.app_logging import setup_logging
 from hsstock.utils.app_config import  AppConfig
 from hsstock.service.engine.qeengine import QEEngine
 

@@ -1,13 +1,9 @@
 # -*- coding: UTF-8 -*-
 
-from abc import ABC, abstractclassmethod
-import pandas as pd
+from abc import ABC
 
 from sqlalchemy import create_engine
-import tushare as ts
 
-
-from hsstock.web.app_logging import setup_logging
 from hsstock.utils.app_config import AppConfig
 
 
@@ -19,7 +15,7 @@ class Store(ABC):
     def insert_one(self,item):
         pass
 
-    def insert_many(self,table, df):
+    def insert_many(self,table, df, if_exists='replace', index=False, index_label=None):
         pass
 
     def find(self,query):
@@ -39,8 +35,10 @@ class MysqlStore(Store):
     def insert_one(self, item):
         pass
 
-    def insert_many(self, table,df):
-        df.to_sql(table, self.engine, if_exists='append')
+    def insert_many(self, table, df, if_exists='replace', index=False, index_label=None):
+        df.to_sql(table, self.engine, if_exists = 'replace' if if_exists ==  None else if_exists,
+                  index = False if index == False else True,
+                  index_label = None if index_label == None else index_label)
         pass
 
     def find(self, query):
@@ -79,9 +77,9 @@ class StoreService(Store):
     def insert_one(self, item):
         pass
 
-    def insert_many(self, table, df):
+    def insert_many(self, table, df,if_exists='replace', index=False, index_label=None):
         for store in self.stores:
-            store.insert_many(table,df)
+            store.insert_many(table,df,if_exists, index, index_label)
 
     def find(self, query):
         pass

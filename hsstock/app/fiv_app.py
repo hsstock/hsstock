@@ -5,7 +5,8 @@ import random
 import pandas as pd
 
 from hsstock.service.store_service import StoreService
-from hsstock.utils.crawler import Crawler
+from hsstock.utils.fiv_crawler import Crawler
+from hsstock.utils.app_logging import setup_logging
 
 sched = BlockingScheduler()
 
@@ -28,16 +29,14 @@ def scheduled_job():
         table = 'fiv_stat'
         df = pd.DataFrame(jsonArray, columns=crawler.propertiesList)
         storeservice.insert_many(table, df)
-
+        logging.info(df)
 
 def main():
-    logging.basicConfig(level=logging.DEBUG, format=' %(asctime)s - %(levelname)s - %(message)s')
-    logging.disable(logging.DEBUG)
-
     logging.info('before the start function')
-
-    sched.start()
+    #sched.start()
+    scheduled_job()
     logging.info('let us figure out the situation')
 
 if __name__ == "__main__":
+    setup_logging()
     main()

@@ -1,11 +1,7 @@
 # -*- coding: UTF-8 -*-
 
-import pandas as pd
 import futuquant as ft
-from futuquant.constant import MKT_MAP
 
-
-from hsstock.web.app_logging import setup_logging
 from hsstock.utils.app_config import AppConfig
 from hsstock.service.quote_service import LF
 from hsstock.service.quote_service import HF

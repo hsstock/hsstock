@@ -3,7 +3,7 @@ import json
 import logging.config
 
 def setup_logging(
-    default_path='./../logging_config.json',
+    default_path='./../../data/logging_config.json',
     default_level=logging.INFO,
     env_key='LOG_CFG'
 ):
