@@ -2,6 +2,8 @@
 import tushare as ts
 import logging
 import time
+import sqlalchemy as sa
+import pandas as pd
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 
@@ -438,9 +440,13 @@ def main():
     try:
         logging.info("fetch sina_dd,  starting")
 
-        df = ts.get_sina_dd('002049',date='2018-06-26')
+        df = ts.get_sina_dd('002049',date='2018-06-26',vol=1000)
         df['date'] = DateUtil.getTodayStr()
-        df = df.reset_index(level=[0])
+        table = 'ts_sina_dd'
+        storeservice.insert_many(table, df)
+
+        df = ts.get_sina_dd('002049', date='2018-06-25',vol=1000)
+        df['date'] = '2018-06-25'
         table = 'ts_sina_dd'
         storeservice.insert_many(table, df)
 
@@ -449,6 +455,9 @@ def main():
         logging.error("OS|error: {0}".format(err))
     else:
         print('success')
+
+
+
 
 if __name__ == "__main__":
     setup_logging()
