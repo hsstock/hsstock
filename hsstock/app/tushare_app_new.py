@@ -15,6 +15,60 @@ from hsstock.service.tushare_service import TUShare_service
 
 sched = BlockingScheduler()
 
+"""
+交易数据
+    1:历史行情:近三年数据，全部数据用get_h_data
+    1:复权数据:前复权，后复权，不复权，默认：前复权，不设定日期：获取近一年数据，设定日期：最好不要超过三年，获取全部数据，分年段获取，get_h_data
+    N:R:实时行情：一次性获取当前所有股票行情数据 get_today_all
+    1:历史分笔：当日之前的分笔数据，当天的用get_today_ticks获取，或当日18点之后，用本接口, get_tick_data
+    N:R:实时分笔: 两三秒可调用一次，get_realtime_quotes(['code1','code2'])
+    N:R:当日历史分笔: 交易进行中使用，get_today_ticks('601333') 列表吗？
+    N:R:大盘指数行情列表: 大盘指数实时行情列表，get_index
+    1:大单交易数据: 大单交易数据，来自新浪财经，默认400手，最好转换成金额（加转换功能）？
+投资参考数据
+    N:+R:分配预案: 季报，年报之前的送转，分红预案 profit_data
+    N:+R 业绩预告：forecast_data(year,quarter)
+    N:+R 限售股解禁: xsg_data(year,quarter) 
+    N:+R 基金持股 fund_holding(year,quarter)
+    1:新股数据 new_stocks()
+    融资融券（沪市）
+    融资融券（深市）
+股票分类数据
+    1:行业分类 get_industry_classified()
+    1:概念分类 get_concept_classified()
+    1:地域分类 get_area_classified()
+    1:中小板分类: get_sme_classified()
+    1:创业板分类 get_gem_classified()
+    1:风险警示板分类 get_st_classified()
+    1: 沪深300成份及权重 get_hs300s()
+    1: 上证50成份股 get_sz50s()
+    1: 中证500成份股 get_zz500s()
+    终止上市股票列表
+    暂停上市股票列表
+基本面数据
+    1:股票列表: get_stock_basics()
+    1:业绩报告（主表）: get_report_data(year,quarter)
+    1:盈利能力: get_profit_data(year, quarter)
+    1:营运能力: get_operation_data(year,quarter)
+    1:成长能力: get_growth_data(year,quarter)
+    1:偿债能力: get_debtpaying_data(year,quarter)
+    1:现金流量: get_cashflow_data(year,quarter)
+宏观经济数据
+    1:存款利率: get_deposit_rate()
+    1:贷款利率: get_loan_rate()
+    1:存款准备金率: get_rrr()
+    1:货币供应量: get_money_supply()
+    1:货币供应量(年底余额): get_money_supply_bal()
+    1:国内生产总值(年度): get_gdp_year()
+    1:国内生产总值(季度): get_gdp_quarter()
+    1:三大需求对GDP贡献: get_gdp_for()
+    1:三大产业对GDP拉动: get_gdp_pull()
+    1:三大产业贡献率: get_gdp_contrib()
+    1:居民消费价格指数: get_cpi()
+    1:工业品出厂价格指数: get_ppi()
+新闻事件数据
+    (ok)N+R:即时新闻: 获取即时财经新闻，类型包括国内财经、证券、外汇、期货、港股和美股等新闻信息。数据更新较快，使用过程中可用定时任务来获取。get_latest_news()
+"""
 @tick.clock()
 def change_df_filed_type(df,fields,type,old,new):
     """
@@ -40,7 +94,7 @@ def change_df_filed_type(df,fields,type,old,new):
     #     print(df)
     return df
 
-@sched.scheduled_job('interval',seconds=10)
+@sched.scheduled_job('interval',seconds=5)
 def timed_job():
     storeservice = StoreService()
     logging.info("fetch latest_news, starting")
@@ -305,7 +359,6 @@ def main():
     # storeservice.insert_many(table, df)
     # logging.info("fetch latest_news, end")
 
-
     # try:
     #     logging.info("fetch profit_data, starting")
     #     for year in range(2010, 2019):
@@ -333,7 +386,6 @@ def main():
     #     logging.error("OS|error: {0}".format(err))
     # else:
     #     print('success')
-
 
     # logging.info("fetch xsg_data, starting")
     # df = ts.xsg_data()
@@ -489,12 +541,12 @@ def main():
     try:
         logging.info("fetch sina_dd,  starting")
 
-        df = ts.get_sina_dd('000063',date='2018-06-27',vol=400)
+        df = ts.get_sina_dd('000063', date='2018-06-27', vol=400)
         df['date'] = DateUtil.getTodayStr()
         table = 'ts2_sina_dd'
         storeservice.insert_many(table, df)
 
-        df = ts.get_sina_dd('000063', date='2018-06-25',vol=400)
+        df = ts.get_sina_dd('000063', date='2018-06-25', vol=400)
         df['date'] = '2018-06-25'
         table = 'ts2_sina_dd'
         storeservice.insert_many(table, df)
@@ -505,14 +557,13 @@ def main():
     else:
         print('success')
 
-
     try:
         logging.info("test change field type,  starting")
 
-        df = pd.DataFrame({'A': ['-','1.0'],'B':['-','-']})
-        #df['A'][0] = 1
-        df = change_df_filed_type(df,['A','B'], float,'-',0.0)
-        table='aaaaa'
+        df = pd.DataFrame({'A': ['-', '1.0'], 'B': ['-', '-']})
+        # df['A'][0] = 1
+        df = change_df_filed_type(df, ['A', 'B'], float, '-', 0.0)
+        table = 'aaaaa'
         storeservice.insert_many(table, df)
         logging.info("test change field type, end")
     except IOError as err:
@@ -525,5 +576,5 @@ def main():
 if __name__ == "__main__":
     setup_logging()
     main()
-    #sched.start()
+    sched.start()
 

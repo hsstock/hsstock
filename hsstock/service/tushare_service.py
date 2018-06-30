@@ -13,7 +13,7 @@ class TUShare_service(object):
         print('tushare_versin', self.tushare_version)
 
 
-    def get_history_kline(self,code,start=None,end=None,ktype='D',retry_count=3,pause=0):
+    def get_hist_data(self,code,start=None,end=None,ktype='D',retry_count=3,pause=0):
         '''
         功能：
             获取个股历史交易数据（包括均线数据），可以通过参数设置获取日k线、周k线、月k线，以及5分钟、15分钟、30分钟和60分钟k线数据。本接口只能获取近3年的日线数据，适合搭配均线数据进行选股和分析，如果需要全部历史数据，请调用下一个接口get_h_data()。
@@ -74,7 +74,7 @@ class TUShare_service(object):
         '''
         return ts.get_h_data(code, start, end, autype, index, retry_count, pause)
 
-    def get_total_all(self):
+    def get_today_all(self):
         '''
         功能：
             一次性获取当前交易所有股票的行情数据（如果是节假日，即为上一交易日，结果显示速度取决于网速）
@@ -202,7 +202,7 @@ class TUShare_service(object):
         '''
         return ts.get_index()
 
-    def get_sina_add(self,code,date='2018-06-13',vol=400,retry_count=3,pause=0):
+    def get_sina_dd(self,code,date='2018-06-13',vol=400,retry_count=3,pause=0):
         '''
         功能：
             获取大单交易数据，默认为大于等于400手，数据来源于新浪财经。
@@ -226,29 +226,7 @@ class TUShare_service(object):
         '''
         return ts.get_sina_dd(code,date,vol,retry_count,pause)
 
-    def get_profit_data(self,year=2018,top=25,retry_count=3,pause=0):
-        '''
-        功能：
-            每到季报、年报公布的时段，就经常会有上市公司利润分配预案发布，而一些高送转高分红的股票往往会成为市场炒作的热点。及时获取和统计高送转预案的股票是参与热点炒作的关键，TuShare提供了简洁的接口，能返回股票的送转和分红预案情况。
-
-        参数说明：
-            year : 预案公布的年份，默认为2014
-            top :取最新n条数据，默认取最近公布的25条
-            retry_count：当网络异常后重试次数，默认为3
-            pause:重试时停顿秒数，默认为0
-
-        返回值说明：
-
-            code:股票代码
-            name:股票名称
-            year:分配年份
-            report_date:公布日期
-            divi:分红金额（每10股）
-            shares:转增和送股数（每10股）
-        '''
-        return ts.profit_data(year,top, retry_count, pause)
-
-    def get_forecast_data(self,year=2018,quarter=1):
+    def forecast_data(self,year=2018,quarter=1):
         '''
         功能：
             按年度、季度获取业绩预告数据，接口提供从1998年以后每年的业绩预告数据，需指定年度、季度两个参数。数据在获取的过程中，会打印进度信息(下同)。
@@ -269,7 +247,7 @@ class TUShare_service(object):
         '''
         return ts.forecast_data(year,quarter)
 
-    def get_xsg_data(self,year=2018,month=None,retry_count=3,pause=0):
+    def xsg_data(self,year=2018,month=None,retry_count=3,pause=0):
         '''
         功能：
             以月的形式返回限售股解禁情况，通过了解解禁股本的大小，判断股票上行的压力。可通过设定年份和月份参数获取不同时段的数据。
@@ -291,7 +269,7 @@ class TUShare_service(object):
         '''
         return ts.xsg_data(year,month,retry_count,pause)
 
-    def get_fund_holdings(self,year=2018,quarter=1,retry_count=3,pause=0):
+    def fund_holdings(self,year=2018,quarter=1,retry_count=3,pause=0):
         '''
         功能：
             获取每个季度基金持有上市公司股票的数据。
@@ -317,7 +295,7 @@ class TUShare_service(object):
         '''
         return ts.fund_holdings(year,quarter,retry_count,pause)
 
-    def get_new_stocks(self,retry_count=3,pause=0):
+    def new_stocks(self,retry_count=3,pause=0):
         '''
         功能：
             获取IPO发行和上市的时间列表，包括发行数量、网上发行数量、发行价格已经中签率信息等。
@@ -591,6 +569,28 @@ class TUShare_service(object):
             bips,每股主营业务收入(元)
         '''
         return ts.get_profit_data(year, quarter)
+
+    def profit_data(self, year=2018, top=25, retry_count=3, pause=0):
+        '''
+        功能：
+            每到季报、年报公布的时段，就经常会有上市公司利润分配预案发布，而一些高送转高分红的股票往往会成为市场炒作的热点。及时获取和统计高送转预案的股票是参与热点炒作的关键，TuShare提供了简洁的接口，能返回股票的送转和分红预案情况。
+
+        参数说明：
+            year : 预案公布的年份，默认为2014
+            top :取最新n条数据，默认取最近公布的25条
+            retry_count：当网络异常后重试次数，默认为3
+            pause:重试时停顿秒数，默认为0
+
+        返回值说明：
+
+            code:股票代码
+            name:股票名称
+            year:分配年份
+            report_date:公布日期
+            divi:分红金额（每10股）
+            shares:转增和送股数（每10股）
+        '''
+        return ts.profit_data(year, top)
 
     def get_operation_data(self, year=2018, quarter=1):
         '''
