@@ -93,7 +93,7 @@ class StoreService(Store):
         for store in self.stores:
             store.init_schema(table,df,dtype,clauses,if_exists,index,index_label)
 
-    def insert_many(self, table, df,if_exists='replace', index=False, index_label=None):
+    def insert_many(self, table, df,if_exists='append', index=False, index_label=None):
         for store in self.stores:
             store.insert_many(table,df,if_exists, index, index_label)
 

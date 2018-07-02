@@ -4,6 +4,7 @@ import logging
 import time
 import sqlalchemy as sa
 import pandas as pd
+import signal
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 
@@ -11,9 +12,11 @@ from hsstock.service.store_service import StoreService
 from hsstock.utils.app_logging import setup_logging
 from hsstock.utils.date_util import DateUtil
 import hsstock.utils.tick_deco  as tick
-from hsstock.service.tushare_service import TUShare_service
+from hsstock.service.tushare_service_new import TUShare_service
 
 sched = BlockingScheduler()
+ts = TUShare_service()
+
 
 """
 交易数据
@@ -96,18 +99,13 @@ def change_df_filed_type(df,fields,type,old,new):
 
 @sched.scheduled_job('interval',seconds=5)
 def timed_job():
-    storeservice = StoreService()
-    logging.info("fetch latest_news, starting")
-    df = ts.get_latest_news()
-    table = 'ts2_latest_news'
-    storeservice.insert_many(table, df)
-    logging.info("fetch latest_news, end")
+    ts.get_latest_news()
 
 
 def main():
     # fetch industry catalog
+
     storeservice = StoreService()
-    ts = TUShare_service()
 
     # logging.info("fetch industry catalog, starting")
     # df = ts.get_industry_classified()
@@ -538,42 +536,72 @@ def main():
     # else:
     #     print('success')
 
-    try:
-        logging.info("fetch sina_dd,  starting")
+    # try:
+    #     logging.info("fetch sina_dd,  starting")
+    #
+    #     df = ts.get_sina_dd('000063', date='2018-06-27', vol=400)
+    #     df['date'] = DateUtil.getTodayStr()
+    #     table = 'ts2_sina_dd'
+    #     storeservice.insert_many(table, df)
+    #
+    #     df = ts.get_sina_dd('000063', date='2018-06-25', vol=400)
+    #     df['date'] = '2018-06-25'
+    #     table = 'ts2_sina_dd'
+    #     storeservice.insert_many(table, df)
+    #
+    #     logging.info("fetch sina_dd, end")
+    # except IOError as err:
+    #     logging.error("OS|error: {0}".format(err))
+    # else:
+    #     print('success')
+    #
+    # try:
+    #     logging.info("test change field type,  starting")
+    #
+    #     df = pd.DataFrame({'A': ['-', '1.0'], 'B': ['-', '-']})
+    #     # df['A'][0] = 1
+    #     df = change_df_filed_type(df, ['A', 'B'], float, '-', 0.0)
+    #     table = 'aaaaa'
+    #     storeservice.insert_many(table, df)
+    #     logging.info("test change field type, end")
+    # except IOError as err:
+    #     logging.error("OS|error: {0}".format(err))
+    # else:
+    #     print('success')
+    print('a')
 
-        df = ts.get_sina_dd('000063', date='2018-06-27', vol=400)
-        df['date'] = DateUtil.getTodayStr()
-        table = 'ts2_sina_dd'
-        storeservice.insert_many(table, df)
+is_closing = False
 
-        df = ts.get_sina_dd('000063', date='2018-06-25', vol=400)
-        df['date'] = '2018-06-25'
-        table = 'ts2_sina_dd'
-        storeservice.insert_many(table, df)
+def signal_int_handler(signum, frame):
+    global is_closing
+    logging.info('exiting...')
+    is_closing = True
+    sched.shutdown(True)
 
-        logging.info("fetch sina_dd, end")
-    except IOError as err:
-        logging.error("OS|error: {0}".format(err))
-    else:
-        print('success')
+#SIGKILL 不可被捕获
+def signal_kill_handler():
+    global is_closing
+    logging.info('killed, exiting...')
+    is_closing = True
+    sched.shutdown(True)
 
-    try:
-        logging.info("test change field type,  starting")
+def signal_term_handler(*args):
+    global is_closing
+    logging.info('killed, exiting...')
+    is_closing = True
+    sched.shutdown(True)
 
-        df = pd.DataFrame({'A': ['-', '1.0'], 'B': ['-', '-']})
-        # df['A'][0] = 1
-        df = change_df_filed_type(df, ['A', 'B'], float, '-', 0.0)
-        table = 'aaaaa'
-        storeservice.insert_many(table, df)
-        logging.info("test change field type, end")
-    except IOError as err:
-        logging.error("OS|error: {0}".format(err))
-    else:
-        print('success')
-
+def try_exit():
+    global is_closing
+    if is_closing:
+        # clean up here
+        logging.info('exit success')
 
 
 if __name__ == "__main__":
+    signal.signal(signal.SIGINT, signal_int_handler)
+    #signal.signal(signal.SIGKILL, signal_term_handler)
+    signal.signal(signal.SIGTERM, signal_term_handler)
     setup_logging()
     main()
     sched.start()
