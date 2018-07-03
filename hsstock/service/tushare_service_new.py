@@ -1,12 +1,13 @@
 # -*- coding: UTF-8 -*-
 
-import tushare as ts
 import logging
 
 from hsstock.service.store_service import StoreService
 from hsstock.utils.app_logging import setup_logging
 from hsstock.utils.date_util import DateUtil
 import hsstock.utils.tick_deco  as tick
+from hsstock.utils.app_config import AppConfig
+import hsstock.tushare as ts
 
 
 '''
@@ -935,8 +936,28 @@ class TUShare_service(object):
 
         '''
         df = ts.get_latest_news(top, show_content)
+        if df is None:
+            logging.info('df is None')
+            return
         table = 'ts2_latest_news'
-        self.storeservice.insert_many(table, df)
+        latest_pulltime = None
+        pulltime = None
+        dropindex = -1
+        for i in range(0,len(df)):
+            pulltime = df.iloc[i]['time']
+            pulltime = DateUtil.string_toTimestamp(DateUtil.format_date(pulltime))
+            if i == 0:
+                latest_pulltime = pulltime
+            if pulltime <= AppConfig.latest_news_pulltime:
+                #remove
+                dropindex = i
+                print( "dropindex:",dropindex)
+                break
+        if dropindex != -1:
+            df = df.drop(range(dropindex,len(df),1))
+        if len(df) > 0 :
+            self.storeservice.insert_many(table, df)
+        AppConfig.write_news_pulltime(latest_pulltime)
 
     def get_notices(self,code='600000', date='2018-06-15'):
         '''

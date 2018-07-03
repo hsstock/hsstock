@@ -12,3 +12,4 @@ hsstock/vnpy/trader/CtaTrading/temp/
 *.json
 *.xlsx
 *.h5
+logs

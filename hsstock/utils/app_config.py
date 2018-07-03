@@ -19,6 +19,7 @@ class AppConfig:
         AppConfig.config = configparser.RawConfigParser()
         AppConfig.path = ''.join((os.path.abspath(''.join((__file__, '../../../../'))), '/data/app.config'))
         AppConfig.config.read(AppConfig.path)
+        AppConfig.latest_news_pulltime = float(AppConfig.config.get('pull_time','latest_news'))
 
 
     @staticmethod
@@ -27,7 +28,8 @@ class AppConfig:
 
     @staticmethod
     def write_news_pulltime(time):
-        #AppConfig.get_config().add_section('sec_b')
+        #AppConfig.get_config().add_section('sec_b')A
+        AppConfig.latest_news_pulltime = time
         AppConfig.get_config().set("pull_time", "latest_news", time)
         AppConfig.get_config().write(open(AppConfig.path, "w"))
 
@@ -35,6 +37,6 @@ class AppConfig:
 if __name__ == "__main__":
     port = AppConfig.get_config().get('web','port')
     print(port)
-    AppConfig.instance().write_news_pulltime('a')
+    AppConfig.write_news_pulltime('a')
 
 
