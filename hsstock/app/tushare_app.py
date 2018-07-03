@@ -55,6 +55,7 @@ def main():
     storeservice = StoreService()
     ts = TUShare_service()
 
+
     # logging.info("fetch industry catalog, starting")
     # df = ts.get_industry_classified()
     # table='ts2_industry_classified'

@@ -57,7 +57,7 @@ def get_latest_news(top=None, show_content=False):
         data = []
         for r in data_str:
             rt = datetime.fromtimestamp(r['time'])
-            rtstr = datetime.strftime(rt, "%m-%d %H:%M")
+            rtstr = datetime.strftime(rt, "%Y-%m-%d %H:%M:%S")
             arow = [r['channel']['title'], r['title'], rtstr, r['url']]
             if show_content:
                 arow.append(latest_content(r['url']))
