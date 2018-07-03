@@ -139,18 +139,18 @@ class QueryHistory(object):
                         columns=['Date', 'Time', 'Open', 'High', 'Low', 'Close', 'TotalVolume'])
         return RET_OK
 
-    # if __name__ == "__main__":
-    #     # 参数配置
-    #     ip = '10.242.45.130'
-    #     port = 11111
-    #     code = 'US.NTES'  # 腾讯
-    #     quote_context = OpenQuoteContext(ip, port)
-    #
-    #     # 导出csv文件数据
-    #     export_csv_k1m_file(quote_context, code, '2018-04-01', '2018-05-23')
-    #
-    #     # 正常关闭对象
-    #     quote_context.close()
+    if __name__ == "__main__":
+        # 参数配置
+        ip = '10.242.45.130'
+        port = 11111
+        code = 'US.NTES'  # 腾讯
+        quote_context = OpenQuoteContext(ip, port)
+
+        # 导出csv文件数据
+        export_csv_k1m_file(quote_context, code, '2018-04-01', '2018-05-23')
+
+        # 正常关闭对象
+        quote_context.close()
 
 
 

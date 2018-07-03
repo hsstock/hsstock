@@ -1,16 +1,11 @@
 # -*- coding: UTF-8 -*-
-#import tushare as ts
 import logging
-import time
-import sqlalchemy as sa
-import pandas as pd
 import signal
+import threading
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 
-from hsstock.service.store_service import StoreService
 from hsstock.utils.app_logging import setup_logging
-from hsstock.utils.date_util import DateUtil
 import hsstock.utils.tick_deco  as tick
 from hsstock.service.tushare_service_new import TUShare_service
 
@@ -97,77 +92,81 @@ def change_df_filed_type(df,fields,type,old,new):
     #     print(df)
     return df
 
+
 #@sched.scheduled_job('cron',day_of_week='mon-fri',hour='16-17', minute='20-59',seconds='*/10')
-# @sched.scheduled_job('interval',seconds=5)
-# def timer_job():
-#     ts.get_latest_news()
-#
-#
-# #@sched.scheduled_job('cron',day_of_week='sat-sun',hour='16', minute='00-01',second='*/10')
-# @sched.scheduled_job('interval',seconds=5)
-# def job_sunday():
-#     ts.get_ppi()
-#     ts.get_cpi()
-#     ts.get_gdp_contrib()
-#     ts.get_gdp_pull()
-#     ts.get_gdp_for()
-#     ts.get_gdp_quarter()
-#     ts.get_gdp_year()
-#     ts.get_money_supply_bal()
-#     ts.get_money_supply()
-#     ts.get_rrr()
-#     ts.get_loan_rate()
-#     ts.get_deposit_rate()
-#
-#     ts.get_zz500s()
-#     ts.get_sz50s()
-#     ts.get_hs300s()
-#     ts.get_st_classified()
-#     ts.get_gem_classified()
-#     ts.get_sme_classified()
-#     ts.get_area_classified()
-#     ts.get_concept_classified()
-#     ts.get_industry_classified()
-#     ts.new_stocks()
-#     ts.xsg_data()
-#
-#     for year in range(2010, 2019):
-#         for quarter in range(1, 5):
-#             df = ts.get_cashflow_data(year, quarter)
-#
-#     for year in range(2010, 2019):
-#         for quarter in range(1, 5):
-#             df = ts.get_debtpaying_data(year, quarter)
-#
-#     for year in range(2010, 2019):
-#         for quarter in range(1, 5):
-#             df = ts.get_growth_data(year, quarter)
-#
-#     for year in range(2010, 2019):
-#         for quarter in range(1, 5):
-#             df = ts.get_operation_data(year, quarter)
-#
-#     for year in range(2010, 2019):
-#         for quarter in range(1, 5):
-#             df = ts.get_profit_data(year, quarter)
-#
-#     for year in range(2010,2019):
-#         for quarter in range(1,5):
-#             df = ts.get_report_data(year,quarter)
-#
-#     for year in range(2010, 2019):
-#         for quarter in range(1,5):
-#             df = ts.fund_holdings(year, quarter)
-#
-#     for year in range(2010, 2019):
-#         for quarter in range(1,5):
-#             df = ts.forecast_data(year, quarter)
-#
-#     for year in range(2010, 2019):
-#         df = ts.profit_data(year, top=100)
-#
-#     ts.get_sina_dd(['000063'], date='2018-06-27', vol=400)
-#
+@sched.scheduled_job('interval',seconds=10)
+def timer_job():
+    ts.get_latest_news()
+
+
+@sched.scheduled_job('cron',day_of_week='mon-sun',hour='20', minute='35-36',second='*/10')
+def job_sunday():
+    """
+    定时间执行
+    :return:
+    """
+    ts.get_ppi()
+    ts.get_cpi()
+    ts.get_gdp_contrib()
+    ts.get_gdp_pull()
+    ts.get_gdp_for()
+    ts.get_gdp_quarter()
+    ts.get_gdp_year()
+    ts.get_money_supply_bal()
+    ts.get_money_supply()
+    ts.get_rrr()
+    ts.get_loan_rate()
+    ts.get_deposit_rate()
+
+    ts.get_zz500s()
+    ts.get_sz50s()
+    ts.get_hs300s()
+    ts.get_st_classified()
+    ts.get_gem_classified()
+    ts.get_sme_classified()
+    ts.get_area_classified()
+    ts.get_concept_classified()
+    ts.get_industry_classified()
+    ts.new_stocks()
+    ts.xsg_data()
+
+    for year in range(2010, 2019):
+        for quarter in range(1, 5):
+            df = ts.get_cashflow_data(year, quarter)
+
+    for year in range(2010, 2019):
+        for quarter in range(1, 5):
+            df = ts.get_debtpaying_data(year, quarter)
+
+    for year in range(2010, 2019):
+        for quarter in range(1, 5):
+            df = ts.get_growth_data(year, quarter)
+
+    for year in range(2010, 2019):
+        for quarter in range(1, 5):
+            df = ts.get_operation_data(year, quarter)
+
+    for year in range(2010, 2019):
+        for quarter in range(1, 5):
+            df = ts.get_profit_data(year, quarter)
+
+    for year in range(2010,2019):
+        for quarter in range(1,5):
+            df = ts.get_report_data(year,quarter)
+
+    for year in range(2010, 2019):
+        for quarter in range(1,5):
+            df = ts.fund_holdings(year, quarter)
+
+    for year in range(2010, 2019):
+        for quarter in range(1,5):
+            df = ts.forecast_data(year, quarter)
+
+    for year in range(2010, 2019):
+        df = ts.profit_data(year, top=100)
+
+    ts.get_sina_dd(['000063'], date='2018-06-27', vol=400)
+
 # @sched.scheduled_job('interval',seconds=3)
 # def job_once():
 #     ts.get_stock_basics()
@@ -175,32 +174,29 @@ def change_df_filed_type(df,fields,type,old,new):
 #     ts.get_h_data('600848',autype='hfq',end='2018-06-28',start='2015-07-01')
 #
 
-def job_realtime():
-    # ts.get_index()
-    # ts.get_today_ticks('601333')
-    # ts.get_realtime_quotes(['002049','002624'])
-    # ts.get_realtime_quotes(['sh', 'sz', 'hs300', 'sz50', 'zxb', 'cyb'])
-    # ts.get_tick_data('002049', DateUtil.getDatetimeYesterdayStr( DateUtil.getDatetimeToday()))
-    ts.get_today_all()
+# @sched.scheduled_job('interval',seconds=3)
+# def job_realtime():
+#     ts.get_index()
+#     ts.get_today_ticks('601333')
+#     ts.get_realtime_quotes(['002049','002624'])
+#     ts.get_realtime_quotes(['sh', 'sz', 'hs300', 'sz50', 'zxb', 'cyb'])
+#     ts.get_tick_data('002049', DateUtil.getDatetimeYesterdayStr( DateUtil.getDatetimeToday()))
+#     ts.get_today_all()
 
+# class Thread_get_today_all (threading.Thread):
+#     def __init__(self, threadname,ts):
+#         threading.Thread.__init__(self)
+#         self.threadname = threadname
+#         self.ts = ts
+#
+#     def run(self):
+#         logging.info ("开始线程：" + self.threadname)
+#         self.ts.get_today_all()
+#         logging.info ("退出线程：" + self.threadname)
+#
 
 def main():
-
-    # try:
-    #     logging.info("test change field type,  starting")
-    #
-    #     df = pd.DataFrame({'A': ['-', '1.0'], 'B': ['-', '-']})
-    #     # df['A'][0] = 1
-    #     df = change_df_filed_type(df, ['A', 'B'], float, '-', 0.0)
-    #     table = 'aaaaa'
-    #     storeservice.insert_many(table, df)
-    #     logging.info("test change field type, end")
-    # except IOError as err:
-    #     logging.error("OS|error: {0}".format(err))
-    # else:
-    #     print('success')
     pass
-    job_realtime()
 
 is_closing = False
 
@@ -229,8 +225,11 @@ def try_exit():
         # clean up here
         logging.info('exit success')
 
-
 if __name__ == "__main__":
+    # tfn_get_today_all = Thread_get_today_all('tfn_get_today_all',ts)
+    # tfn_get_today_all.start()
+    # tfn_get_today_all.join()
+
     signal.signal(signal.SIGINT, signal_int_handler)
     #signal.signal(signal.SIGKILL, signal_term_handler)
     signal.signal(signal.SIGTERM, signal_term_handler)

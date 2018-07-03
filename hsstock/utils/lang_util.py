@@ -1,3 +1,18 @@
+from functools import wraps
+
+def coroutine(func):
+    """
+    装饰器：向前执行到第一个`yield`表达式，预激`func`
+    :param func:
+    :return:
+    """
+    @wraps(func)
+    def primer(*args, **kwargs):
+        gen = func(*args,**kwargs)
+        next(gen)
+        return gen
+    return primer
+
 def create_factory(cls_name, field_names):
     try:
         field_names = field_names.replace(',', ' ').split()  # <1>

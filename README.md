@@ -231,3 +231,24 @@ brew install zmq
 #### Tushare
 
 1. "ts_" as the table prefix for tushare server
+
+
+#### Code Piece
+
+1.
+
+```
+        # try:
+        #     logging.info("test change field type,  starting")
+        #
+        #     df = pd.DataFrame({'A': ['-', '1.0'], 'B': ['-', '-']})
+        #     # df['A'][0] = 1
+        #     df = change_df_filed_type(df, ['A', 'B'], float, '-', 0.0)
+        #     table = 'aaaaa'
+        #     storeservice.insert_many(table, df)
+        #     logging.info("test change field type, end")
+        # except IOError as err:
+        #     logging.error("OS|error: {0}".format(err))
+        # else:
+        #     print('success')
+```
