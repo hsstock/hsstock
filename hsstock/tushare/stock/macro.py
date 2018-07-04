@@ -12,6 +12,7 @@ import pandas as pd
 import numpy as np
 import re
 import json
+import datetime
 from hsstock.tushare.stock import macro_vars as vs
 from hsstock.tushare.stock import cons as ct
 try:

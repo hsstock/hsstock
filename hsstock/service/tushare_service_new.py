@@ -21,7 +21,6 @@ class TUShare_service(object):
         self.tushare_version = ts.__version__
         setup_logging()
         self.storeservice = StoreService()
-
         print('tushare_versin', self.tushare_version)
 
     @tick.clock()
@@ -59,6 +58,8 @@ class TUShare_service(object):
         '''
         try:
             df = ts.get_hist_data(code,start, end, ktype,retry_count, pause)
+            if df is None:
+                return
             df = df.reset_index(level=[0])
             df['code'] = code
             table = 'ts2_hist_data'
@@ -96,6 +97,8 @@ class TUShare_service(object):
         '''
         try:
             df = ts.get_h_data(code, start, end, autype, index, retry_count, pause)
+            if df is None:
+                return
             df['code'] = code
             df = df.reset_index(level=[0])
             table = 'ts2_h_data'
@@ -130,7 +133,9 @@ class TUShare_service(object):
             nmc:流通市值
         '''
         try:
-            df = ts.get_today_all(3, 0)
+            df = ts.get_today_all()
+            if df is None:
+                return
             date = time.strftime('%Y-%m-%d', time.localtime())
             df['date'] = date
             df = df.reset_index(level=[0])
@@ -165,6 +170,10 @@ class TUShare_service(object):
         '''
         try:
             df = ts.get_tick_data(code,date,retry_count, pause)
+            if df is None:
+                return
+            df = df.replace('--', 0)
+            df['change'] = df['change'].astype(float)
             df['date'] = DateUtil.getTodayStr()
             df['code'] = code
             df = df.reset_index(level=[0])
@@ -214,6 +223,19 @@ class TUShare_service(object):
         '''
         try:
             df = ts.get_realtime_quotes(code)
+            if df is None:
+                return
+            df = df.replace('--', 0)
+            df['b1_v'] = df['b1_v'].astype(float)
+            df['b2_v'] = df['b2_v'].astype(float)
+            df['b3_v'] = df['b3_v'].astype(float)
+            df['b4_v'] = df['b4_v'].astype(float)
+            df['b5_v'] = df['b5_v'].astype(float)
+            df['a1_v'] = df['a1_v'].astype(float)
+            df['a2_v'] = df['a2_v'].astype(float)
+            df['a3_v'] = df['a3_v'].astype(float)
+            df['a4_v'] = df['a4_v'].astype(float)
+            df['a5_v'] = df['a5_v'].astype(float)
             df['date'] = DateUtil.getTodayStr()
             df = df.reset_index(level=[0])
             del df['index']
@@ -248,6 +270,10 @@ class TUShare_service(object):
         '''
         try:
             df = ts.get_today_ticks(code,retry_count,pause)
+            if df is None:
+                return
+            df = df.replace('--', 0)
+            df['pchange'] = df['pchange'].astype(float)
             df['date'] = DateUtil.getTodayStr()
             df['code'] = code
             df = df.reset_index(level=[0])
@@ -280,6 +306,8 @@ class TUShare_service(object):
         '''
         try:
             df = ts.get_index()
+            if df is None:
+                return
             df['date'] = DateUtil.getTodayStr()
             df = df.reset_index(level=[0])
             del df['index']
@@ -315,6 +343,8 @@ class TUShare_service(object):
         '''
         try:
             df = ts.get_sina_dd(code,date,vol,retry_count,pause)
+            if df is None:
+                return
             df['date'] = date
             table = 'ts2_sina_dd'
             self.storeservice.insert_many(table, df)
@@ -345,6 +375,10 @@ class TUShare_service(object):
         '''
         try:
             df = ts.forecast_data(year, quarter)
+            if df is None:
+                return
+            df = df.replace('--', 0)
+            df['range'] = df['range'].astype(float)
             df['year'] = year
             df['quarter'] = quarter
             table = 'ts2_forecast_data'
@@ -375,9 +409,14 @@ class TUShare_service(object):
             count:解禁数量（万股）
             ratio:占总盘比率
         '''
-        df = ts.xsg_data(year,month,retry_count,pause)
-        table = 'ts2_xsg_data'
-        self.storeservice.insert_many(table, df)
+        try:
+            df = ts.xsg_data(year,month,retry_count,pause)
+            if df is None:
+                return
+            table = 'ts2_xsg_data'
+            self.storeservice.insert_many(table, df)
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
 
     @tick.clock()
     def fund_holdings(self,year=2018,quarter=1,retry_count=3,pause=0):
@@ -406,6 +445,8 @@ class TUShare_service(object):
         '''
         try:
             df = ts.fund_holdings(year,quarter,retry_count,pause)
+            if df is None:
+                return
             df['year'] = year
             df['quarter'] = quarter
             table = 'ts2_fund_holdings'
@@ -440,9 +481,14 @@ class TUShare_service(object):
             funds：募集资金(亿元)
             ballot:网上中签率(%)
         '''
-        df = ts.new_stocks(retry_count,pause)
-        table = 'ts2_new_stocks'
-        self.storeservice.insert_many(table, df, 'replace')
+        try:
+            df = ts.new_stocks(retry_count,pause)
+            if df is None:
+                return
+            table = 'ts2_new_stocks'
+            self.storeservice.insert_many(table, df, 'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
 
     @tick.clock()
     def get_industry_classified(self):
@@ -458,9 +504,14 @@ class TUShare_service(object):
             name：股票名称
             c_name：行业名称
         '''
-        df = ts.get_industry_classified()
-        table='ts2_industry_classified'
-        self.storeservice.insert_many(table, df, 'replace')
+        try:
+            df = ts.get_industry_classified()
+            if df is None:
+                return
+            table='ts2_industry_classified'
+            self.storeservice.insert_many(table, df, 'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
 
     @tick.clock()
     def get_concept_classified(self):
@@ -477,9 +528,16 @@ class TUShare_service(object):
             name：股票名称
             c_name：行业名称
         '''
-        df = ts.get_concept_classified()
-        table = 'ts2_concept_classified'
-        self.storeservice.insert_many(table, df, 'replace')
+        try:
+            df = ts.get_concept_classified()
+            if df is None:
+                return
+            table = 'ts2_concept_classified'
+            self.storeservice.insert_many(table, df, 'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_area_classified(self,file_path=None):
@@ -496,9 +554,16 @@ class TUShare_service(object):
             name：股票名称
             c_name：行业名称
         '''
-        df = ts.get_area_classified()
-        table = 'ts2_area_classified'
-        self.storeservice.insert_many(table, df, 'replace')
+        try:
+            df = ts.get_area_classified()
+            if df is None:
+                return
+            table = 'ts2_area_classified'
+            self.storeservice.insert_many(table, df, 'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_sme_classified(self,file_path=None):
@@ -514,9 +579,16 @@ class TUShare_service(object):
             code：股票代码
             name：股票名称
         '''
-        df = ts.get_sme_classified()
-        table = 'ts2_sme_classified'
-        self.storeservice.insert_many(table, df,'replace')
+        try:
+            df = ts.get_sme_classified()
+            if df is None:
+                return
+            table = 'ts2_sme_classified'
+            self.storeservice.insert_many(table, df,'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_gem_classified(self,file_path=None):
@@ -532,11 +604,16 @@ class TUShare_service(object):
             code：股票代码
             name：股票名称
         '''
-        df = ts.get_gem_classified()
-        if df is None:
-            return
-        table = 'ts2_gem_classified'
-        self.storeservice.insert_many(table, df, 'replace')
+        try:
+            df = ts.get_gem_classified()
+            if df is None:
+                return
+            table = 'ts2_gem_classified'
+            self.storeservice.insert_many(table, df, 'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_st_classified(self, file_path=None):
@@ -552,9 +629,16 @@ class TUShare_service(object):
             code：股票代码
             name：股票名称
         '''
-        df = ts.get_st_classified()
-        table = 'ts2_st_classified'
-        self.storeservice.insert_many(table, df,'replace')
+        try:
+            df = ts.get_st_classified()
+            if df is None:
+                return
+            table = 'ts2_st_classified'
+            self.storeservice.insert_many(table, df,'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_hs300s(self, file_path=None):
@@ -571,9 +655,16 @@ class TUShare_service(object):
             date :日期
             weight:权重
         '''
-        df = ts.get_hs300s()
-        table = 'ts2_hs300s'
-        self.storeservice.insert_many(table, df, 'replace')
+        try:
+            df = ts.get_hs300s()
+            if df is None:
+                return
+            table = 'ts2_hs300s'
+            self.storeservice.insert_many(table, df, 'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_sz50s(self, file_path=None):
@@ -588,9 +679,16 @@ class TUShare_service(object):
             code :股票代码
             name :股票名称
         '''
-        df = ts.get_sz50s()
-        table = 'ts2_sz50s'
-        self.storeservice.insert_many(table, df, 'replace')
+        try:
+            df = ts.get_sz50s()
+            if df is None:
+                return
+            table = 'ts2_sz50s'
+            self.storeservice.insert_many(table, df, 'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_zz500s(self, file_path=None):
@@ -605,9 +703,16 @@ class TUShare_service(object):
             code :股票代码
             name :股票名称
         '''
-        df = ts.get_zz500s()
-        table = 'ts2_zz500s'
-        self.storeservice.insert_many(table, df, 'replace')
+        try:
+            df = ts.get_zz500s()
+            if df is None:
+                return
+            table = 'ts2_zz500s'
+            self.storeservice.insert_many(table, df, 'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_terminated(self, file_path=None):
@@ -679,11 +784,18 @@ class TUShare_service(object):
             npr,净利润率(%)
             holders,股东人数
         '''
-        df = ts.get_stock_basics()
-        table = 'ts2_stock_basics'
-        # replace will fail
-        #self.storeservice.insert_many(table, df, 'append', True, 'code')
-        self.storeservice.insert_many(table, df, 'replace')
+        try:
+            df = ts.get_stock_basics()
+            if df is None:
+                return
+            table = 'ts2_stock_basics'
+            # replace will fail
+            #self.storeservice.insert_many(table, df, 'append', True, 'code')
+            self.storeservice.insert_many(table, df, 'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_report_data(self, year=2018, quarter=1):
@@ -709,6 +821,10 @@ class TUShare_service(object):
         '''
         try:
             df = ts.get_report_data(year,quarter)
+            if df is None:
+                return
+            df = df.replace('--', 0)
+            df['distrib'] = df['distrib'].astype(float)
             df['year'] = year
             df['quarter'] = quarter
             table = 'ts2_report_data'
@@ -740,6 +856,8 @@ class TUShare_service(object):
         '''
         try:
             df = ts.get_profit_data(year, quarter)
+            if df is None:
+                return
             df['year'] = year
             df['quarter'] = quarter
             table = 'ts2_profit_data'
@@ -772,6 +890,8 @@ class TUShare_service(object):
         '''
         try:
             df = ts.profit_data(year, top=100)
+            if df is None:
+                return
             df['year'] = year
             table = 'ts2_pre_profit_data'
             self.storeservice.insert_many(table, df)
@@ -801,6 +921,8 @@ class TUShare_service(object):
         '''
         try:
             df = ts.get_operation_data(year, quarter)
+            if df is None:
+                return
             df['year'] = year
             df['quarter'] = quarter
             table = 'ts2_operation_data'
@@ -831,6 +953,8 @@ class TUShare_service(object):
         '''
         try:
             df = ts.get_growth_data(year, quarter)
+            if df is None:
+                return
             df['year'] = year
             df['quarter'] = quarter
             table = 'ts2_growth_data'
@@ -861,6 +985,15 @@ class TUShare_service(object):
         '''
         try:
             df = ts.get_debtpaying_data(year, quarter)
+            if df is None:
+                return
+            df = df.replace('--', 0)
+            df['currentratio'] = df['currentratio'].astype(float)
+            df['quickratio'] = df['quickratio'].astype(float)
+            df['cashratio'] = df['cashratio'].astype(float)
+            df['icratio'] = df['icratio'].astype(float)
+            df['sheqratio'] = df['sheqratio'].astype(float)
+            df['adratio'] = df['adratio'].astype(float)
             df['year'] = year
             df['quarter'] = quarter
             table = 'ts2_debtpaying_data'
@@ -890,6 +1023,8 @@ class TUShare_service(object):
         '''
         try:
             df = ts.get_cashflow_data(year, quarter)
+            if df is None:
+                return
             df['year'] = year
             df['quarter'] = quarter
             table = 'ts2_cashflow_data'
@@ -913,9 +1048,18 @@ class TUShare_service(object):
             deposit_type :存款种类
             rate:利率（%）
         '''
-        df = ts.get_deposit_rate()
-        table = 'ts2_deposit_rate'
-        self.storeservice.insert_many(table, df, 'replace')
+        try:
+            df = ts.get_deposit_rate()
+            if df is None:
+                return
+            df = df.replace('--', 0)
+            df['rate'] = df['rate'].astype(float)
+            table = 'ts2_deposit_rate'
+            self.storeservice.insert_many(table, df, 'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_loan_rate(self):
@@ -931,9 +1075,18 @@ class TUShare_service(object):
             loan_type :存款种类
             rate:利率（%）
         '''
-        df = ts.get_loan_rate()
-        table = 'ts2_loan_rate'
-        self.storeservice.insert_many(table, df, 'replace')
+        try:
+            df = ts.get_loan_rate()
+            if df is None:
+                return
+            df = df.replace('--', 0)
+            df['rate'] = df['rate'].astype(float)
+            table = 'ts2_loan_rate'
+            self.storeservice.insert_many(table, df, 'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_rrr(self):
@@ -950,9 +1103,18 @@ class TUShare_service(object):
             now:调整后存款准备金率(%)
             changed:调整幅度(%)
         '''
-        df = ts.get_rrr()
-        table = 'ts2_rrr'
-        self.storeservice.insert_many(table, df, 'replace')
+        try:
+            df = ts.get_rrr()
+            if df is None:
+                return
+            df = df.replace('--', 0)
+            df['changed'] = df['changed'].astype(float)
+            table = 'ts2_rrr'
+            self.storeservice.insert_many(table, df, 'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_money_supply(self):
@@ -982,9 +1144,33 @@ class TUShare_service(object):
             rests:其他存款(亿元)
             rests_yoy:其他存款同比增长(%)
         '''
-        df = ts.get_money_supply()
-        table = 'ts2_money_supply'
-        self.storeservice.insert_many(table, df,'replace')
+        try:
+            df = ts.get_money_supply()
+            if df is None:
+                return
+            df = df.replace('--', 0)
+            df['m2'] = df['m2'].astype(float)
+            df['m2_yoy'] = df['m2_yoy'].astype(float)
+            df['m1'] = df['m1'].astype(float)
+            df['m1_yoy'] = df['m1_yoy'].astype(float)
+            df['m0'] = df['m0'].astype(float)
+            df['m0_yoy'] = df['m0_yoy'].astype(float)
+            df['cd'] = df['cd'].astype(float)
+            df['cd_yoy'] = df['cd_yoy'].astype(float)
+            df['qm'] = df['qm'].astype(float)
+            df['qm_yoy'] = df['qm_yoy'].astype(float)
+            df['ftd'] = df['ftd'].astype(float)
+            df['ftd_yoy'] = df['ftd_yoy'].astype(float)
+            df['sd'] = df['sd'].astype(float)
+            df['sd_yoy'] = df['sd_yoy'].astype(float)
+            df['rests'] = df['rests'].astype(float)
+            df['rests_yoy'] = df['rests_yoy'].astype(float)
+            table = 'ts2_money_supply'
+            self.storeservice.insert_many(table, df,'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_money_supply_bal(self):
@@ -1006,9 +1192,25 @@ class TUShare_service(object):
             sd:储蓄存款(亿元)
             rests:其他存款(亿元)
         '''
-        df = ts.get_money_supply_bal()
-        table = 'ts2_money_supply_bal'
-        self.storeservice.insert_many(table, df,'replace')
+        try:
+            df = ts.get_money_supply_bal()
+            if df is None:
+                return
+            df = df.replace('--', 0)
+            df['m2'] = df['m2'].astype(float)
+            df['m1'] = df['m1'].astype(float)
+            df['m0'] = df['m0'].astype(float)
+            df['cd'] = df['cd'].astype(float)
+            df['qm'] = df['qm'].astype(float)
+            df['ftd'] = df['ftd'].astype(float)
+            df['sd'] = df['sd'].astype(float)
+            df['rests'] = df['rests'].astype(float)
+            table = 'ts2_money_supply_bal'
+            self.storeservice.insert_many(table, df,'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_gdp_year(self):
@@ -1032,9 +1234,16 @@ class TUShare_service(object):
             trans_industry :交通运输仓储邮电通信业(亿元)
             lbdy :批发零售贸易及餐饮业(亿元)
         '''
-        df = ts.get_gdp_year()
-        table = 'ts2_gdp_year'
-        self.storeservice.insert_many(table, df, 'replace')
+        try:
+            df = ts.get_gdp_year()
+            if df is None:
+                return
+            table = 'ts2_gdp_year'
+            self.storeservice.insert_many(table, df, 'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_gdp_quarter(self):
@@ -1056,9 +1265,16 @@ class TUShare_service(object):
             ti :第三产业增加值(亿元)
             ti_yoy :第三产业增加值同比增长(%)
         '''
-        df = ts.get_gdp_quarter()
-        table = 'ts2_gdp_quarter'
-        self.storeservice.insert_many(table, df, 'replace')
+        try:
+            df = ts.get_gdp_quarter()
+            if df is None:
+                return
+            table = 'ts2_gdp_quarter'
+            self.storeservice.insert_many(table, df, 'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_gdp_for(self):
@@ -1078,9 +1294,16 @@ class TUShare_service(object):
             goods_for :货物和服务净出口贡献率(%)
             goods_rate :货物和服务净出口拉动(百分点)
         '''
-        df = ts.get_gdp_for()
-        table = 'ts2_gdp_for'
-        self.storeservice.insert_many(table, df, 'replace')
+        try:
+            df = ts.get_gdp_for()
+            if df is None:
+                return
+            table = 'ts2_gdp_for'
+            self.storeservice.insert_many(table, df, 'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_gdp_pull(self):
@@ -1099,9 +1322,16 @@ class TUShare_service(object):
             industry:其中工业拉动(%)
             ti :第三产业拉动率(%)
         '''
-        df = ts.get_gdp_pull()
-        table = 'ts2_gdp_pull'
-        self.storeservice.insert_many(table, df, 'replace')
+        try:
+            df = ts.get_gdp_pull()
+            if df is None:
+                return
+            table = 'ts2_gdp_pull'
+            self.storeservice.insert_many(table, df, 'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_gdp_contrib(self):
@@ -1120,9 +1350,16 @@ class TUShare_service(object):
             industry:其中工业献率(%)
             ti :第三产业献率(%)
         '''
-        df = ts.get_gdp_contrib()
-        table = 'ts2_gdp_contrib'
-        self.storeservice.insert_many(table, df, 'replace')
+        try:
+            df = ts.get_gdp_contrib()
+            if df is None:
+                return
+            table = 'ts2_gdp_contrib'
+            self.storeservice.insert_many(table, df, 'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_cpi(self):
@@ -1137,9 +1374,16 @@ class TUShare_service(object):
             month :统计月份
             cpi :价格指数
         '''
-        df = ts.get_cpi()
-        table = 'ts2_cpi'
-        self.storeservice.insert_many(table, df, 'replace')
+        try:
+            df = ts.get_cpi()
+            if df is None:
+                return
+            table = 'ts2_cpi'
+            self.storeservice.insert_many(table, df, 'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_ppi(self):
@@ -1163,9 +1407,16 @@ class TUShare_service(object):
             roeu:一般日用品价格指数
             dcg:耐用消费品价格指数
         '''
-        df = ts.get_ppi()
-        table = 'ts2_ppi'
-        self.storeservice.insert_many(table, df,'replace')
+        try:
+            df = ts.get_ppi()
+            if df is None:
+                return
+            table = 'ts2_ppi'
+            self.storeservice.insert_many(table, df,'replace')
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
 
     @tick.clock()
@@ -1188,29 +1439,34 @@ class TUShare_service(object):
             content:新闻内容（在show_content为True的情况下出现）
 
         '''
-        df = ts.get_latest_news(top, show_content)
-        if df is None:
-            logging.info('df is None')
-            return
-        table = 'ts2_latest_news'
-        latest_pulltime = None
-        pulltime = None
-        dropindex = -1
-        for i in range(0,len(df)):
-            pulltime = df.iloc[i]['time']
-            pulltime = DateUtil.string_toTimestamp(DateUtil.format_date(pulltime))
-            if i == 0:
-                latest_pulltime = pulltime
-            if pulltime <= AppConfig.latest_news_pulltime:
-                #remove
-                dropindex = i
-                print( "dropindex:",dropindex)
-                break
-        if dropindex != -1:
-            df = df.drop(range(dropindex,len(df),1))
-        if len(df) > 0 :
-            self.storeservice.insert_many(table, df)
-        AppConfig.write_news_pulltime(latest_pulltime)
+        try:
+            df = ts.get_latest_news(top, show_content)
+            if df is None:
+                logging.info('df is None')
+                return
+            table = 'ts2_latest_news'
+            latest_pulltime = None
+            pulltime = None
+            dropindex = -1
+            for i in range(0,len(df)):
+                pulltime = df.iloc[i]['time']
+                pulltime = DateUtil.string_toTimestamp(DateUtil.format_date(pulltime))
+                if i == 0:
+                    latest_pulltime = pulltime
+                if pulltime <= AppConfig.latest_news_pulltime:
+                    #remove
+                    dropindex = i
+                    print( "dropindex:",dropindex)
+                    break
+            if dropindex != -1:
+                df = df.drop(range(dropindex,len(df),1))
+            if len(df) > 0 :
+                self.storeservice.insert_many(table, df)
+            AppConfig.write_news_pulltime(latest_pulltime)
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     def get_notices(self,code='600000', date='2018-06-15'):
         '''
