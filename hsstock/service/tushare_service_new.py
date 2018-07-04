@@ -130,7 +130,7 @@ class TUShare_service(object):
             nmc:流通市值
         '''
         try:
-            df = ts.get_today_all()
+            df = ts.get_today_all(3, 0)
             date = time.strftime('%Y-%m-%d', time.localtime())
             df['date'] = date
             df = df.reset_index(level=[0])
@@ -533,6 +533,8 @@ class TUShare_service(object):
             name：股票名称
         '''
         df = ts.get_gem_classified()
+        if df is None:
+            return
         table = 'ts2_gem_classified'
         self.storeservice.insert_many(table, df, 'replace')
 
@@ -1167,7 +1169,7 @@ class TUShare_service(object):
 
 
     @tick.clock()
-    def get_latest_news(self,top=80, show_content=False):
+    def get_latest_news(self,top=80, show_content=True):
         '''
         功能：
             即时新闻

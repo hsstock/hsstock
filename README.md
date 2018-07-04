@@ -252,3 +252,66 @@ brew install zmq
         # else:
         #     print('success')
 ```
+
+2. 多线程，网络不稳定，服务器不可控
+```
+# class Thread_get_today_all (threading.Thread):
+#     def __init__(self, threadname,ts):
+#         threading.Thread.__init__(self)
+#         self.threadname = threadname
+#         self.ts = ts
+#
+#     def run(self):
+#         logging.info ("开始线程：" + self.threadname)
+#         self.ts.get_today_all()
+#         logging.info ("退出线程：" + self.threadname)
+#
+ # tfn_get_today_all = Thread_get_today_all('tfn_get_today_all',ts)
+    # tfn_get_today_all.start()
+    # tfn_get_today_all.join()
+
+```
+
+3.
+```
+df = df.replace('', 0)
+df['buy'] = df['buy'].astype(float)
+
+df['code'] = df['code'].map(lambda x: str(x).zfill(6))
+df = df.drop_duplicates('code')
+```
+4.
+```
+def _cap_tops(last=5, pageNo=1, retry_count=3, pause=0.001, dataArr=pd.DataFrame()):
+    ct._write_console()
+    for _ in range(retry_count):
+        time.sleep(pause)
+        try:
+            request = Request(rv.LHB_SINA_URL%(ct.P_TYPE['http'], ct.DOMAINS['vsf'], rv.LHB_KINDS[0],
+                                               ct.PAGES['fd'], last, pageNo))
+            text = urlopen(request, timeout=10).read()
+            text = text.decode('GBK')
+            html = lxml.html.parse(StringIO(text))
+            res = html.xpath("//table[@id=\"dataTable\"]/tr")
+            if ct.PY3:
+                sarr = [etree.tostring(node).decode('utf-8') for node in res]
+            else:
+                sarr = [etree.tostring(node) for node in res]
+            sarr = ''.join(sarr)
+            sarr = '<table>%s</table>'%sarr
+            df = pd.read_html(sarr)[0]
+            df.columns = rv.LHB_GGTJ_COLS
+            dataArr = dataArr.append(df, ignore_index=True)
+            nextPage = html.xpath('//div[@class=\"pages\"]/a[last()]/@onclick')
+            if len(nextPage)>0:
+                pageNo = re.findall(r'\d+', nextPage[0])[0]
+                return _cap_tops(last, pageNo, retry_count, pause, dataArr)
+            else:
+                return dataArr
+        except Exception as e:
+            print(e)
+
+```
+#### 数据资产
+
+[通联数据](https://app.wmcloud.com/cloud-portal/#/portal)

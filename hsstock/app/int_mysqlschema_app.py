@@ -476,7 +476,8 @@ def main():
                 "classify": sa.types.NVARCHAR(20),
                 "title": sa.types.NVARCHAR(100),
                 "time": sa.types.DATETIME,
-                "url": sa.types.NVARCHAR(500)
+                "url": sa.types.NVARCHAR(500),
+                "content":sa.types.TEXT
             },
             "clauses": [
                 'ALTER TABLE `{0}` ADD INDEX (`title`);'
@@ -654,7 +655,7 @@ def main():
         #         "net_profit_ratio": sa.types.FLOAT,
         #         "gross_profit_rate": sa.types.FLOAT,
         #         "net_profits": sa.types.FLOAT,
-        #         "esp": sa.types.FLOAT,
+        #         "eps": sa.types.FLOAT,
         #         "business_income": sa.types.FLOAT,
         #         "bips": sa.types.FLOAT,
         #         "year": sa.types.INT,

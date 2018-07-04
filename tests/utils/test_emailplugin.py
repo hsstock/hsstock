@@ -27,7 +27,7 @@ class EmailPluginTestCase(unittest.TestCase):
         en = EmailNotification()
         en.set_enable(True)
         en.set_sender(EmailPluginTestCase.sender,EmailPluginTestCase.password,EmailPluginTestCase.smtpserver)
-        en.send_email('jiabao_hu@corp.netease.com', 'subject', 'words')
+        en.send_email('hujb2000@163.com', 'subject', 'words')
 
 
 unittest.main
