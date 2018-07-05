@@ -20,6 +20,12 @@ class DateUtil():
         return yesterday.isoformat()
 
     @staticmethod
+    def getDatetimePastStr(today, ndays):
+        past = today + timedelta(days=-ndays)  # 减去ndays天
+        return past.isoformat()
+
+
+    @staticmethod
     def getTodayStr():
         return time.strftime('%Y-%m-%d', time.localtime())
 

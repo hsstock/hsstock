@@ -88,30 +88,30 @@ def job_sunday(ts):
     线程工作：定时间执行
     :return:
     """
-    ts.get_ppi()
-    ts.get_cpi()
-    ts.get_gdp_contrib()
-    ts.get_gdp_pull()
-    ts.get_gdp_for()
-    ts.get_gdp_quarter()
-    ts.get_gdp_year()
-    ts.get_money_supply_bal()
-    ts.get_money_supply()
-    ts.get_rrr()
-    ts.get_loan_rate()
-    ts.get_deposit_rate()
-
-    ts.get_zz500s()
-    ts.get_sz50s()
-    ts.get_hs300s()
-    ts.get_st_classified()
-    ts.get_gem_classified()
-    ts.get_sme_classified()
-    ts.get_area_classified()
-    ts.get_concept_classified()
-    ts.get_industry_classified()
-    ts.new_stocks()
-    ts.xsg_data()
+    # ts.get_ppi()
+    # ts.get_cpi()
+    # ts.get_gdp_contrib()
+    # ts.get_gdp_pull()
+    # ts.get_gdp_for()
+    # ts.get_gdp_quarter()
+    # ts.get_gdp_year()
+    # ts.get_money_supply_bal()
+    # ts.get_money_supply()
+    # ts.get_rrr()
+    # ts.get_loan_rate()
+    # ts.get_deposit_rate()
+    #
+    # ts.get_zz500s()
+    # ts.get_sz50s()
+    # ts.get_hs300s()
+    # ts.get_st_classified()
+    # ts.get_gem_classified()
+    # ts.get_sme_classified()
+    # ts.get_area_classified()
+    # ts.get_concept_classified()
+    # ts.get_industry_classified()
+    # ts.new_stocks()
+    # ts.xsg_data()
 
     doneYear = AppConfig.pull_year
     doneQuarter = AppConfig.pull_quarter
@@ -129,19 +129,12 @@ def job_sunday(ts):
             AppConfig.write_pulltime(year, quarter)
 
 
-def job_once_custom(ts):
+def job_once(ts):
     ts.get_stock_basics()
-    for symbol in AppConfig.custom_stocks:
-        ts.get_hist_data(symbol)
-        ts.get_h_data(symbol, '2015-07-06', '2018-07-05', 'hfq')
-        ts.get_sina_dd(symbol, '2018-07-05', 400)
+    ts.get_hist_data('600848')
+    ts.get_h_data('600848','2015-07-01','2018-06-28','hfq')
+    ts.get_sina_dd(['000063'], '2018-06-27', 400)
 
-def job_once_global(ts):
-    ts.get_stock_basics()
-    for symbol in AppConfig.custom_stocks:
-        ts.get_hist_data(symbol)
-        ts.get_h_data(symbol, '2015-07-06', '2018-07-05', 'hfq')
-        ts.get_sina_dd(symbol, '2018-07-05', 400)
 
 
 def job_realtime_global(ts):
@@ -185,42 +178,35 @@ def try_exit():
 
 
 
-@sched.scheduled_job('cron',day_of_week='sat-sun',hour='18', minute='00-01',second='*/10')
 def sunday_task():
     tfn = MyThread('job_sunday', job_sunday,ts_sunday)
     tfn.start()
 
-#@sched.scheduled_job('interval',seconds=3)
-def once_custom_task():
-    tfn = MyThread('job_once_custom',job_once_custom, ts_once)
-    tfn.start()
-
-def once_global_task():
-    tfn = MyThread('job_once_global',job_once_global, ts_once)
-    tfn.start()
-
-@sched.scheduled_job('interval',seconds=5)
-def news_task():
-    tfn = MyThread('job_news',job_news, ts_news)
-    tfn.start()
-
-@sched.scheduled_job('interval',seconds=20)
-def realtime_global_task():
-    tfn = MyThread('job_realtime_global',job_realtime_global, ts_realtime_global)
-    tfn.start()
-
-@sched.scheduled_job('interval',seconds=20)
-def realtime_custom_task():
-    tfn = MyThread('job_realtime_custom',job_realtime_custom, ts_realtime_custom)
-    tfn.start()
+# def once_task():
+#     tfn = MyThread('job_once',job_once, ts_once)
+#     tfn.start()
+#
+# @sched.scheduled_job('interval',seconds=5)
+# def news_task():
+#     tfn = MyThread('job_news',job_news, ts_news)
+#     tfn.start()
+#
+# @sched.scheduled_job('interval',seconds=20)
+# def realtime_global_task():
+#     tfn = MyThread('job_realtime_global',job_realtime_global, ts_realtime_global)
+#     tfn.start()
+#
+# @sched.scheduled_job('interval',seconds=20)
+# def realtime_custom_task():
+#     tfn = MyThread('job_realtime_custom',job_realtime_custom, ts_realtime_custom)
+#     tfn.start()
 
 
 
 def main():
-    # sunday_task()
-    # once_custom_task()
-    once_global_task()
-    #news_task()
+    sunday_task()
+    # once_task()
+    # news_task()
     # realtime_global_task()
     # realtime_custom_task()
 

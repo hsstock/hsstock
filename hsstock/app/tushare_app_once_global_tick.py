@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 import logging
 import signal
+import time
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 
@@ -10,6 +11,7 @@ from hsstock.service.tushare_service_new import TUShare_service
 from hsstock.utils.date_util import DateUtil
 from hsstock.utils.threadutil import MyThread
 from hsstock.utils.app_config import AppConfig
+from hsstock.tushare.util.dateu import is_holiday
 
 sched = BlockingScheduler()
 ts_realtime_global = TUShare_service()
@@ -133,15 +135,42 @@ def job_once_custom(ts):
     ts.get_stock_basics()
     for symbol in AppConfig.custom_stocks:
         ts.get_hist_data(symbol)
+        time.sleep(1)
         ts.get_h_data(symbol, '2015-07-06', '2018-07-05', 'hfq')
+        time.sleep(1)
         ts.get_sina_dd(symbol, '2018-07-05', 400)
+        time.sleep(1)
 
 def job_once_global(ts):
-    ts.get_stock_basics()
-    for symbol in AppConfig.custom_stocks:
+    df = ts.get_stock_basics()
+    cont = False
+    lastsymbol = '600318'
+    for symbol in df['name'].index.values:
+        if symbol == lastsymbol:
+            cont = True
+        if not cont:
+            continue
         ts.get_hist_data(symbol)
-        ts.get_h_data(symbol, '2015-07-06', '2018-07-05', 'hfq')
+        #ts.get_h_data(symbol, '2017-07-06', '2018-07-05', 'hfq')
+        time.sleep(3)
         ts.get_sina_dd(symbol, '2018-07-05', 400)
+        time.sleep(2)
+
+def job_once_global_tick(ts):
+    global is_closing
+    df = ts.get_stock_basics()
+    for symbol in df['name'].index.values:
+        for ndays in range(1,10,1):
+            if not is_closing:
+                day = DateUtil.getDatetimePastStr(DateUtil.getDatetimeToday(),ndays)
+                if not is_holiday(day):
+                    ts.get_tick_data(symbol,day)
+                    time.sleep(1)
+                else:
+                    logging.info('is holiday')
+        if not is_closing:
+            time.sleep(2)
+
 
 
 def job_realtime_global(ts):
@@ -184,42 +213,48 @@ def try_exit():
 
 
 
+#
+# @sched.scheduled_job('cron',day_of_week='sat-sun',hour='18', minute='00-01',second='*/10')
+# def sunday_task():
+#     tfn = MyThread('job_sunday', job_sunday,ts_sunday)
+#     tfn.start()
+#
+# #@sched.scheduled_job('interval',seconds=3)
+# def once_custom_task():
+#     tfn = MyThread('job_once_custom',job_once_custom, ts_once)
+#     tfn.start()
 
-@sched.scheduled_job('cron',day_of_week='sat-sun',hour='18', minute='00-01',second='*/10')
-def sunday_task():
-    tfn = MyThread('job_sunday', job_sunday,ts_sunday)
+# def once_global_task():
+#     tfn = MyThread('job_once_global',job_once_global, ts_once)
+#     tfn.start()
+
+def once_global_tick_task():
+    tfn = MyThread('job_once_global_tick',job_once_global_tick, ts_once)
     tfn.start()
 
-#@sched.scheduled_job('interval',seconds=3)
-def once_custom_task():
-    tfn = MyThread('job_once_custom',job_once_custom, ts_once)
-    tfn.start()
 
-def once_global_task():
-    tfn = MyThread('job_once_global',job_once_global, ts_once)
-    tfn.start()
-
-@sched.scheduled_job('interval',seconds=5)
-def news_task():
-    tfn = MyThread('job_news',job_news, ts_news)
-    tfn.start()
-
-@sched.scheduled_job('interval',seconds=20)
-def realtime_global_task():
-    tfn = MyThread('job_realtime_global',job_realtime_global, ts_realtime_global)
-    tfn.start()
-
-@sched.scheduled_job('interval',seconds=20)
-def realtime_custom_task():
-    tfn = MyThread('job_realtime_custom',job_realtime_custom, ts_realtime_custom)
-    tfn.start()
+# @sched.scheduled_job('interval',seconds=5)
+# def news_task():
+#     tfn = MyThread('job_news',job_news, ts_news)
+#     tfn.start()
+#
+# @sched.scheduled_job('interval',seconds=20)
+# def realtime_global_task():
+#     tfn = MyThread('job_realtime_global',job_realtime_global, ts_realtime_global)
+#     tfn.start()
+#
+# @sched.scheduled_job('interval',seconds=20)
+# def realtime_custom_task():
+#     tfn = MyThread('job_realtime_custom',job_realtime_custom, ts_realtime_custom)
+#     tfn.start()
 
 
 
 def main():
     # sunday_task()
     # once_custom_task()
-    once_global_task()
+    # once_global_task()
+    once_global_tick_task()
     #news_task()
     # realtime_global_task()
     # realtime_custom_task()

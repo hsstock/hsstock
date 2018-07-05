@@ -1,9 +1,12 @@
 # -*- coding: UTF-8 -*-
 
 from abc import ABC
-
+import logging
 from sqlalchemy import create_engine
 import sqlalchemy as sa
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import OperationalError
+from sqlalchemy.pool import QueuePool
 
 from hsstock.utils.app_config import AppConfig
 
@@ -47,11 +50,15 @@ class MysqlStore(Store):
         pass
 
     def insert_many(self, table, df, if_exists='replace', index=False, index_label=None):
-        df.to_sql(table, self.engine, if_exists = 'replace' if if_exists ==  None else if_exists,
-                  index=False if index == False else True,
-                  index_label = None if index_label == None else index_label
-                  )
-        pass
+        try:
+            df.to_sql(table, self.engine, if_exists = 'replace' if if_exists ==  None else if_exists,
+                      index=False if index == False else True,
+                      index_label = None if index_label == None else index_label
+                      )
+        except IntegrityError as exc:
+            logging.error(exc)
+        except OperationalError as exc:
+            logging.error(exc)
 
     def find(self, query):
         pass
@@ -80,7 +87,7 @@ class StoreService(Store):
         '''
         self.config = AppConfig.get_config()
         self.connect_url = self.config.get('mysql', 'connecturl')
-        self.mysql_engine = create_engine(self.connect_url)
+        self.mysql_engine = create_engine(self.connect_url,poolclass=QueuePool,pool_pre_ping=True,pool_recycle=3600)
         mysqlStore = MysqlStore(self.mysql_engine)
         self.stores = []
         self.stores.append(mysqlStore)

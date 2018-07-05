@@ -20,17 +20,36 @@ class AppConfig:
         AppConfig.path = ''.join((os.path.abspath(''.join((__file__, '../../../../'))), '/data/app.config'))
         AppConfig.config.read(AppConfig.path)
         AppConfig.latest_news_pulltime = float(AppConfig.config.get('pull_time','latest_news'))
-
+        AppConfig.pull_year = int(AppConfig.config.get('pull_time', 'year'))
+        AppConfig.pull_quarter = int(AppConfig.config.get('pull_time', 'quarter'))
+        AppConfig.custom_stocks = AppConfig.config.get('custom', 'stocks').split(',')
+        AppConfig.custom_indexes = AppConfig.config.get('custom', 'indexes').split(',')
 
     @staticmethod
     def get_config():
         return AppConfig.instance().config
 
     @staticmethod
-    def write_news_pulltime(time):
+    def write_news_pulltime(time,sync = False):
         #AppConfig.get_config().add_section('sec_b')A
         AppConfig.latest_news_pulltime = time
-        AppConfig.get_config().set("pull_time", "latest_news", time)
+        if  sync is True:
+            AppConfig.get_config().set("pull_time", "latest_news", time)
+            AppConfig.get_config().write(open(AppConfig.path, "w"))
+
+    @staticmethod
+    def write_pulltime(year,quarter,sync = True):
+        AppConfig.pull_year = year
+        AppConfig.pull_quarter = quarter
+        if sync is True:
+            AppConfig.get_config().set("pull_time", "year", year)
+            AppConfig.get_config().set("pull_time", "quarter", quarter)
+            AppConfig.get_config().write(open(AppConfig.path, "w"))
+
+    @staticmethod
+    def write_custom_stocks(stocks):
+        stocks_str = ','.join(stocks)
+        AppConfig.get_config().set("custom", "stocks", stocks_str)
         AppConfig.get_config().write(open(AppConfig.path, "w"))
 
 

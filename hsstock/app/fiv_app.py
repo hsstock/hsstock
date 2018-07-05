@@ -1,6 +1,13 @@
+# -*- coding: UTF-8 -*-
+"""
+ https://finviz.com/help/screener.ashx
+"""
+
+
 from apscheduler.schedulers.blocking import BlockingScheduler
 import logging
 import time
+import datetime
 import random
 import pandas as pd
 
@@ -16,7 +23,7 @@ def scheduled_job():
     crawler = Crawler('##')
     storeservice = StoreService()
 
-    pos = 0
+    pos = 2331
     while pos < 7101:
         print(pos)
         url = 'http://finviz.com/screener.ashx?v=152&r=' + str(
@@ -26,10 +33,35 @@ def scheduled_job():
         time.sleep(2 * random.random())
         pos += 21
         jsonArray = crawler.toJsons()
-        table = 'fiv_stat'
+        table = 'fiv2_stat'
         df = pd.DataFrame(jsonArray, columns=crawler.propertiesList)
-        storeservice.insert_many(table, df)
-        logging.info(df)
+        df = df.replace('-', 0)
+        df['P/E'] = df['P/E'].astype(float)
+        df['Fwd P/E'] = df['Fwd P/E'].astype(float)
+        df['PEG'] = df['PEG'].astype(float)
+        df['P/S'] = df['P/S'].astype(float)
+        df['P/B'] = df['P/B'].astype(float)
+        df['P/C'] = df['P/C'].astype(float)
+        df['P/FCF'] = df['P/FCF'].astype(float)
+        df['EPS'] = df['EPS'].astype(float)
+        df['Short Ratio'] = df['Short Ratio'].astype(float)
+        df['CurrR'] = df['CurrR'].astype(float)
+        df['Quick R'] = df['Quick R'].astype(float)
+        df['LTDebt/Eq'] = df['LTDebt/Eq'].astype(float)
+        df['Debt/Eq'] = df['Debt/Eq'].astype(float)
+        df['Beta'] = df['Beta'].astype(float)
+        df['ATR'] = df['ATR'].astype(float)
+        df['RSI'] = df['RSI'].astype(float)
+        df['Recom'] = df['Recom'].astype(float)
+        df['Rel Volume'] = df['Rel Volume'].astype(float)
+        df['Price'] = df['Price'].astype(float)
+        df['Target Price'] = df['Target Price'].astype(float)
+        try:
+            storeservice.insert_many(table, df)
+        except IOError as err:
+            logging.error(err)
+        else:
+            pass
 
 def main():
     logging.info('before the start function')

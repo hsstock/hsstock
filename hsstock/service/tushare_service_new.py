@@ -62,7 +62,10 @@ class TUShare_service(object):
                 return
             df = df.reset_index(level=[0])
             df['code'] = code
-            table = 'ts2_hist_data'
+            if ktype == 'D':
+                table = 'ts2_hist_data'
+            else:
+                table = 'ts2_hist_data_' + ktype
             self.storeservice.insert_many(table, df)
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
@@ -70,7 +73,7 @@ class TUShare_service(object):
             pass
 
     @tick.clock()
-    def get_h_data(self, code, start=None, end=None, autype='qfq', index=False,retry_count=3, pause=0):
+    def get_h_data(self, code, start=None, end=None, autype='qfq', index=False,retry_count=3, pause=1):
         '''
         功能：
             获取历史复权数据，分为前复权和后复权数据，接口提供股票上市以来所有历史数据，默认为前复权。如果不设定开始和结束日期，则返回近一年的复权数据，从性能上考虑，推荐设定开始日期和结束日期，而且最好不要超过三年以上，获取全部历史数据，请分年段分步获取，取到数据后，请及时在本地存储。获取个股首个上市日期，请参考以下方法
@@ -148,7 +151,7 @@ class TUShare_service(object):
             pass
 
     @tick.clock()
-    def get_tick_data(self,code, date=None, retry_count=3, pause=0):
+    def get_tick_data(self,code, date=None, retry_count=3, pause=1):
         '''
         功能：
             获取个股以往交易历史的分笔数据明细，通过分析分笔数据，可以大致判断资金的进出情况。在使用过程中，对于获取股票某一阶段的历史分笔数据，需要通过参入交易日参数并append到一个DataFrame或者直接append到本地同一个文件里。历史分笔接口只能获取当前交易日之前的数据，当日分笔历史数据请调用get_today_ticks()接口或者在当日18点后通过本接口获取。
@@ -185,7 +188,7 @@ class TUShare_service(object):
             pass
 
     @tick.clock()
-    def get_realtime_quotes(self,code):
+    def get_realtime_quotes(self,codes):
         '''
         功能：
             获取实时分笔数据，可以实时取得股票当前报价和成交信息，其中一种场景是，写一个python定时程序来调用本接口（可两三秒执行一次，性能与行情软件基本一致），然后通过DataFrame的矩阵计算实现交易监控，可实时监测交易量和价格的变化。
@@ -222,20 +225,21 @@ class TUShare_service(object):
             31：time，时间；
         '''
         try:
-            df = ts.get_realtime_quotes(code)
+            df = ts.get_realtime_quotes(codes)
             if df is None:
                 return
             df = df.replace('--', 0)
-            df['b1_v'] = df['b1_v'].astype(float)
-            df['b2_v'] = df['b2_v'].astype(float)
-            df['b3_v'] = df['b3_v'].astype(float)
-            df['b4_v'] = df['b4_v'].astype(float)
-            df['b5_v'] = df['b5_v'].astype(float)
-            df['a1_v'] = df['a1_v'].astype(float)
-            df['a2_v'] = df['a2_v'].astype(float)
-            df['a3_v'] = df['a3_v'].astype(float)
-            df['a4_v'] = df['a4_v'].astype(float)
-            df['a5_v'] = df['a5_v'].astype(float)
+            df = df.replace('', 0)
+            df['b1_v'] = df['b1_v'].astype(int)
+            df['b2_v'] = df['b2_v'].astype(int)
+            df['b3_v'] = df['b3_v'].astype(int)
+            df['b4_v'] = df['b4_v'].astype(int)
+            df['b5_v'] = df['b5_v'].astype(int)
+            df['a1_v'] = df['a1_v'].astype(int)
+            df['a2_v'] = df['a2_v'].astype(int)
+            df['a3_v'] = df['a3_v'].astype(int)
+            df['a4_v'] = df['a4_v'].astype(int)
+            df['a5_v'] = df['a5_v'].astype(int)
             df['date'] = DateUtil.getTodayStr()
             df = df.reset_index(level=[0])
             del df['index']
@@ -289,7 +293,7 @@ class TUShare_service(object):
     def get_index(self):
         '''
         功能：
-            获取当前交易日（交易进行中使用）已经产生的分笔明细数据。
+            获取大盘指数行情
 
         返回值说明：
 
@@ -312,7 +316,7 @@ class TUShare_service(object):
             df = df.reset_index(level=[0])
             del df['index']
             table = 'ts2_index'
-            self.storeservice.insert_many(table, df)
+            self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
         else:
@@ -377,8 +381,6 @@ class TUShare_service(object):
             df = ts.forecast_data(year, quarter)
             if df is None:
                 return
-            df = df.replace('--', 0)
-            df['range'] = df['range'].astype(float)
             df['year'] = year
             df['quarter'] = quarter
             table = 'ts2_forecast_data'
@@ -792,6 +794,7 @@ class TUShare_service(object):
             # replace will fail
             #self.storeservice.insert_many(table, df, 'append', True, 'code')
             self.storeservice.insert_many(table, df, 'replace')
+            return df
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
         else:
@@ -823,8 +826,6 @@ class TUShare_service(object):
             df = ts.get_report_data(year,quarter)
             if df is None:
                 return
-            df = df.replace('--', 0)
-            df['distrib'] = df['distrib'].astype(float)
             df['year'] = year
             df['quarter'] = quarter
             table = 'ts2_report_data'
@@ -1420,7 +1421,7 @@ class TUShare_service(object):
 
 
     @tick.clock()
-    def get_latest_news(self,top=80, show_content=True):
+    def get_latest_news(self,top=5, show_content=True):
         '''
         功能：
             即时新闻
@@ -1439,7 +1440,10 @@ class TUShare_service(object):
             content:新闻内容（在show_content为True的情况下出现）
 
         '''
+        df = None
         try:
+            if time.time() - AppConfig.latest_news_pulltime > 1000:
+                top = 80
             df = ts.get_latest_news(top, show_content)
             if df is None:
                 logging.info('df is None')
@@ -1448,6 +1452,7 @@ class TUShare_service(object):
             latest_pulltime = None
             pulltime = None
             dropindex = -1
+            df.sort_values(by="time", ascending=False)
             for i in range(0,len(df)):
                 pulltime = df.iloc[i]['time']
                 pulltime = DateUtil.string_toTimestamp(DateUtil.format_date(pulltime))
@@ -1456,13 +1461,13 @@ class TUShare_service(object):
                 if pulltime <= AppConfig.latest_news_pulltime:
                     #remove
                     dropindex = i
-                    print( "dropindex:",dropindex)
+                    print('dropindex:',dropindex)
                     break
             if dropindex != -1:
                 df = df.drop(range(dropindex,len(df),1))
             if len(df) > 0 :
                 self.storeservice.insert_many(table, df)
-            AppConfig.write_news_pulltime(latest_pulltime)
+                AppConfig.write_news_pulltime(latest_pulltime,True)
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
         else:

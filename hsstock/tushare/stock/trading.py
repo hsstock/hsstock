@@ -174,7 +174,7 @@ def get_tick_data(code=None, date=None, retry_count=3, pause=0.001,
                 df.columns = ct.TICK_COLUMNS
             else:
                 re = Request(url[src])
-                lines = urlopen(re, timeout=10).read()
+                lines = urlopen(re, timeout=15).read()
                 lines = lines.decode('GBK') 
                 if len(lines) < 20:
                     return None

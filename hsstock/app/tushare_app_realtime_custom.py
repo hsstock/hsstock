@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 import logging
 import signal
+import time
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 
@@ -129,19 +130,12 @@ def job_sunday(ts):
             AppConfig.write_pulltime(year, quarter)
 
 
-def job_once_custom(ts):
+def job_once(ts):
     ts.get_stock_basics()
-    for symbol in AppConfig.custom_stocks:
-        ts.get_hist_data(symbol)
-        ts.get_h_data(symbol, '2015-07-06', '2018-07-05', 'hfq')
-        ts.get_sina_dd(symbol, '2018-07-05', 400)
+    ts.get_hist_data('600848')
+    ts.get_h_data('600848','2015-07-01','2018-06-28','hfq')
+    ts.get_sina_dd(['000063'], '2018-06-27', 400)
 
-def job_once_global(ts):
-    ts.get_stock_basics()
-    for symbol in AppConfig.custom_stocks:
-        ts.get_hist_data(symbol)
-        ts.get_h_data(symbol, '2015-07-06', '2018-07-05', 'hfq')
-        ts.get_sina_dd(symbol, '2018-07-05', 400)
 
 
 def job_realtime_global(ts):
@@ -149,11 +143,15 @@ def job_realtime_global(ts):
     ts.get_today_all()
 
 def job_realtime_custom(ts):
-    ts.get_today_ticks(AppConfig.custom_stocks)
-    ts.get_realtime_quotes(AppConfig.custom_stocks)
-    ts.get_realtime_quotes(AppConfig.custom_indexes)
-    for symbol in AppConfig.custom_stocks:
-        ts.get_tick_data(symbol, DateUtil.getDatetimeYesterdayStr(DateUtil.getDatetimeToday()))
+    global is_closing
+    while not is_closing:
+        ts.get_today_ticks(AppConfig.custom_stocks)
+        ts.get_realtime_quotes(AppConfig.custom_stocks)
+        ts.get_realtime_quotes(AppConfig.custom_indexes)
+        for symbol in AppConfig.custom_stocks:
+            ts.get_tick_data(symbol, DateUtil.getDatetimeYesterdayStr(DateUtil.getDatetimeToday()))
+            time.sleep(1)
+        time.sleep(5)
 
 
 def signal_int_handler(signum, frame):
@@ -184,32 +182,27 @@ def try_exit():
 
 
 
-
-@sched.scheduled_job('cron',day_of_week='sat-sun',hour='18', minute='00-01',second='*/10')
-def sunday_task():
-    tfn = MyThread('job_sunday', job_sunday,ts_sunday)
-    tfn.start()
-
-#@sched.scheduled_job('interval',seconds=3)
-def once_custom_task():
-    tfn = MyThread('job_once_custom',job_once_custom, ts_once)
-    tfn.start()
-
-def once_global_task():
-    tfn = MyThread('job_once_global',job_once_global, ts_once)
-    tfn.start()
-
-@sched.scheduled_job('interval',seconds=5)
-def news_task():
-    tfn = MyThread('job_news',job_news, ts_news)
-    tfn.start()
-
-@sched.scheduled_job('interval',seconds=20)
-def realtime_global_task():
-    tfn = MyThread('job_realtime_global',job_realtime_global, ts_realtime_global)
-    tfn.start()
-
-@sched.scheduled_job('interval',seconds=20)
+#
+# @sched.scheduled_job('cron',day_of_week='sat-sun',hour='18', minute='00-01',second='*/10')
+# def sunday_task():
+#     tfn = MyThread('job_sunday', job_sunday,ts_sunday)
+#     tfn.start()
+#
+# #@sched.scheduled_job('interval',seconds=3)
+# def once_task():
+#     tfn = MyThread('job_once',job_once, ts_once)
+#     tfn.start()
+#
+# @sched.scheduled_job('interval',seconds=5)
+# def news_task():
+#     tfn = MyThread('job_news',job_news, ts_news)
+#     tfn.start()
+#
+# @sched.scheduled_job('interval',seconds=20)
+# def realtime_global_task():
+#     tfn = MyThread('job_realtime_global',job_realtime_global, ts_realtime_global)
+#     tfn.start()
+#
 def realtime_custom_task():
     tfn = MyThread('job_realtime_custom',job_realtime_custom, ts_realtime_custom)
     tfn.start()
@@ -218,11 +211,10 @@ def realtime_custom_task():
 
 def main():
     # sunday_task()
-    # once_custom_task()
-    once_global_task()
+    # once_task()
     #news_task()
     # realtime_global_task()
-    # realtime_custom_task()
+    realtime_custom_task()
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_int_handler)
