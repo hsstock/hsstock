@@ -5,6 +5,7 @@ import time
 import pandas as pd
 from hsstock.tushare.stock import cons as ct
 
+calc = None
 def year_qua(date):
     mon = date[5:7]
     mon = int(mon)
@@ -80,8 +81,11 @@ def trade_cal():
             交易日历
     isOpen=1是交易日，isOpen=0为休市
     '''
-    df = pd.read_csv(ct.ALL_CAL_FILE)
-    return df
+    global calc
+    if calc is None:
+        #calc = pd.read_csv(ct.ALL_CAL_FILE)
+        calc = pd.read_csv('/Users/hujiabao/Downloads/calAll.csv')
+    return calc
 
 
 def is_holiday(date):
@@ -97,7 +101,6 @@ def is_holiday(date):
         return True
     else:
         return False
-
 
 def last_tddate():
     today = datetime.datetime.today().date()

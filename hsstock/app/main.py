@@ -52,6 +52,11 @@ def signal_handler(signum, frame):
     logging.info('exiting...')
     is_closing = True
 
+def signal_term_handler(*args):
+    global is_closing
+    logging.info('killed, exiting...')
+    is_closing = True
+
 def try_exit():
     global is_closing
     if is_closing:
@@ -66,6 +71,7 @@ def main():
     app = make_app()
     setup_logging()
     signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_term_handler)
     server = tornado.httpserver.HTTPServer(app)
     server.bind(AppConfig.get_config().get('web', 'port'))
     server.start(0) # forks one process per cpu

@@ -3,6 +3,7 @@
 import logging
 import time
 
+from sqlalchemy.exc import OperationalError
 from hsstock.service.store_service import StoreService
 from hsstock.utils.app_logging import setup_logging
 from hsstock.utils.date_util import DateUtil
@@ -58,6 +59,7 @@ class TUShare_service(object):
         '''
         try:
             df = ts.get_hist_data(code,start, end, ktype,retry_count, pause)
+            print(df)
             if df is None:
                 return
             df = df.reset_index(level=[0])
@@ -68,6 +70,8 @@ class TUShare_service(object):
                 table = 'ts2_hist_data_' + ktype
             self.storeservice.insert_many(table, df)
         except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        except OperationalError as err :
             logging.error("OS|error: {0}".format(err))
         else:
             pass
@@ -108,6 +112,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df)
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -147,6 +153,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df)
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -183,6 +191,8 @@ class TUShare_service(object):
             del df['index']
             self.storeservice.insert_many('ts2_tick_data', df)
         except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
             logging.error("OS|error: {0}".format(err))
         else:
             pass
@@ -247,6 +257,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df)
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -286,6 +298,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df)
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -318,6 +332,8 @@ class TUShare_service(object):
             table = 'ts2_index'
             self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
             logging.error("OS|error: {0}".format(err))
         else:
             pass
@@ -354,6 +370,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df)
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -387,6 +405,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df)
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -416,9 +436,13 @@ class TUShare_service(object):
             if df is None:
                 return
             table = 'ts2_xsg_data'
-            self.storeservice.insert_many(table, df)
+            self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def fund_holdings(self,year=2018,quarter=1,retry_count=3,pause=0):
@@ -454,6 +478,8 @@ class TUShare_service(object):
             table = 'ts2_fund_holdings'
             self.storeservice.insert_many(table, df)
         except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
             logging.error("OS|error: {0}".format(err))
         else:
             pass
@@ -491,6 +517,10 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_industry_classified(self):
@@ -514,6 +544,10 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
 
     @tick.clock()
     def get_concept_classified(self):
@@ -537,6 +571,8 @@ class TUShare_service(object):
             table = 'ts2_concept_classified'
             self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
             logging.error("OS|error: {0}".format(err))
         else:
             pass
@@ -564,6 +600,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -588,6 +626,8 @@ class TUShare_service(object):
             table = 'ts2_sme_classified'
             self.storeservice.insert_many(table, df,'replace')
         except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
             logging.error("OS|error: {0}".format(err))
         else:
             pass
@@ -614,6 +654,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -638,6 +680,8 @@ class TUShare_service(object):
             table = 'ts2_st_classified'
             self.storeservice.insert_many(table, df,'replace')
         except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
             logging.error("OS|error: {0}".format(err))
         else:
             pass
@@ -665,6 +709,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -689,6 +735,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -712,6 +760,8 @@ class TUShare_service(object):
             table = 'ts2_zz500s'
             self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
             logging.error("OS|error: {0}".format(err))
         else:
             pass
@@ -797,6 +847,8 @@ class TUShare_service(object):
             return df
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -832,6 +884,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df)
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -864,6 +918,8 @@ class TUShare_service(object):
             table = 'ts2_profit_data'
             self.storeservice.insert_many(table, df)
         except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
             logging.error("OS|error: {0}".format(err))
         else:
             pass
@@ -898,6 +954,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df)
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -930,6 +988,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df)
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -961,6 +1021,8 @@ class TUShare_service(object):
             table = 'ts2_growth_data'
             self.storeservice.insert_many(table, df)
         except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
             logging.error("OS|error: {0}".format(err))
         else:
             pass
@@ -1001,6 +1063,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df)
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -1032,6 +1096,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df)
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -1058,6 +1124,8 @@ class TUShare_service(object):
             table = 'ts2_deposit_rate'
             self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
             logging.error("OS|error: {0}".format(err))
         else:
             pass
@@ -1086,6 +1154,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -1113,6 +1183,8 @@ class TUShare_service(object):
             table = 'ts2_rrr'
             self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
             logging.error("OS|error: {0}".format(err))
         else:
             pass
@@ -1170,6 +1242,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df,'replace')
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -1210,6 +1284,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df,'replace')
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -1243,6 +1319,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -1274,6 +1352,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -1303,6 +1383,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -1330,6 +1412,8 @@ class TUShare_service(object):
             table = 'ts2_gdp_pull'
             self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
             logging.error("OS|error: {0}".format(err))
         else:
             pass
@@ -1359,6 +1443,8 @@ class TUShare_service(object):
             self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
+            logging.error("OS|error: {0}".format(err))
         else:
             pass
 
@@ -1382,6 +1468,8 @@ class TUShare_service(object):
             table = 'ts2_cpi'
             self.storeservice.insert_many(table, df, 'replace')
         except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
             logging.error("OS|error: {0}".format(err))
         else:
             pass
@@ -1415,6 +1503,8 @@ class TUShare_service(object):
             table = 'ts2_ppi'
             self.storeservice.insert_many(table, df,'replace')
         except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
             logging.error("OS|error: {0}".format(err))
         else:
             pass
@@ -1469,6 +1559,8 @@ class TUShare_service(object):
                 self.storeservice.insert_many(table, df)
                 AppConfig.write_news_pulltime(latest_pulltime,True)
         except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        except OperationalError as err:
             logging.error("OS|error: {0}".format(err))
         else:
             pass

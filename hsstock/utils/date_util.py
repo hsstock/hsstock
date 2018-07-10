@@ -9,6 +9,7 @@ class DateUtil():
     def getDatetimeToday():
         return date.today()
 
+    @staticmethod
     def getDatetimeToday2(self):
         t = date.today()  # date类型
         dt = datetime.strptime(str(t), '%Y-%m-%d')  # date转str再转datetime
@@ -22,8 +23,12 @@ class DateUtil():
     @staticmethod
     def getDatetimePastStr(today, ndays):
         past = today + timedelta(days=-ndays)  # 减去ndays天
-        return past.isoformat()
+        return DateUtil.date_toString(past)
 
+    @staticmethod
+    def getDatetimeFutureStr(today, ndays):
+        past = today + timedelta(days=ndays)  # 加上ndays天
+        return DateUtil.date_toString(past)
 
     @staticmethod
     def getTodayStr():
@@ -63,6 +68,14 @@ class DateUtil():
     @staticmethod
     def string_toDatetime(string):
         return datetime.strptime(string, "%Y-%m-%d %H:%M:%S")
+
+    @staticmethod
+    def date_toString(dt):
+        return dt.strftime("%Y-%m-%d")
+
+    @staticmethod
+    def string_toDate(string):
+        return datetime.strptime(string, "%Y-%m-%d")
 
     # 把字符串转成时间戳形式
     @staticmethod
