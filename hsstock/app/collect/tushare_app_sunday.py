@@ -7,7 +7,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 from hsstock.utils.app_logging import setup_logging
 import hsstock.utils.tick_deco  as tick
-from hsstock.service.tushare_service_new import TUShare_service
+from hsstock.service.tushare_service import TUShare_service
 from hsstock.utils.date_util import DateUtil
 from hsstock.utils.threadutil import MyThread
 from hsstock.utils.app_config import AppConfig
@@ -170,5 +170,6 @@ if __name__ == "__main__":
     setup_logging()
     main()
     sched.start()
+
 
 

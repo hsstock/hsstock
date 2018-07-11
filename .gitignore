@@ -13,3 +13,4 @@ hsstock/vnpy/trader/CtaTrading/temp/
 *.xlsx
 *.h5
 logs
+hsstock/futuquant

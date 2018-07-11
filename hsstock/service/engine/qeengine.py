@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-import futuquant as ft
+import futuquant_old as ft
 
 from hsstock.utils.app_config import AppConfig
 from hsstock.service.quote_service import LF
@@ -44,8 +44,11 @@ class QEEngine(object):
 
     def stop(self):
         self.quote_ctx.stop()
+        self.quote_ctx.close()
         self.tradehk_ctx.stop()
+        self.tradehk_ctx.close()
         self.tradeus_ctx.stop()
+        self.tradeus_ctx.close()
 
     def get_queryhistory(self):
         return self.queryhistory

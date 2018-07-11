@@ -1,15 +1,13 @@
 import unittest
 
-import futuquant as ft
-from futuquant.constant import MKT_MAP
+import hsstock.futuquant as ft
 
+from hsstock.futuquant.common.constant import *
 from hsstock.utils.app_config import AppConfig
 from hsstock.service.quote_service import LF
 from hsstock.service.quote_service import HF
 from hsstock.service.quote_service import Subscribe
 
-from futuquant.constant import RET_ERROR
-from futuquant.constant import RET_OK
 
 class QuoteServiceTestCase(unittest.TestCase):
 
@@ -32,6 +30,7 @@ class QuoteServiceTestCase(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.ctx.stop()
+        cls.ctx.close()
         print('tearDownClass')
 
     def setUp(self):
@@ -49,13 +48,19 @@ class QuoteServiceTestCase(unittest.TestCase):
         ret_code, ret_data = QuoteServiceTestCase.lf.get_stock_basicinfo('US','STOCK')
         self.assertTrue(ret_code == RET_OK)
 
-    def test_get_autype_list(self):
-        ret_code, ret_data = QuoteServiceTestCase.lf.get_autype_list(['HK.00700','US.AAPL'])
-        self.assertTrue(ret_code == RET_OK)
+    # def test_get_multiple_history_kline(self):
+    #     ret_code, ret_data = QuoteServiceTestCase.lf.get_multiple_history_kline(['US.NTES'], '2018-06-20', '2018-06-25',  KLType.K_DAY, AuType.QFQ)
+    #     self.assertTrue(ret_code == RET_OK)
 
-    def test_get_history_kline(self):
-        ret_code, ret_data = QuoteServiceTestCase.lf.get_history_kline('US.AAPL')
-        self.assertTrue(ret_code == RET_OK)
+    # def test_get_history_kline(self):
+    #     ret_code, ret_data = QuoteServiceTestCase.lf.get_history_kline('US.AAPL','2018-06-20', '2018-06-25')
+    #     self.assertTrue(ret_code == RET_OK)
+
+    # def test_get_autype_list(self):
+    #     ret_code, ret_data = QuoteServiceTestCase.lf.get_autype_list(['US.AAPL'])
+    #     self.assertTrue(ret_code == RET_OK)
+
+
 
     def test_get_market_snapshot(self):
         ret_code, ret_data = QuoteServiceTestCase.lf.get_market_snapshot(['HK.00700', 'US.AAPL'])
@@ -121,9 +126,6 @@ class QuoteServiceTestCase(unittest.TestCase):
         ret_code, bid_data, ask_data = QuoteServiceTestCase.hf.get_broker_queue('HK.00700')
         self.assertTrue(ret_code == RET_OK)
 
-    def test_get_multi_points_history_kline(self):
-        ret_code, ret_data = QuoteServiceTestCase.lf.get_multi_points_history_kline( ['HK.00700','HK.00241'],['2017-01-01', '2017-01-02'], '')
-        self.assertTrue(ret_code == RET_OK)
-
+    #
 
 unittest.main

@@ -11,8 +11,8 @@ from time import sleep
 from datetime import datetime
 from copy import copy
 
-import futuquant as ft
-from futuquant.open_context import (RET_ERROR, RET_OK, PriceRegularMode,
+import futuquant_old as ft
+from hsstock.futuquant.open_context import (RET_ERROR, RET_OK, PriceRegularMode,
                                     StockQuoteHandlerBase, OrderBookHandlerBase,
                                     USTradeOrderHandlerBase, USTradeDealHandlerBase,
                                     HKTradeOrderHandlerBase, HKTradeDealHandlerBase)

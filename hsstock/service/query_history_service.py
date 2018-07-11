@@ -4,7 +4,7 @@
     指定涨跌幅，查询本地下载的历史日k数据，返回符合条件的股票
 """
 
-from futuquant.open_context import *
+from hsstock.futuquant.quote.open_quote_context import *
 from datetime import datetime, timedelta
 
 

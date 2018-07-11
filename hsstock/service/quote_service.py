@@ -1,7 +1,5 @@
 # -*- coding: UTF-8 -*-
-from futuquant.constant import RET_ERROR
-from futuquant.constant import RET_OK
-from futuquant.constant import KL_FIELD
+from hsstock.futuquant.common.constant import *
 
 from hsstock.model.subscribe import SubItem
 from hsstock.utils.tick_deco import  clock
@@ -72,7 +70,7 @@ class LF(object):
             客户端内部或网络错误
         '''
 
-        ret_code, ret_data = self.ctx.get_trading_days(market)
+        ret_code, ret_data = self.ctx.get_trading_days(market=market)
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
@@ -106,6 +104,23 @@ class LF(object):
             print(ret_data)
             exit()
         #print(ret_data)
+        return ret_code, ret_data
+
+    def get_multiple_history_kline(self, codelist=[], start=None, end=None, ktype=KLType.K_DAY, autype=AuType.QFQ):
+        """
+
+        :param codelist:
+        :param start:
+        :param end:
+        :param ktype:
+        :param autype:
+        :return:
+        """
+        ret_code, ret_data = self.ctx.get_multiple_history_kline(codelist,start, end,  ktype, autype)
+        if ret_code == RET_ERROR:
+            print(ret_data)
+            #exit()
+        # print(ret_data)
         return ret_code, ret_data
 
     def get_autype_list(self, code_list):
@@ -143,7 +158,7 @@ class LF(object):
         #print(ret_data)
         return ret_code, ret_data
 
-    def get_history_kline(self, code, start=None, end=None, ktype='K_DAY', autype='None'):
+    def get_history_kline(self, code, start=None, end=None, ktype='K_DAY', autype='None',fields=KL_FIELD.ALL):
         ''' 获取历史K线
 
         :param code: 股票代码
@@ -202,7 +217,7 @@ class LF(object):
 
             US.AAPL返回为空，需要订阅吗？
         '''
-        ret_code, ret_data = self.ctx.get_history_kline(code,start,end,ktype,autype)
+        ret_code, ret_data = self.ctx.get_history_kline(code,start,end,ktype,autype,fields)
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()

@@ -1,5 +1,5 @@
 import unittest
-import tushare as ts
+import hsstock.tushare as ts
 
 from hsstock.service.store_service import StoreService
 

@@ -1,875 +1,251 @@
 # -*- coding: UTF-8 -*-
 
 from abc import ABC, abstractclassmethod
-
-from futuquant.open_context import *
-
-
-'''
-交易接口有频率限制，30秒内不能超过20次交易请求
-'''
-
-'''
-def unlock_trade(self,trade_password, trade_password_md5=None):
-def login_new_account(self,user_id, login_password_md5, trade_password, trade_password_md5=None):
-def place_order(self, price, qty, strcode, orderside, ordertype=0, envtype=0,
-                                                 order_deal_push=False, price_mode=PriceRegularMode.IGNORE):
-def set_order_status(self,status, orderid=0, envtype=0):
-def change_order(self,price, qty, orderid=0, envtype=0):
-def accinfo_query(self,envtype=0):
-def order_list_query(self, orderid="", statusfilter="",  strcode='', start='', end='', envtype=0):
-def position_list_query(self, strcode='', stocktype='', pl_ratio_min='', pl_ratio_max='', envtype=0):
-def deal_list_query(self, envtype=0):
-def history_order_list_query(self,statusfilter='', strcode='', start='', end='', envtype=0):
-def history_deal_list_query(self, strcode, start, end, envtype=0):
-def subscribe_order_deal_push(self, order_list, order_deal_push=True, envtype=0):
-'''
+from hsstock.futuquant import *
 
 class Trade(ABC):
     def __init__(self,trade_ctx):
         self.ctx = trade_ctx
 
-    def unlock_trade(self, trade_password, trade_password_md5=None):
+    def get_acc_list(self):
         '''
-        功能：交易解锁。
+        功能：
+            获取交易业务账户列表。要调用交易接口前，必须先获取此列表，后续交易接口根据不同市场传入不同的交易业务账户ID，传0默认第一个账户
 
-        :param trade_password: 用户交易密码。
-        :param trade_password_md5: 交易密码32位MD5加密16进制表示，trade_password和trade_password_md5同时传入时，只使用trade_password_md5
-        :return: ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0, ret_data返回None。
+        :return(ret_code,ret_data:
+            ret_code为RET_OK时，ret_data为DataFrame数据，否则为错误原因字符串，DataFrame数据如下
 
-        失败情况：
-            交易密码错误
-            客户端内部或网络错误
+        参数	    类型	说明
+        acc_id	int	交易业务账户
+        trd_env	str	交易环境，TrdEnv.REAL(真实环境)或TrdEnv.SIMULATE(仿真环境)
         '''
-        ret_code, ret_data = self.ctx.unlock_trade(trade_password, trade_password_md5)
-        #print(ret_code, ret_data)
+        ret_code, ret_data = self.ctx.get_acc_list()
         return ret_code, ret_data
 
-    def login_new_account(self, user_id, login_password_md5, trade_password, trade_password_md5=None):
+    def unlock_trade(self, password, password_md5=None,is_unlock=True):
         '''
-        功能：切换牛牛号登录
-        :param user_id: 需要切换的牛牛号
-        :param login_password_md5: 登录密码32位MD5加密16进制表示
-        :param trade_password: 交易密码明文
-        :param trade_password_md5: 交易密码32位MD5加密16进制表示，trade_password和trade_password_md5同时传入时，只使用trade_password_md5
-        :return: ret = RET_OK表示切换成功。
+        功能：解锁交易
 
-注           :切换牛牛号登录会导致API接口断开重连。
+        Parameters:
+            password – str，交易密码，如果password_md5不为空就使用传入的password_md5解锁，否则使用password转MD5得到password_md5再解锁
+            password_md5 – str，交易密码的MD5转16进制字符串(全小写)，解锁交易必须要填密码，锁定交易忽略
+            is_unlock – bool，解锁或锁定，True解锁，False锁定
+        Return(ret_code, ret_data):
+            ret == RET_OK时, data为None，如果之前已经解锁过了，data为提示字符串，指示出已经解锁
+            ret != RET_OK时， data为错误字符串
         '''
-        ret_code, ret_data = self.ctx.login_new_account(user_id, login_password_md5, trade_password,
-                                                        trade_password_md5=None)
-        #print(ret_code, ret_data)
+        ret_code, ret_data = self.ctx.unlock_trade(password, password_md5)
         return ret_code, ret_data
 
-
-class HKTrade(Trade):
-    def __init__(self,trade_ctx):
-        super(HKTrade,self).__init__(trade_ctx)
-
-
-    def place_order(self, price, qty, strcode, orderside, ordertype=0, envtype=0,
-                                                     order_deal_push=False, price_mode=PriceRegularMode.IGNORE):
+    def accinfo_query(self,trd_env=TrdEnv.REAL,acc_id = 0 ):
         '''
-        功能：港股下单接口，自动订阅订单推送。
+        功能：获取账户资金数据。获取账户的资产净值、证券市值、现金、购买力等资金数据。
 
-        :param price: 交易价格。
-        :param qty: 交易数量。
-        :param strcode: 股票代码。例如：“HK.00700”。
-        :param orderside: 交易方向。如下表所示。
-        :param ordertype: 交易类型。与美股不同！如下表所示。
-        :param envtype: 交易环境参数。如下表所示。
-        :param order_deal_push: 是否订阅成交推送
-        :param price_mode: 报价调整模式，在提交订单前，将price调整至符合价位表要求的数值
-        :return:
-            ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0，ret_data为一个dataframe, 其中包括：
+        :param
+            trd_env – str，交易环境 TrdEnv ，TrdEnv.REAL(真实环境)或TrdEnv.SIMULATE(仿真环境)
+            acc_id – int，交易业务账户ID，传0默认第一个账户
+        :return(ret_code,ret_data):
+            ret_code为RET_OK时，ret_data为DataFrame数据，否则为错误原因字符串，DataFrame数据如下：
 
-                返回字符串	    说明	    返回字符串	说明
-                code	        股票ID	stock_name	股票名称
-                dealt_avg_price	成交均价	dealt_qty	成交数量
-                qty	            订单数量	orderid	    订单ID
-                order_type	    交易类型	price	    交易价格
-                status	        订单状态(具体状态如下)
-                submited_time	提交时间
-                updated_time	更新时间
-                order_side	交易方向
-
-                status	订单类型	status	订单类型
-                0	服务器处理中	1	等待成交
-                2	部分成交	    3	全部成交
-                4	已失效	    5	下单失败
-                6	已撤单	    7	已删除
-                8	等待开盘	    21	本地已发送
-                22	本地已发送，服务器返回下单失败、没产生订单
-                23	本地已发送，等待服务器返回超时
-
-                order_side	交易方向
-                0	买入
-                1	卖出
-
-                order_type	交易类型
-                    0	增强限价单(普通交易)
-                    1	竞价单(竞价交易)
-                    3	竞价限价单(竞价限价)
-            失败情况：
-
-                参数错误
-                客户端内部或网络错误
-                不满足下单条件
-
-        orderside	交易方向
-            0	买入
-            1	卖出
-        ordertype	交易类型
-            0	增强限价单(普通交易)
-            1	竞价单(竞价交易)
-            3	竞价限价单(竞价限价)
-        envtype	交易环境参数
-            0	真实交易
-            1	仿真交易
+                参数	            类型	    说明
+                power	        float	购买力，即可使用用于买入的资金
+                total_assets	float	资产净值
+                cash	        float	现金
+                market_val	    float	证券市值
+                frozen_cash	    float	冻结金额
+                avl_withdrawal_cash	float	可提金额
         '''
-        ret_code, ret_data = self.ctx.place_order(price, qty, strcode, orderside, ordertype, envtype,
-                                                     order_deal_push, price_mode)
-        #print(ret_code, ret_data)
+        ret_code, ret_data = self.ctx.accinfo_query(trd_env,acc_id)
         return ret_code, ret_data
 
-    def set_order_status(self,status, orderid=0, envtype=0):
+    def position_list_query(self, code='', pl_ratio_min=None, pl_ratio_max=None, trd_env=TrdEnv.REAL, acc_id=0):
         '''
-        功能：更改某指定港股订单状态。
-
-        :param status: 更改状态的类型。如下表所示。
-        :param orderid: 订单ID。
-        :param envtype: 交易环境参数。如下表所示。
-                status	更改状态的类型
-                    0	撤单
-                    1	失效
-                    2	生效
-                    3	删除
-                envtype	交易环境参数
-                    0	真实交易
-                    1	仿真交易
-        :return:    ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0，ret_data为一个dataframe, 其中包括：
-            envtype: 交易环境参数。0是真实交易，1是仿真交易
-            orderid: 订单ID。
-
-        失败情况：
-            参数错误
-            客户端内部或网络错误
-            订单不存在
+        功能：
+            获取账户持仓列表。获取账户的证券持仓列表。
+        :param code: str，代码过滤，只返回包含这个代码的数据，没传不过滤，返回所有
+        :param pl_ratio_min:  float，过滤盈亏比例下限，高于此比例的会返回，如0.1，返回盈亏比例大于10%的持仓
+        :param pl_ratio_max: float，过滤盈亏比例上限，低于此比例的会返回，如0.2，返回盈亏比例小于20%的持仓
+        :param trd_env:  str，交易环境，TrdEnv.REAL(真实环境)或TrdEnv.SIMULATE(仿真环境)
+        :param acc_id:  int，交易业务账户ID，传0默认第一个账户
+        Return(ret_code, ret_data):
+            ret_code为RET_OK时，ret_data为DataFrame数据，否则为错误原因字符串，DataFrame数据如下：
+            参数	            类型	说明
+            position_side	str	持仓方向，PositionSide.LONG(多仓)或PositionSide.SHORT(空仓)
+            code	        str	代码
+            stock_name	    str	名称
+            qty	            float	持有数量，2位精度，期权单位是”张”，下同
+            can_sell_qty	float	可卖数量
+            nominal_price	float	市价，3位精度(A股2位)
+            cost_price	    float	成本价，无精度限制
+            cost_price_valid	bool	成本价是否有效，True有效，False无效
+            market_val	    float	市值，3位精度(A股2位)
+            pl_ratio	    float	盈亏比例，无精度限制
+            pl_ratio_valid	bool	盈亏比例是否有效，True有效，False无效
+            pl_val	        float	盈亏金额，3位精度(A股2位)
+            pl_val_valid	bool	盈亏金额是否有效，True有效，False无效
+            today_pl_val	float	今日盈亏金额，3位精度(A股2位)，下同
+            today_buy_qty	float	今日买入总量
+            today_buy_val	float	今日买入总额
+            today_sell_qty	float	今日卖出总量
+            today_sell_val	float	今日卖出总额
         '''
-        ret_code, ret_data = self.ctx.set_order_status(status, orderid, envtype)
-        #print(ret_code, ret_data)
+        ret_code, ret_data = self.ctx.position_list_query(code, pl_ratio_min, pl_ratio_max, trd_env, acc_id)
         return ret_code, ret_data
 
-    def change_order(self,price, qty, orderid=0, envtype=0):
+    def place_order(self, price, qty, code, trd_side=TrdSide.NONE, order_type=OrderType.NORMAL, adjust_limit=0, trd_env=TrdEnv.SIMULATE, acc_id=0):
         '''
-        功能：修改某指定港股订单。
+        功能：下单交易
 
-        :param price: 交易价格。
-        :param qty: 交易数量。
-        :param orderid: 订单ID。
-        :param envtype: 交易环境参数。如下表所示。
-            envtype	交易环境参数
-                0	真实交易
-                1	仿真交易
-        :return:ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0，ret_data为一个dataframe, 其中包括：
+        :param price: float，订单价格，3位精度(A股2位)，当订单是市价单或竞价单类型，忽略该参数传值
+        :param qty:  float，订单数量，2位精度，期权单位是”张”
+        :param code:  str，代码
+        :param trd_side:  str，交易方向，参考TrdSide类的定义
+        :param order_type: str，订单类型，参考OrderType类的定义
+        :param adjust_limit: float，港股有价位表，订单价格必须在规定的价位上，OpenD会对传入价格自动调整到合法价位上，此参数指定价格调整方向和调整幅度百分比限制，正数代表向上调整，负数代表向下调整，具体值代表调整幅度限制，如：0.015代表向上调整且幅度不超过1.5%；-0.01代表向下调整且幅度不超过1%
+        :param trd_env: – str，交易环境，TrdEnv.REAL(真实环境)或TrdEnv.SIMULATE(仿真环境)
+        :param acc_id: – int，交易业务账户ID，传0默认第一个账户
 
-            envtype: 交易环境参数。0是真实交易，1是仿真交易
-
-            orderid: 订单ID。
-
-        失败情况：
-
-            参数错误
-            客户端内部或网络错误
-            订单不存在
+        Return(ret_code, ret_data):
+            ret_code为RET_OK时，ret_data为DataFrame数据，否则为错误原因字符串，DataFrame数据跟下面的 order-list-query (获取订单列表)相同
         '''
-        ret_code, ret_data = self.ctx.change_order(price, qty, orderid, envtype)
-        # print(ret_code, ret_data)
+        ret_code, ret_data = self.ctx.place_order(price, qty, code, trd_side, order_type, adjust_limit,trd_env,acc_id)
         return ret_code, ret_data
 
-    def accinfo_query(self,envtype=0):
+    def order_list_query(self, order_id="", status_filter_list=[],  code='', start='', end='', trd_env=TrdEnv.REAL,acc_id=0):
         '''
-        功能：查询港股账户信息。
+        功能：
+            获取订单列表。获取账户的交易订单列表。
 
-        :param envtype:交易环境参数。如下表所示。
-            envtype	交易环境参数
-                0	真实交易
-                1	仿真交易
-        :return:ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0，ret_data为一个dataframe, 其中包括：
+        :param order_id: – str，订单号过滤，只返回此订单号的数据，没传不过滤，返回所有
+        :param status_filter_list: – str数组，订单状态过滤，只返回这些状态的订单数据，没传不过滤，返回所有，参考 OrderStatus 类的定义
+        :param code: – str，代码过滤，只返回包含这个代码的数据，没传不过滤，返回所有
+        :param start: – str，开始时间，严格按YYYY-MM-DD HH:MM:SS或YYYY-MM-DD HH:MM:SS.MS格式传
+        :param end:  – str，结束时间，严格按YYYY-MM-DD HH:MM:SS或YYYY-MM-DD HH:MM:SS.MS格式传
+        :param trd_env: – str，交易环境，TrdEnv.REAL(真实环境)或TrdEnv.SIMULATE(仿真环境)
+        :param acc_id: – int，交易业务账户ID，传0默认第一个账户
+        Return(ret_code, ret_data):
+            ret_code为RET_OK时，ret_data为DataFrame数据，否则为错误原因字符串，DataFrame数据如下：
 
-                返回字符串	说明	返回字符串	说明
-                ZQSZ	证券市值	XJJY	现金结余
-                KQXJ	可取现金	DJZJ	冻结资金
-                ZSJE	追收金额	ZGJDE	最高借贷额
-                YYJDE	已用借贷额	GPBZJ	股票保证金
-                ZCJZ	资产净值
-                Power	现金账号的购买力，不适用于融资账号(因每支股票的融资额不同，融资账户的购买力由购买的股票决定)
-        失败情况：
-
-                参数错误
-                客户端内部或网络错误
+            参数      	类型	说明
+            trd_side	str	交易方向，参考 TrdSide 类的定义
+            order_type	str	订单类型，参考 OrderType 类的定义
+            order_status	str	订单状态，参考 OrderStatus 类的定义
+            order_id	str	订单号
+            code	    str	代码
+            stock_name	str	名称
+            qty	        float	订单数量，2位精度，期权单位是”张”
+            price	    float	订单价格，3位精度(A股2位)
+            create_time	str	创建时间，严格按YYYY-MM-DD HH:MM:SS或YYYY-MM-DD HH:MM:SS.MS格式传
+            updated_time	str	最后更新时间，严格按YYYY-MM-DD HH:MM:SS或YYYY-MM-DD HH:MM:SS.MS格式传
+            dealt_qty	float	成交数量，2位精度，期权单位是”张”
+            dealt_avg_price	float	成交均价，无精度限制
+            last_err_msg	str	最后的错误描述，如果有错误，会有此描述最后一次错误的原因，无错误为
         '''
-        ret_code, ret_data = self.ctx.accinfo_query(envtype)
-        #print(ret_code)
-        #print(ret_data)
+        ret_code, ret_data = self.ctx.order_list_query(order_id, status_filter_list, code, start, end, trd_env,acc_id)
         return ret_code, ret_data
 
-    def order_list_query(self, orderid="", statusfilter="",  strcode='', start='', end='', envtype=0):
+    def modify_order(self, modify_order_op, order_id, qty, price, adjust_limit=0, trd_env=TrdEnv.REAL, acc_id=0):
         '''
-        功能：查询港股今日订单列表。
-        :param orderid:指定订单id查询，为空或0为不指定。
-        :param statusfilter:状态过滤字符串，为空返回全部订单，”,”分隔需要返回的状态，如”1,2,3”返回的是等待成交，部分成交以及全部成交的订单，状态如下表所示
-                    statusfilter	返回订单的状态	statusfilter	返回订单的状态
-                    0	服务器处理中	1	等待成交
-                    2	部分成交	3	全部成交
-                    4	已失效	5	下单失败
-                    6	已撤单	7	已删除
-                    8	等待开盘	21	本地已发送
-                    22	本地已发送，服务器返回下单失败、没产生订单
-                    23	本地已发送，等待服务器返回超时
-        :param strcode:股票代码过滤，例如”hk.00700”，为空为不限制。
-        :param start: 下单时间过滤，格式”hh:mm:ss”, 过滤时间开始点，为空为00:00:00
-        :param end: 下单时间过滤，格式”hh:mm:ss”, 过滤时间结束点，为空为23:59:59。
-        :param envtype:交易环境参数。如下表所示。
-                envtype	交易环境参数
-                0	真实交易
-                1	仿真交易
-        :return:ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0，ret_data为一个dataframe, 其中包括：
+        功能：
+            修改订单。修改订单，包括修改订单的价格和数量(即以前的改单)、撤单、失效、生效、删除等
+        :param modify_order_op: – str，改单操作类型，参考 ModifyOrderOp_ 类的定义
+        :param order_id: – str，订单号
+        :param qty: – float，(改单有效)新的订单数量，2位精度，期权单位是”张”
+        :param price: – float，(改单有效)新的订单价格，3位精度(A股2位)
+        :param adjust_limit: – folat，(改单有效)港股有价位表，订单价格必须在规定的价位上，OpenD会对传入价格自动调整到合法价位上，此参数指定价格调整方向和调整幅度百分比限制，正数代表向上调整，负数代表向下调整，具体值代表调整幅度限制，如：0.015代表向上调整且幅度不超过1.5%；-0.01代表向下调整且幅度不超过1%
+        :param trd_env: – str，交易环境 TrdEnv ，TrdEnv.REAL(真实环境)或TrdEnv.SIMULATE(仿真环境)
+        :param acc_id: – int，交易业务账户ID，传0默认第一个账户
+        Return(ret_code, ret_data):
+            ret_code为RET_OK时，ret_data为DataFrame数据，否则为错误原因字符串，DataFrame数据如下：
 
-                返回字符串	        说明	    返回字符串	说明
-                code	            股票ID	stock_name	股票名称
-                dealt_avg_price	    成交均价	dealt_qty	成交数量
-                qty	                订单数量	orderid	    订单ID
-                order_type	        交易类型	price	    交易价格
-                status	            订单状态(具体状态如下)
-                submited_time	提交时间
-                updated_time	更新时间
-                order_side	交易方向
-                status	订单类型	status	订单类型
-                0	服务器处理中	1	等待成交
-                2	部分成交	    3	全部成交
-                4	已失效	    5	下单失败
-                6	已撤单	    7	已删除
-                8	等待开盘	    21	本地已发送
-                22	本地已发送，服务器返回下单失败、没产生订单
-                23	本地已发送，等待服务器返回超时
-
-                order_side	交易方向
-                    0	买入
-                    1	卖出
-                order_type	交易类型
-                    0	增强限价单(普通交易)
-                    1	竞价单(竞价交易)
-                    3	竞价限价单(竞价限价)
-        失败情况：
-                参数错误
-                客户端内部或网络错误
+            参数	        类型	    说明
+            trd_env	    str	    交易环境 TrdEnv ，TrdEnv.REAL(真实环境)或TrdEnv.SIMULATE(仿真环境)
+            order_id    str	    订单号
         '''
-        ret_code, ret_data = self.ctx.order_list_query(orderid, statusfilter, strcode, start, end, envtype)
-        #print(ret_code, ret_data)
+        ret_code, ret_data = self.ctx.modify_order(modify_order_op, order_id, qty, price, adjust_limit, trd_env, acc_id)
         return ret_code, ret_data
 
-    def position_list_query(self, strcode='', stocktype='', pl_ratio_min='', pl_ratio_max='', envtype=0):
+    def deal_list_query(self, code="", trd_env=TrdEnv.REAL, acc_id=0):
         '''
-        查询持仓列表
-        :param strcode: 股票代码过滤，例如”hk.00700”，为空为不限制。
-        :param stocktype: 股票类型
-                    正股	“STOCK”
-                    指数	“IDX”
-                    ETF基金	“ETF”
-                    涡轮牛熊	“WARRANT”
-                    债券	“BOND”
-        :param pl_ratio_min:盈亏比例过滤，“10”表示只返回盈亏比例10%以上（包括10%）的持仓，为空为不限制。
-        :param pl_ratio_max: 盈亏比例过滤，“10”表示只返回盈亏比例10%以下（包括10%）的持仓，为空为不限制。
-        :param envtype: 交易环境参数。如下表所示。
-            envtype	交易环境参数
-                0	真实交易
-                1	仿真交易
-        :return:    ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0，ret_data为一个dataframe, 其中包括：
+        功能：
+            获取成交列表。获取账户的交易成交列表。
+        :param code: – str，代码过滤，只返回包含这个代码的数据，没传不过滤，返回所有
+        :param trd_env: – str，交易环境 TrdEnv ，TrdEnv.REAL(真实环境)或TrdEnv.SIMULATE(仿真环境)
+        :param acc_id:  – int，交易业务账户ID，传0默认第一个账户
+        Return(ret_code, ret_data):
+            ret_code为RET_OK时，ret_data为DataFrame数据，否则为错误原因字符串，DataFrame数据如下：
 
-            返回字符串	说明	    返回字符串	说明
-            code	    股票ID	stock_name	股票名称
-            qty	        持有数量
-            can_sell_qty可卖数量
-            cost_price	成本价
-            cost_price_valid	成本价是否有效(非0有效)
-            market_val	市值
-            nominal_price	市价
-            pl_ratio	盈亏比例
-            pl_ratio_valid	盈亏比例是否有效(非0有效)
-            pl_val	盈亏金额
-            pl_val_valid	盈亏金额是否有效(非0有效)
-            today_buy_qty	今日买入数量
-            today_buy_val	今日买入金额
-            today_pl_val	今日盈亏金额
-            today_sell_qty	今日卖出数量
-            today_sell_val	今日卖出金额
-        失败情况：
-
-            参数错误
-            客户端内部或网络错误
+            参数	        类型	说明
+            trd_side	str	交易方向，参考 TrdSide 类的定义
+            deal_id 	str	成交号
+            order_id	str	订单号
+            code	    str	代码
+            stock_name	str	名称
+            qty	        float	成交数量，2位精度，期权单位是”张”
+            price	    float	成交价格，3位精度(A股2位)
+            create_time	str	创建时间，严格按YYYY-MM-DD HH:MM:SS或YYYY-MM-DD HH:MM:SS.MS格式传
+            counter_broker_id	int	对手经纪号，港股有效
+            counter_broker_name	str	对手经纪名称，港股有效
         '''
-        ret_code, ret_data = self.ctx.position_list_query(strcode, stocktype, pl_ratio_min, pl_ratio_max, envtype)
-        #print(ret_code, ret_data)
+        ret_code, ret_data = self.ctx.deal_list_query(code,trd_env,acc_id)
         return ret_code, ret_data
 
-    def deal_list_query(self, envtype=0):
+    def history_order_list_query(self,status_filter_list=[], code='', start='', end='', trd_env=TrdEnv.REAL, acc_id=0):
         '''
-        功能：查询港股今日成交列表。
-        :param self:
-        :param envtype: 交易环境参数。如下表所示。
-            envtype	交易环境参数
-                0	真实交易
-                1	仿真交易
-        :return: ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0，ret_data为一个dataframe, 其中包括：
+        功能：
+            获取历史订单列表。获取账户的历史交易订单列表。
 
-                code: 股票代码。
-
-                stock_name: 股票名称。
-
-                dealid: 成交ID。
-
-                orderid: 订单ID。
-
-                price: 交易价格。
-
-                qty: 交易数量。
-
-                orderside: 交易方向，0表示买入，1表示卖出。
-
-                time: 成交时间。
-
-        失败情况：
-
-                参数错误
-                客户端内部或网络错误
+        :param status_filter_list: – str数组，订单状态过滤，只返回这些状态的订单数据，没传不过滤，返回所有，参考OrderStatus类的定义
+        :param code: – str，代码过滤，只返回包含这个代码的数据，没传不过滤，返回所有
+        :param start: - str，开始时间，严格按YYYY-MM-DD HH:MM:SS或YYYY-MM-DD HH:MM:SS.MS格式传
+        :param end: – str，结束时间，严格按YYYY-MM-DD HH:MM:SS或YYYY-MM-DD HH:MM:SS.MS格式传
+        :param trd_env: – str，交易环境 TrdEnv ，TrdEnv.REAL(真实环境)或TrdEnv.SIMULATE(仿真环境)
+        :param acc_id: – int，交易业务账户ID，传0默认第一个账户
+        Return(ret_code, ret_data):
+            ret_code为RET_OK时，ret_data为DataFrame数据，否则为错误原因字符串，DataFrame数据跟上面的 order-list-query (获取订单列表)相同
         '''
-        ret_code, ret_data = self.ctx.deal_list_query(envtype)
-        #print(ret_code, ret_data)
+        ret_code, ret_data = self.ctx.history_order_list_query(status_filter_list, code, start, end, trd_env, acc_id)
         return ret_code, ret_data
 
-    def history_order_list_query(self,statusfilter='', strcode='', start='', end='', envtype=0):
+    def history_deal_list_query(self, code='', start='', end='', trd_env=TrdEnv.REAL,acc_id=0):
         '''
-        功能：查询历史订单列表, 30秒内不能超过5次请求, 时间段最多90自然日。
-        :param self:
-        :param statusfilter: 状态过滤字符串，为空返回全部订单，”,”分隔需要返回的状态，如”1,2,3”返回的是等待成交，部分成交以及全部成交的订单，状态如下表所示
-            statusfilter	返回订单的状态	statusfilter	返回订单的状态
-            0	服务器处理中	1	等待成交
-            2	部分成交    	3	全部成交
-            4	已失效	    5	下单失败
-            6	已撤单	    7	已删除
-            8	等待开盘	    21	本地已发送
-            22	本地已发送，服务器返回下单失败、没产生订单
-            23	本地已发送，等待服务器返回超时
-        :param strcode: 股票代码过滤，例如”hk.00700”，为空为不限制。
-        :param start: 历史订单查询起始时间，格式”yy-mm-dd”。
-        :param end: 历史订单查询截止时间，格式”yy-mm-dd”。 起止时间参数组合如下表所示：
-                start	end	查询时间段
-                空	非空	end前90天
-                非空	空	start后90天
-                空	空	90天前至当天
-        :param envtype: 交易环境参数。如下表所示。
-            envtype	交易环境参数
-                0	真实交易
-                1	仿真交易
-        :return:
-            ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0，ret_data为一个dataframe, 其中包括：
-
-            返回字符串	说明	返回字符串	说明
-            code	股票ID	stock_name	股票名称
-            orderid | 订单ID	dealt_qty	成交数量
-            order_type	交易类型	price	交易价格
-            status	订单状态(具体状态如下)	submited_time	提交时间
-            updated_time	更新时间	order_side	交易方向
-            qty	订单数量
-            status	订单类型	status	订单类型
-            0	服务器处理中	1	等待成交
-            2	部分成交	    3	全部成交
-            4	已失效	    5	下单失败
-            6	已撤单	    7	已删除
-            8	等待开盘	    21	本地已发送
-            22	本地已发送，服务器返回下单失败、没产生订单
-            23	本地已发送，等待服务器返回超时
-            order_side	交易方向
-                0	买入
-                1	卖出
-            order_type	交易类型
-                0	增强限价单(普通交易)
-                1	竞价单(竞价交易)
-                3	竞价限价单(竞价限价)
-        失败情况：
-
-            参数错误
-            客户端内部或网络错误
+        功能：获取历史成交列表。获取账户的历史交易成交列表。
+        :param code: str，代码过滤，只返回包含这个代码的数据，没传不过滤，返回所有
+        :param start: str，开始时间，严格按YYYY-MM-DD HH:MM:SS或YYYY-MM-DD HH:MM:SS.MS格式传
+        :param end: str，结束时间，严格按YYYY-MM-DD HH:MM:SS或YYYY-MM-DD HH:MM:SS.MS格式传
+        :param trd_env:  str，交易环境 TrdEnv ，TrdEnv.REAL(真实环境)或TrdEnv.SIMULATE(仿真环境)
+        :param acc_id:  int，交易业务账户ID，传0默认第一个账户
+        :return: ret_code为RET_OK时，ret_data为DataFrame数据，否则为错误原因字符串，DataFrame数据跟上面的 deal-list-query (获取成交列表)相同。
         '''
-        ret_code, ret_data = self.ctx.history_order_list_query(statusfilter, strcode, start, end, envtype)
-        #print(ret_code, ret_data)
+        ret_code, ret_data = self.ctx.history_deal_list_query(code, start, end, trd_env, acc_id)
         return ret_code, ret_data
 
-    def history_deal_list_query(self, strcode='', start='', end='', envtype=0):
+class HSTradeDeal(TradeDealHandlerBase):
+    '''
+    deal update push
+    '''
+    def on_recv_rsp(self, rsp_pb):
         '''
-        功能：查询历史订单列表, 30秒内不能超过5次请求, 时间段最多90自然日。
-        :param strcode: 股票代码过滤，例如”hk.00700”，为空为不限制。
-        :param start: 历史订单查询其实时间，格式”yy-mm-dd”, 为空则为end字段前90天。
-        :param end:  历史订单查询其实时间，格式”yy-mm-dd”, 为空则为start字段后90天，若start为空，则end为当天。
-        :param envtype: 交易环境参数。如下表所示。
-            envtype	交易环境参数
-                0	真实交易
-                1	仿真交易
-        :return: ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0，ret_data为一个dataframe, 其中包括：
+        响应成交推送。OpenD会主动推送新的成交数据过来，需要客户端响应处理
 
-            code: 股票代码。
-
-            stock_name: 股票名称。
-
-            dealid: 成交ID。
-
-            orderid: 订单ID。
-
-            price: 交易价格。
-
-            qty: 交易数量。
-
-            order_side: 交易方向，0表示买入，1表示卖出。
-
-            time: 成交时间。
-
-        失败情况：
-
-            参数错误
-            客户端内部或网络错误
+        :param rsp_pb:  – class，成交推送协议pb对象
+        :Return(ret_code, ret_data):
+ 	        ret_code为RET_OK时，ret_data为DataFrame数据，否则为错误原因字符串，DataFrame数据跟上面的 deal-list-query (获取成交列表)相同
         '''
-        ret_code, ret_data = self.ctx.history_deal_list_query(strcode, start, end, envtype)
-        #print(ret_code, ret_data)
-        return ret_code, ret_data
-
-    def subscribe_order_deal_push(self, order_list, order_deal_push=True, envtype=0):
-        '''
-        功能：订阅订单成交推送。
-        :param order_list: 订阅的订单ID，多个或单个，列表或字符串（字符串用英文逗号分割），单独传空表示订阅全部订单，包括后来新增的。
-        :param order_deal_push: 是否订阅成交推送。
-        :param envtype: 交易环境参数
-                0	真实交易
-                1	仿真交易
-        :return: ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0。
-
-        失败情况：
-            参数错误
-            客户端内部或网络错误
-        '''
-        ret_code = self.ctx.subscribe_order_deal_push(order_list, order_deal_push, envtype)
-        #print(ret_code)
-        return ret_code
-
-class USTrade(Trade):
-    def __init__(self,trade_ctx):
-        super(USTrade,self).__init__(trade_ctx)
-
-    def place_order(self, price, qty, strcode, orderside, ordertype=1, envtype=0,
-                                                     order_deal_push=False):
-        '''
-        下单接口
-
-        功能：美股下单接口。美股暂时不支持仿真交易，自动订阅订单推送。
-        :param price: 交易价格。
-        :param qty: 交易数量。
-        :param strcode: 股票代码。例如：“HK.00700”。
-        :param orderside: 交易方向。如下表所示。
-        :param ordertype: 交易类型。与港股不同！如下表所示。
-        :param envtype: 环境参数，0是真实环境，1是仿真环境
-        :param order_deal_push: 是否订阅成交推送
-        :return:
-            ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0，ret_data为一个dataframe, 其中包括：
-
-                返回字符串	    说明	    返回字符串	说明
-                code	        股票ID	stock_name	股票名称
-                dealt_avg_price	成交均价	dealt_qty	成交数量
-                qty	            订单数量	orderid	    订单ID
-                order_type	    交易类型	price	    交易价格
-                status	        订单状态(具体状态如下)
-                submited_time	提交时间
-                updated_time	更新时间
-                order_side	交易方向
-
-                status	订单类型	status	订单类型
-                0	服务器处理中	1	等待成交
-                2	部分成交	    3	全部成交
-                4	已失效	    5	下单失败
-                6	已撤单	    7	已删除
-                8	等待开盘	    21	本地已发送
-                22	本地已发送，服务器返回下单失败、没产生订单
-                23	本地已发送，等待服务器返回超时
-
-                order_side	交易方向
-                0	买入
-                1	卖出
-
-                order_type	交易类型
-                    1	市价单
-                    2	限价
-                    51	盘前交易、限价
-                    52	盘后交易、限价
-            失败情况：
-
-                参数错误
-                客户端内部或网络错误
-                不满足下单条件
-
-        '''
-        ret_code, ret_data = self.ctx.place_order(price, qty, strcode, orderside, ordertype, envtype,
-                                                     order_deal_push)
-        #print(ret_code, ret_data)
-        return ret_code, ret_data
-
-    def set_order_status(self,status, orderid=0, envtype=0):
-        '''
-        功能：更改某指定美股订单状态。美股暂时不支持仿真交易。
-
-        :param status: 美股暂时只支持撤单，status的值只能为0。
-        :param orderid: 订单ID。
-        :param envtype: 交易环境参数
-                    0	真实交易
-                    1	仿真交易
-        :return:    ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0，ret_data为一个dataframe, 其中包括：
-
-                返回字符串	说明	    返回字符串	说明
-                code	    股票ID	stock_name	股票名称
-                dealt_avg_price	成交均价
-                dealt_qty	成交数量
-                qty	        订单数量
-                orderid	    订单ID
-                order_type	交易类型
-                price	    交易价格
-                status	    订单状态(具体状态如下)
-                submited_time	提交时间
-                updated_time	更新时间
-                order_side	    交易方向
-                status	        订单类型	status	订单类型
-                0	服务器处理中	1	等待成交
-                2	部分成交	    3	全部成交
-                4	已失效	    5	下单失败
-                6	已撤单	    7	已删除
-                8	等待开盘	    21	本地已发送
-                22	本地已发送，服务器返回下单失败、没产生订单
-                23	本地已发送，等待服务器返回超时
-                order_side	交易方向
-                    0	买入
-                    1	卖出
-                order_type	交易类型
-                    1	市价单
-                    2	限价
-                    51	盘前交易、限价
-                    52	盘后交易、限价
-        失败情况：
-                参数错误
-                客户端内部或网络错误
-                订单不存在
-        '''
-        ret_code, ret_data = self.ctx.set_order_status(status, orderid, envtype)
-        #print(ret_code, ret_data)
-        return ret_code, ret_data
-
-
-    def change_order(self, price, qty, orderid=0, envtype=0):
-        '''
-        功能：修改某指定美股订单。美股暂时不支持仿真交易。
-
-        :param price: 交易价格。
-        :param qty: 交易数量。
-        :param orderid: 订单ID。
-        :param envtype: 交易环境参数。如下表所示。
-            envtype	交易环境参数
-                0	真实交易
-                1	仿真交易
-        :return:ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0，ret_data为一个dataframe, 其中包括：
-
-            envtype: 交易环境参数。0是真实交易，1是仿真交易
-
-            orderid: 订单ID。
-
-        失败情况：
-
-            参数错误
-            客户端内部或网络错误
-            订单不存在
-        '''
-        ret_code, ret_data = self.ctx.change_order(price, qty, orderid, envtype)
-        #print(ret_code, ret_data)
-        return ret_code, ret_data
-
-    def accinfo_query(self,envtype=0):
-        '''
-        功能：查询美股账户信息。美股暂时不支持仿真环境
-
-        :param envtype:交易环境参数。如下表所示。
-            envtype	交易环境参数
-                0	真实交易
-                1	仿真交易
-        :return:ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0，ret_data为一个dataframe, 其中包括：
-
-                返回字符串	说明	返回字符串	说明
-                Power	购买力	ZCJZ	资产净值
-                ZQSZ	证券市值	XJJY	现金结余
-                KQXJ	可取现金	DJZJ	冻结资金
-                ZSJE	追收金额	ZGJDE	最高借贷额
-                YYJDE	已用借贷额	GPBZJ	股票保证金
-        失败情况：
-
-                参数错误
-                客户端内部或网络错误
-        '''
-        ret_code, ret_data = self.ctx.accinfo_query(envtype)
-        #print(ret_code, ret_data)
-        return ret_code, ret_data
-
-
-    def order_list_query(self, orderid="", statusfilter="",  strcode='', start='', end='', envtype=0):
-        '''
-        功能：查询美股今日订单列表。美股暂时不支持仿真环境。
-
-        :param orderid:指定订单id查询，为空或0为不指定。
-        :param statusfilter:状态过滤字符串，默认为空返回全部订单，”,”分隔需要返回的状态，如”1,2,3”返回的是等待成交，部分成交以及全部成交的订单，如下表所示
-                    statusfilter	返回订单的状态	statusfilter	返回订单的状态
-                    0	服务器处理中	1	等待成交
-                    2	部分成交	3	全部成交
-                    4	已失效	5	下单失败
-                    6	已撤单	7	已删除
-                    8	等待开盘	21	本地已发送
-                    22	本地已发送，服务器返回下单失败、没产生订单
-                    23	本地已发送，等待服务器返回超时
-        :param strcode:股票代码过滤，例如”hk.00700”，为空为不限制。
-        :param start: 下单时间过滤，格式”hh:mm:ss”, 过滤时间开始点，为空为00:00:00。
-        :param end: 下单时间过滤，格式”hh:mm:ss”, 过滤时间结束点，为空为23:59:59。
-        :param envtype:交易环境参数。如下表所示。
-                envtype	交易环境参数
-                0	真实交易
-                1	仿真交易
-        :return:ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0，ret_data为一个dataframe, 其中包括：
-
-                返回字符串	说明	返回字符串	说明
-                code	股票ID	stock_name	股票名称
-                dealt_avg_price	成交均价	dealt_qty	成交数量
-                qty	订单数量	orderid	订单ID
-                order_type	交易类型	price	交易价格
-                status	订单状态(具体状态如下)	submited_time	提交时间
-                updated_time	更新时间	order_side	交易方向
-                status	订单类型	status	订单类型
-                    0	服务器处理中	1	等待成交
-                    2	部分成交	3	全部成交
-                    4	已失效	5	下单失败
-                    6	已撤单	7	已删除
-                    8	等待开盘	21	本地已发送
-                    22	本地已发送，服务器返回下单失败、没产生订单
-                    23	本地已发送，等待服务器返回超时
-                order_side	交易方向
-                    0	买入
-                    1	卖出
-                order_type	交易类型
-                    1	市价单
-                    2	限价
-                    51	盘前交易、限价
-                    52	盘后交易、限价
-        失败情况：
-
-                参数错误
-                客户端内部或网络错误
-        '''
-        ret_code, ret_data = self.ctx.order_list_query(orderid, statusfilter, strcode, start, end, envtype)
-        #print(ret_code, ret_data)
-        return ret_code, ret_data
-
-    def position_list_query(self, strcode='', stocktype='', pl_ratio_min='', pl_ratio_max='', envtype=0):
-        '''
-        功能：查询美股持仓列表。美股暂时不支持仿真环境。
-
-        :param strcode: 股票代码过滤，例如”hk.00700”，为空为不限制。
-        :param stocktype: 股票类型
-                    正股	“STOCK”
-                    指数	“IDX”
-                    ETF基金	“ETF”
-                    涡轮牛熊	“WARRANT”
-                    债券	“BOND”
-        :param pl_ratio_min:盈亏比例过滤，“10”表示只返回盈亏比例10%以上（包括10%）的持仓，为空为不限制。
-        :param pl_ratio_max: 盈亏比例过滤，“10”表示只返回盈亏比例10%以下（包括10%）的持仓，为空为不限制。
-        :param envtype: 交易环境参数。如下表所示。
-            envtype	交易环境参数
-                0	真实交易
-                1	仿真交易
-        :return:    ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0，ret_data为一个dataframe, 其中包括：
-
-            返回字符串	说明	    返回字符串	说明
-            code	    股票ID	stock_name	股票名称
-            qty	        持有数量
-            can_sell_qty可卖数量
-            cost_price	成本价
-            cost_price_valid	成本价是否有效(非0有效)
-            market_val	市值
-            nominal_price	市价
-            pl_ratio	盈亏比例
-            pl_ratio_valid	盈亏比例是否有效(非0有效)
-            pl_val	盈亏金额
-            pl_val_valid	盈亏金额是否有效(非0有效)
-            today_buy_qty	今日买入数量
-            today_buy_val	今日买入金额
-            today_pl_val	今日盈亏金额
-            today_sell_qty	今日卖出数量
-            today_sell_val	今日卖出金额
-        失败情况：
-
-            参数错误
-            客户端内部或网络错误
-        '''
-        ret_code, ret_data = self.ctx.position_list_query(strcode, stocktype, pl_ratio_min, pl_ratio_max, envtype)
-        #print(ret_code, ret_data)
-        return ret_code, ret_data
-
-    def deal_list_query(self, envtype=0):
-        '''
-        功能：查询美股今日成交列表。美股暂时不支持仿真环境。
-        :param envtype: 交易环境参数。如下表所示。
-            envtype	交易环境参数
-                0	真实交易
-                1	仿真交易
-        :return: ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0，ret_data为一个dataframe, 其中包括：
-
-                code: 股票代码。
-
-                stock_name: 股票名称。
-
-                dealid: 成交ID。
-
-                orderid: 订单ID。
-
-                price: 交易价格。
-
-                qty: 交易数量。
-
-                orderside: 交易方向，0表示买入，1表示卖出。
-
-                time: 成交时间。
-
-        失败情况：
-
-                参数错误
-                客户端内部或网络错误
-        '''
-        ret_code, ret_data = self.ctx.deal_list_query(envtype)
-        #print(ret_code, ret_data)
-        return ret_code, ret_data
-
-
-    def history_order_list_query(self,statusfilter='', strcode='', start='', end='', envtype=0):
-        '''
-        功能：查询历史订单列表, 30秒内不能超过5次交易请求, 时间段最多90自然日。
-
-        :param statusfilter: 状态过滤字符串，为空返回全部订单，”,”分隔需要返回的状态，如”1,2,3”返回的是等待成交，部分成交以及全部成交的订单，状态如下表所示
-            statusfilter	返回订单的状态	statusfilter	返回订单的状态
-            0	服务器处理中	1	等待成交
-            2	部分成交    	3	全部成交
-            4	已失效	    5	下单失败
-            6	已撤单	    7	已删除
-            8	等待开盘	    21	本地已发送
-            22	本地已发送，服务器返回下单失败、没产生订单
-            23	本地已发送，等待服务器返回超时
-        :param strcode: 股票代码过滤，例如”hk.00700”，为空为不限制。
-        :param start: 历史订单查询起始时间，格式”yy-mm-dd”。
-        :param end: 历史订单查询截止时间，格式”yy-mm-dd”。 起止时间参数组合如下表所示：
-                start	end	查询时间段
-                空	非空	end前90天
-                非空	空	start后90天
-                空	空	90天前至当天
-        :param envtype: 交易环境参数。如下表所示。
-            envtype	交易环境参数
-                0	真实交易
-                1	仿真交易
-        :return:
-            ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0，ret_data为一个dataframe, 其中包括：
-
-            返回字符串	说明	返回字符串	说明
-                code	股票ID	stock_name	股票名称
-                orderid | 订单ID	dealt_qty	成交数量
-                order_type	交易类型	price	交易价格
-                status	订单状态(具体状态如下)	submited_time	提交时间
-                updated_time	更新时间	order_side	交易方向
-                qty	订单数量
-            status	订单类型	status	订单类型
-            0	服务器处理中	1	等待成交
-            2	部分成交	    3	全部成交
-            4	已失效	    5	下单失败
-            6	已撤单	    7	已删除
-            8	等待开盘	    21	本地已发送
-            22	本地已发送，服务器返回下单失败、没产生订单
-            23	本地已发送，等待服务器返回超时
-            order_side	交易方向
-                0	买入
-                1	卖出
-            order_type	交易类型
-                1	市价单
-                2	限价
-                51	盘前交易、限价
-                52	盘后交易、限价
-        失败情况：
-
-            参数错误
-            客户端内部或网络错误
-        '''
-        ret_code, ret_data = self.ctx.history_order_list_query(statusfilter, strcode, start, end, envtype)
-        #print(ret_code, ret_data)
-        return ret_code, ret_data
-
-    def history_deal_list_query(self, strcode='', start='', end='', envtype=0):
-        '''
-        功能：查询历史订单列表, 30秒内不能超过5次请求, 时间段最多90自然日。
-
-        :param strcode: 股票代码过滤，例如”hk.00700”，为空为不限制。
-        :param start: 历史订单查询其实时间，格式”yy-mm-dd”, 为空则为end字段前90天。
-        :param end:  历史订单查询其实时间，格式”yy-mm-dd”, 为空则为start字段后90天，若start为空，则end为当天。
-        :param envtype: 交易环境参数。如下表所示。
-            envtype	交易环境参数
-                0	真实交易
-                1	仿真交易
-        :return: ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0，ret_data为一个dataframe, 其中包括：
-
-            code: 股票代码。
-
-            stock_name: 股票名称。
-
-            dealid: 成交ID。
-
-            orderid: 订单ID。
-
-            price: 交易价格。
-
-            qty: 交易数量。
-
-            order_side: 交易方向，0表示买入，1表示卖出。
-
-            time: 成交时间。
-
-        失败情况：
-
-            参数错误
-            客户端内部或网络错误
-        '''
-        ret_code, ret_data = self.ctx.history_deal_list_query(strcode, start, end, envtype)
-        #print(ret_code, ret_data)
-        return ret_code, ret_data
-
-    def subscribe_order_deal_push(self, order_list, order_deal_push=True, envtype=0):
-        '''
-        功能：订阅订单成交推送。
-
-        :param order_list: 订阅的订单ID，多个或单个，列表或字符串（字符串用英文逗号分割），单独传空表示订阅全部订单，包括后来新增的。
-        :param order_deal_push: 是否订阅成交推送。
-        :param envtype: 交易环境参数
-                0	真实交易
-                1	仿真交易
-        :return: ret_code失败时，ret_data返回为错误描述字符串； 正常情况下，ret_code为0。
-
-        失败情况：
-            参数错误
-            客户端内部或网络错误
-        '''
-        ret_code = self.ctx.subscribe_order_deal_push(order_list, order_deal_push, envtype)
-        #print(ret_code)
-        return ret_code
+        ret, content =  super(HSTradeDeal,self).on_recv_rsp(rsp_pb)
+
+        if ret == RET_OK:
+            print("HSTradeDeal content={}".format(content))
+
+        return ret, content
+
+class HSTradeOrder(TradeOrderHandlerBase):
+    '''
+    order update push
+    '''
+    def on_recv_rsp(self,rsp_pb):
+        ret, content = super(HSTradeOrder,self).on_recv_rsp(rsp_pb)
+
+        if ret == RET_OK:
+            print('*HSTradeOrder content={}'.format(content))
+        return ret, content

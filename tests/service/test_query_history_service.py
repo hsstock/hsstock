@@ -1,7 +1,7 @@
 import unittest
 
-import futuquant as ft
-from futuquant.constant import MKT_MAP
+import futuquant_old as ft
+from hsstock.futuquant.common.constant import MKT_MAP
 
 from hsstock.utils.app_config import AppConfig
 from hsstock.service.quote_service import LF
@@ -9,8 +9,8 @@ from hsstock.service.quote_service import HF
 from hsstock.service.quote_service import Subscribe
 from hsstock.service.query_history_service import QueryHistory
 
-from futuquant.constant import RET_ERROR
-from futuquant.constant import RET_OK
+from hsstock.futuquant.common.constant import RET_ERROR
+from hsstock.futuquant.common.constant import RET_OK
 
 class QueryHistoryServiceTestCase(unittest.TestCase):
 
@@ -31,6 +31,7 @@ class QueryHistoryServiceTestCase(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.ctx.stop()
+        cls.ctx.close()
         print('tearDownClass')
 
     def setUp(self):
