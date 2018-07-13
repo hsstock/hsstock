@@ -19,10 +19,10 @@ class TUShareServiceTestCase(unittest.TestCase):
     def tearDown(self):
         print('tearDown')
 
-    # def test_get_his_data(self):
-    #     df = TUShareServiceTestCase.tss.get_history_kline('600000')
-    #     self.assertTrue(len(df) > 0 )
-    #
+    def test_get_his_data(self):
+        TUShareServiceTestCase.tss.get_hist_data('600000')
+        self.assertTrue(1 > 0 )
+
     # def test_get_h_data(self):
     #     df = TUShareServiceTestCase.tss.get_h_data('600000')
     #     self.assertTrue(len(df) > 0 )

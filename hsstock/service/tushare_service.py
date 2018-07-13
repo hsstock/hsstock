@@ -7,7 +7,7 @@ from sqlalchemy.exc import OperationalError
 from hsstock.service.store_service import StoreService
 from hsstock.utils.app_logging import setup_logging
 from hsstock.utils.date_util import DateUtil
-import hsstock.utils.tick_deco  as tick
+import hsstock.utils.decorator  as tick
 from hsstock.utils.app_config import AppConfig
 import hsstock.tushare as ts
 

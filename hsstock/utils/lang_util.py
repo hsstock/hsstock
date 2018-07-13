@@ -42,6 +42,15 @@ def create_factory(cls_name, field_names):
 
     return type(cls_name, (object,), cls_attrs)  # <7>
 
+def Singleton(cls):
+    _instance = {}
+
+    def _singleton(*args, **kargs):
+        if cls not in _instance:
+            _instance[cls] = cls(*args, **kargs)
+        return _instance[cls]
+
+    return _singleton
 
 if __name__ == '__main__':
     Dog = create_factory('Dog', ['name', 'weight', 'owner'])

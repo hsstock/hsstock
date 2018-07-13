@@ -3,11 +3,8 @@
 import futuquant_old as ft
 
 from hsstock.utils.app_config import AppConfig
-from hsstock.service.quote_service import LF
-from hsstock.service.quote_service import HF
-from hsstock.service.quote_service import Subscribe
-from hsstock.service.trade_service import HKTrade
-from hsstock.service.trade_service import USTrade
+from hsstock.service.quote_service import *
+from hsstock.service.trade_service import Trade
 from hsstock.service.query_history_service import QueryHistory
 
 
@@ -36,9 +33,9 @@ class QEEngine(object):
         self.lf = LF(quote_ctx)
         self.sub = Subscribe(quote_ctx, total, kline, tiker, quote, order_book, rt_data, broker)
         self.hf = HF(quote_ctx, self.sub)
-        self.hktrade = HKTrade(self.tradehk_ctx)
+        self.hktrade = Trade(self.tradehk_ctx)
         self.hktrade.unlock_trade(self.decipher)
-        self.ustrade = USTrade(self.tradeus_ctx)
+        self.ustrade = Trade(self.tradeus_ctx)
         self.ustrade.unlock_trade(self.decipher)
         self.queryhistory = QueryHistory(quote_ctx)
 

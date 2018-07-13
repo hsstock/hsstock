@@ -2,6 +2,9 @@
 
 from abc import ABC, abstractclassmethod
 from hsstock.futuquant import *
+from hsstock.service.quote_service import *
+from hsstock.utils.decorator import *
+from hsstock.common.constant import *
 
 class Trade(ABC):
     def __init__(self,trade_ctx):
@@ -22,7 +25,8 @@ class Trade(ABC):
         ret_code, ret_data = self.ctx.get_acc_list()
         return ret_code, ret_data
 
-    def unlock_trade(self, password, password_md5=None,is_unlock=True):
+    @rate_limit(FREQ.UNLOCK_TRADE)
+    def unlock_trade(self, password=None, password_md5=None,is_unlock=True):
         '''
         功能：解锁交易
 
@@ -34,6 +38,7 @@ class Trade(ABC):
             ret == RET_OK时, data为None，如果之前已经解锁过了，data为提示字符串，指示出已经解锁
             ret != RET_OK时， data为错误字符串
         '''
+
         ret_code, ret_data = self.ctx.unlock_trade(password, password_md5)
         return ret_code, ret_data
 
@@ -92,6 +97,7 @@ class Trade(ABC):
         ret_code, ret_data = self.ctx.position_list_query(code, pl_ratio_min, pl_ratio_max, trd_env, acc_id)
         return ret_code, ret_data
 
+    @rate_limit(FREQ.PLACE_ORDER)
     def place_order(self, price, qty, code, trd_side=TrdSide.NONE, order_type=OrderType.NORMAL, adjust_limit=0, trd_env=TrdEnv.SIMULATE, acc_id=0):
         '''
         功能：下单交易
@@ -144,6 +150,7 @@ class Trade(ABC):
         ret_code, ret_data = self.ctx.order_list_query(order_id, status_filter_list, code, start, end, trd_env,acc_id)
         return ret_code, ret_data
 
+    @rate_limit(FREQ.MODIFY_ORDER)
     def modify_order(self, modify_order_op, order_id, qty, price, adjust_limit=0, trd_env=TrdEnv.REAL, acc_id=0):
         '''
         功能：
@@ -190,6 +197,7 @@ class Trade(ABC):
         ret_code, ret_data = self.ctx.deal_list_query(code,trd_env,acc_id)
         return ret_code, ret_data
 
+    @rate_limit(FREQ.HISTORY_ORDER_LIST_QUERY)
     def history_order_list_query(self,status_filter_list=[], code='', start='', end='', trd_env=TrdEnv.REAL, acc_id=0):
         '''
         功能：
@@ -207,6 +215,7 @@ class Trade(ABC):
         ret_code, ret_data = self.ctx.history_order_list_query(status_filter_list, code, start, end, trd_env, acc_id)
         return ret_code, ret_data
 
+    @rate_limit(FREQ.HISTORY_DEAL_LIST_QUERY)
     def history_deal_list_query(self, code='', start='', end='', trd_env=TrdEnv.REAL,acc_id=0):
         '''
         功能：获取历史成交列表。获取账户的历史交易成交列表。

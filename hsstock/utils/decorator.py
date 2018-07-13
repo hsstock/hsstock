@@ -1,5 +1,7 @@
 import time
 
+from hsstock.common.freqlimit import FreqLimit
+
 DEFAULT_FMT = '[{elapsed:0.8f}s] {name}({args}) -> {result}'
 
 def clock(fmt=DEFAULT_FMT):
@@ -16,6 +18,19 @@ def clock(fmt=DEFAULT_FMT):
         return clocked
     return decorate
 
+def rate_limit(act):
+    def decorate(func):
+        def rate_limited(*_args):
+            freqlimit = FreqLimit()
+            _result = freqlimit.rate_limit(act)
+            if _result is not True:
+                _ret_code, _ret_data = func(*_args)
+            else:
+                print('rate limited')
+            #result = repr(_ret_code,_ret_data)
+            return _ret_code,_ret_data
+        return rate_limited
+    return decorate
 
 if __name__ == '__main__':
 
@@ -26,3 +41,4 @@ if __name__ == '__main__':
 
     for i in range(3):
         snooze(.123)
+

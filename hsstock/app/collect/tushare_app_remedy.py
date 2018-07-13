@@ -7,7 +7,7 @@ from datetime import datetime, date, timedelta
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 from hsstock.utils.app_logging import setup_logging
-import hsstock.utils.tick_deco  as tick
+import hsstock.utils.decorator  as tick
 from hsstock.service.tushare_service import TUShare_service
 from hsstock.utils.date_util import DateUtil
 from hsstock.utils.threadutil import MyThread
