@@ -107,6 +107,12 @@ def job_hf(worker):
         worker.get_order_book('HK.00700')
         if is_closing is True:
             break
+        worker.ctx.set_handler(HSStockQuoteHandler())
+        worker.ctx.set_handler(HSOrderBookHandler())
+        worker.ctx.set_handler(HSCurKlineHandler())
+        worker.ctx.set_handler(HSTickerHandler())
+        worker.ctx.set_handler(HSRTDataHandler())
+        worker.ctx.set_handler(HSBrokerHandler())
 
 def job_hk_trade(worker):
     '''
@@ -114,6 +120,7 @@ def job_hk_trade(worker):
     :return:
     '''
     global is_closing
+    global hk_ctx
     while not is_closing:
         worker.get_acc_list()
         if is_closing is True:
@@ -143,14 +150,10 @@ def job_hk_trade(worker):
         worker.history_deal_list_query('HK.00700','2018-06-01 00:00:00','2018-07-10 00:00:00',TrdEnv.REAL)
         if is_closing is True:
             break
-        # TradeServiceTestCase.hk_ctx.set_handler(HSTradeOrder())
-        # worker.place_order(300, 100, "HK.00700", TrdSide.BUY)
-        # TradeServiceTestCase.us_ctx.set_handler(HSTradeOrder())
-        # worker.place_order(150, 100, "US.AAPL", TrdSide.BUY)
-        # TradeServiceTestCase.hk_ctx.set_handler(HSTradeDeal())
-        # worker.place_order(300, 100, "HK.00700", TrdSide.BUY)
-        # TradeServiceTestCase.us_ctx.set_handler(HSTradeDeal())
-        # worker.place_order(150, 100, "US.AAPL", TrdSide.BUY)
+        hk_ctx.set_handler(HSTradeOrder())
+        hk_ctx.set_handler(HSTradeDeal())
+        worker.place_order(300, 100, "HK.00700", TrdSide.BUY)
+        time.sleep(FREQLIMIT[FREQ.TOTAL_SECONDS])
 
 def job_us_trade(worker):
     '''
@@ -158,6 +161,7 @@ def job_us_trade(worker):
     :return:
     '''
     global is_closing
+    global us_ctx
     while not is_closing:
         worker.get_acc_list()
         if is_closing is True:
@@ -187,15 +191,11 @@ def job_us_trade(worker):
         worker.history_deal_list_query('US.AAPL','2018-06-01 00:00:00','2018-07-10 00:00:00',TrdEnv.REAL)
         if is_closing is True:
             break
-        # TradeServiceTestCase.hk_ctx.set_handler(HSTradeOrder())
-        # worker.place_order(300, 100, "HK.00700", TrdSide.BUY)
-        # TradeServiceTestCase.us_ctx.set_handler(HSTradeOrder())
-        # worker.place_order(150, 100, "US.AAPL", TrdSide.BUY)
-        # TradeServiceTestCase.hk_ctx.set_handler(HSTradeDeal())
-        # worker.place_order(300, 100, "HK.00700", TrdSide.BUY)
-        # TradeServiceTestCase.us_ctx.set_handler(HSTradeDeal())
-        # worker.place_order(150, 100, "US.AAPL", TrdSide.BUY)
+        us_ctx.set_handler(HSTradeOrder())
+        us_ctx.set_handler(HSTradeDeal())
+        worker.place_order(150, 100, "US.AAPL", TrdSide.BUY)
 
+        time.sleep(FREQLIMIT[FREQ.TOTAL_SECONDS])
 
 def signal_int_handler(signum, frame):
     global is_closing
@@ -285,17 +285,17 @@ def main():
     hf_ctx.start()
     sub = Subscribe(hf_ctx, total, kline, tiker, quote, order_book, rt_data, broker)
     hf = HF(hf_ctx, sub)
-    #hf_task(hf)
+    hf_task(hf)
 
     hk_ctx = ft.OpenHKTradeContext(config.get('ftserver', 'host'), int(config.get('ftserver', 'port')))
     hk_trade = Trade(hk_ctx)
     hk_trade.unlock_trade(None,config.get('ftserver', 'decipher'))
-    hk_trade_task(hk_trade)
+    #hk_trade_task(hk_trade)
 
     us_ctx = ft.OpenUSTradeContext(config.get('ftserver', 'host'), int(config.get('ftserver', 'port')))
     us_trade = Trade(us_ctx)
     us_trade.unlock_trade(None, config.get('ftserver', 'decipher'))
-    us_trade_task(us_trade)
+    #us_trade_task(us_trade)
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_int_handler)

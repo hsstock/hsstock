@@ -725,6 +725,9 @@ class Subscribe(object):
             ret == RET_OK err_message为None
             ret != RET_OK err_message为错误描述字符串
         '''
+        code_list = unique_and_normalize_list(code_list)
+        subtype_list = unique_and_normalize_list(subtype_list)
+
         ret = self.quota.prefeching_cosume(code_list,subtype_list)
         if ret == RET_ERROR:
             print("overquota")
@@ -755,6 +758,9 @@ class Subscribe(object):
             ret == RET_OK err_message为None
             ret != RET_OK err_message为错误描述字符串
         '''
+        code_list = unique_and_normalize_list(code_list)
+        subtype_list = unique_and_normalize_list(subtype_list)
+
         ret = self.quota.prefeching_recycle(code_list, subtype_list)
         if ret == RET_ERROR:
             print("overtotal quota")
@@ -826,7 +832,7 @@ class Quota(object):
         :param subtype:
         :return:
         '''
-        quota = self.calc_quota(code_list,subtype_list)
+        quota = self._calc_quota(code_list, subtype_list)
         if self.remaining_quota >= quota:
             self.remaining_quota -= quota
         else:
@@ -839,7 +845,7 @@ class Quota(object):
         :param subtype:
         :return:
         '''
-        quota = self.calc_quota(code_list, subtype_list)
+        quota = self._calc_quota(code_list, subtype_list)
         if self.remaining_quota >= quota:
             return self.remaining_quota
         else:
@@ -851,7 +857,7 @@ class Quota(object):
         :param subtype:
         :return:
         '''
-        quota = self.calc_quota(code_list, subtype_list)
+        quota = self._calc_quota(code_list, subtype_list)
         if self.remaining_quota + quota <= self.total:
             self.remaining_quota += quota
         else:
@@ -864,13 +870,13 @@ class Quota(object):
         :param subtype:
         :return:
         '''
-        quota = self.calc_quota(code_list, subtype_list)
+        quota = self._calc_quota(code_list, subtype_list)
         if self.remaining_quota + quota <= self.total:
             return self.remaining_quota
         else:
             return RET_ERROR
 
-    def enum_quota(self,subtype):
+    def _enum_quota(self, subtype):
         quota = 0
         if "TICKER" == subtype:
             quota = self.ticker
@@ -902,15 +908,93 @@ class Quota(object):
             pass
         return int(quota)
 
-    def calc_quota(self, code_list, subtype_list):
-        code_list = unique_and_normalize_list(code_list)
-        subtype_list = unique_and_normalize_list(subtype_list)
-
+    def _calc_quota(self, code_list, subtype_list):
         quota = 0
         for subtype in subtype_list:
-            quota += self.enum_quota(subtype)
+            quota += self._enum_quota(subtype)
         quota *= len(code_list)
         return quota
 
+class HSStockQuoteHandler(StockQuoteHandlerBase):
+    '''
+    功能：异步处理推送的订阅股票的报价。
+    '''
+    def on_recv_rsp(self, rsp_str):
+        ret_code, data = super(HSStockQuoteHandler, self).on_recv_rsp(rsp_str)
+        if ret_code != RET_OK:
+            print("HSStockQuoteHandler: error, msg: %s" % data)
+            return RET_ERROR, data
 
+        print("HSStockQuoteHandler ", data)  # HSStockQuoteHandler自己的处理逻辑
 
+        return RET_OK, data
+
+class HSOrderBookHandler(OrderBookHandlerBase):
+    '''
+    功能：异步处理推送的实时摆盘。
+    '''
+    def on_recv_rsp(self, rsp_str):
+        ret_code, data = super(HSOrderBookHandler, self).on_recv_rsp(rsp_str)
+        if ret_code != RET_OK:
+            print("HSOrderBookHandler: error, msg: %s" % data)
+            return RET_ERROR, data
+
+        print("HSOrderBookHandler ", data)  # HSOrderBookHandler自己的处理逻辑
+
+        return RET_OK, data
+
+class HSCurKlineHandler(CurKlineHandlerBase):
+    '''
+    功能：异步处理推送的k线数据。
+    '''
+    def on_recv_rsp(self, rsp_str):
+        ret_code, data = super(HSCurKlineHandler, self).on_recv_rsp(rsp_str)
+        if ret_code != RET_OK:
+            print("HSCurKlineHandler: error, msg: %s" % data)
+            return RET_ERROR, data
+
+        print("HSCurKlineHandler ", data)  # HSCurKlineHandler自己的处理逻辑
+
+        return RET_OK, data
+
+class HSTickerHandler(TickerHandlerBase):
+    '''
+    功能：异步处理推送的逐笔数据。
+    '''
+    def on_recv_rsp(self, rsp_str):
+        ret_code, data = super(HSTickerHandler, self).on_recv_rsp(rsp_str)
+        if ret_code != RET_OK:
+            print("HSTickerHandler: error, msg: %s" % data)
+            return RET_ERROR, data
+
+        print("HSTickerHandler ", data)  # HSTickerHandler自己的处理逻辑
+
+        return RET_OK, data
+
+class HSRTDataHandler(RTDataHandlerBase):
+    '''
+    功能：异步处理推送的分时数据。
+    '''
+    def on_recv_rsp(self, rsp_str):
+        ret_code, data = super(HSRTDataHandler, self).on_recv_rsp(rsp_str)
+        if ret_code != RET_OK:
+            print("HSRTDataHandler: error, msg: %s" % data)
+            return RET_ERROR, data
+
+        print("HSRTDataHandler ", data)  # HSRTDataHandler自己的处理逻辑
+
+        return RET_OK, data
+
+class HSBrokerHandler(BrokerHandlerBase):
+    '''
+    功能：异步处理推送的经纪数据。
+    '''
+    def on_recv_rsp(self, rsp_str):
+        ret_code, data = super(HSBrokerHandler, self).on_recv_rsp(rsp_str)
+        if ret_code != RET_OK:
+            print("HSBrokerHandler: error, msg: %s" % data)
+            return RET_ERROR, data
+
+        print("HSBrokerHandler ", data)  # HSBrokerHandler自己的处理逻辑
+
+        return RET_OK, data
