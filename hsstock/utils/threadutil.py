@@ -3,7 +3,7 @@ import logging
 import threading
 
 class MyThread(threading.Thread):
-    def __init__(self, threadname,job_func,ts):
+    def __init__(self, threadname,job_func,ts=None):
         threading.Thread.__init__(self)
         self.threadname = threadname
         self.ts = ts

@@ -1,6 +1,6 @@
 import unittest
 
-import futuquant_old as ft
+import hsstock.futuquant as ft
 from hsstock.futuquant.common.constant import MKT_MAP
 
 from hsstock.utils.app_config import AppConfig

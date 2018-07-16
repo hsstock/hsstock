@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-import futuquant_old as ft
+import hsstock.futuquant as ft
 
 from hsstock.utils.app_config import AppConfig
 from hsstock.service.quote_service import *

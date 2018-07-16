@@ -312,6 +312,10 @@ def _cap_tops(last=5, pageNo=1, retry_count=3, pause=0.001, dataArr=pd.DataFrame
             print(e)
 
 ```
+5.
+```
+kill -9 $(ps aux | grep python | awk '{print $2}')
+```
 #### 数据资产
 
 [通联数据](https://app.wmcloud.com/cloud-portal/#/portal)

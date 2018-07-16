@@ -67,6 +67,7 @@ class LF(object):
         # print("TRADING DAYS")
         # for x in ret_data:
         #     print(x)
+
         return ret_code, ret_data
 
     def get_stock_basicinfo(self, market, stock_type=SecurityType.STOCK):
