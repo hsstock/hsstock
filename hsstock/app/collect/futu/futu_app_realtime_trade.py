@@ -19,6 +19,8 @@ from hsstock.common.freqlimit import FreqLimit
 from hsstock.common.constant import *
 from hsstock.service.quote_service import Subscribe
 from hsstock.service.trade_service import *
+from hsstock.utils.lang_util import *
+
 
 sched = BlockingScheduler()
 
@@ -28,6 +30,30 @@ hf_ctx = None
 hk_ctx = None
 us_ctx = None
 
+def job_once_global(worker):
+    '''
+    功能：获取一次性的全局数据
+    :param worker:
+    :return:
+    '''
+    global is_closing
+
+def job_once_custom(worker):
+    '''
+
+    :param worker:
+    :return:
+    '''
+    global is_closing
+
+def job_realtime_global(worker):
+    '''
+
+    :param workery:
+    :return:
+    '''
+    global is_closing
+
 def job_lf(worker):
     '''
     线程工作：低频数据接口
@@ -36,26 +62,35 @@ def job_lf(worker):
     global is_closing
 
     while not is_closing:
-        worker.get_trading_days('US')
+        begin = time.time()
+        markets = enumclass_to_list(Market)
+        for market in markets:
+            worker.get_trading_days(market)
         if is_closing is True:
             break
-        worker.get_stock_basicinfo('US', 'STOCK')
+        securitytypes = enumclass_to_list(SecurityType)
+        for market in markets:
+            for securitytype in securitytypes:
+                worker.get_stock_basicinfo(market, securitytype)
         if is_closing is True:
             break
-        worker.get_multiple_history_kline(['US.NTES'], '2018-06-20', '2018-06-25', KLType.K_DAY, AuType.QFQ)
+
+        worker.get_multiple_history_kline(['US.NTES','US.BABA'], '2018-06-20', '2018-06-25', KLType.K_DAY, AuType.QFQ)
         if is_closing is True:
             break
-        worker.get_multiple_history_kline(['HK.00700'], '2018-06-20', '2018-06-25',
-                                                                 KLType.K_DAY, AuType.QFQ)
+        worker.get_multiple_history_kline(['HK.00771','HK.00700'], '2018-06-20', '2018-06-25',
+                                                                  KLType.K_DAY, AuType.QFQ)
+        if is_closing is True:
+             break
+
+        worker.get_history_kline('US.AAPL','2018-01-01', '2018-06-29',KLType.K_5M)
         if is_closing is True:
             break
-        worker.get_history_kline('US.AAPL','2018-06-20', '2018-06-25')
+        worker.get_history_kline('HK.00700', '2018-01-01', '2018-06-29',KLType.K_5M)
         if is_closing is True:
             break
-        worker.get_history_kline('HK.00700', '2018-06-20', '2018-06-25')
-        if is_closing is True:
-            break
-        worker.get_autype_list(['US.AAPL'])
+        break
+        worker.get_autype_list(['US.AAPL','HK.00700'])
         if is_closing is True:
             break
         worker.get_autype_list(['HK.00700'])
@@ -64,24 +99,30 @@ def job_lf(worker):
         worker.get_market_snapshot(['HK.00700', 'US.AAPL'])
         if is_closing is True:
             break
-        worker.get_plate_list(Market.US)
+
+        plate_list = []
+        for market in markets:
+            ret_code, ret_data = worker.get_plate_list(market)
+            if ret_code is RET_OK:
+                plate_list.append(ret_data)
         if is_closing is True:
             break
-        worker.get_plate_list(Market.HK)
-        if is_closing is True:
-            break
-        worker.get_plate_list(Market.SH)
-        if is_closing is True:
-            break
-        worker.get_plate_list(Market.SZ)
-        if is_closing is True:
-            break
-        worker.get_plate_stock('US.BK2004')
-        if is_closing is True:
-            break
+
+        # for i in range(0,len(plate_list),1):
+        #     for j in range(0, len(plate_list[i]), 1):
+        #         worker.get_plate_stock(plate_list[i].iloc[j].code)
+        #         print('get_plate_stock current progress - {}.{}'.format(i,j))
+        #         time.sleep(FREQLIMIT[FREQ.TOTAL_SECONDS]/FREQLIMIT[FREQ.GET_PLATE_STOCK])
+        # if is_closing is True:
+        #     break
+
         worker.get_global_state()
         if is_closing is True:
             break
+
+        end = time.time()
+        print(end-begin)
+        time.sleep(FREQLIMIT[FREQ.TOTAL_SECONDS] - end + begin)
 
 def job_hf(worker):
     '''
@@ -286,17 +327,17 @@ def main():
     hf_ctx.start()
     sub = Subscribe(hf_ctx, total, kline, tiker, quote, order_book, rt_data, broker)
     hf = HF(hf_ctx, sub)
-    hf_task(hf)
+    #hf_task(hf)
 
     hk_ctx = ft.OpenHKTradeContext(config.get('ftserver', 'host'), int(config.get('ftserver', 'port')))
     hk_trade = Trade(hk_ctx)
     hk_trade.unlock_trade(None,config.get('ftserver', 'decipher'))
-    #hk_trade_task(hk_trade)
+    hk_trade_task(hk_trade)
 
     us_ctx = ft.OpenUSTradeContext(config.get('ftserver', 'host'), int(config.get('ftserver', 'port')))
     us_trade = Trade(us_ctx)
     us_trade.unlock_trade(None, config.get('ftserver', 'decipher'))
-    #us_trade_task(us_trade)
+    us_trade_task(us_trade)
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_int_handler)

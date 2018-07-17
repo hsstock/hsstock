@@ -52,6 +52,21 @@ def Singleton(cls):
 
     return _singleton
 
+def enumclass_to_list(cls):
+    '''
+    枚举类的属性值转换数组，最后一个为"NONE"
+    :param cls: 枚举类
+    :return:
+    '''
+    ret = []
+    for e in dir(cls):
+        if e == 'NONE':
+            continue
+        if e == "__class__":
+            break
+        ret.append(e)
+    return ret
+
 if __name__ == '__main__':
     Dog = create_factory('Dog', ['name', 'weight', 'owner'])
     d1 = Dog('wc',80,'hujb')

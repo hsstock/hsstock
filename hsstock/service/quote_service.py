@@ -4,6 +4,8 @@ from hsstock.futuquant import *
 from hsstock.model.subscribe import SubItem
 from hsstock.utils.decorator import *
 from hsstock.common.constant import *
+from hsstock.service.store_service import StoreService
+
 
 '''
 行情API
@@ -44,8 +46,19 @@ K线	2
 '''
 class LF(object):
     def __init__(self,quote_ctx):
-        print('LF')
         self.ctx = quote_ctx
+        self.storeservice = StoreService()
+
+    def is_holiday(self,market,date):
+        '''
+                判断是否为交易日，返回True or False
+        '''
+        ret_code, ret_data = self.get_trading_days(market)
+        if ret_code == RET_ERROR:
+            print(ret_data)
+            exit()
+
+        return date not in ret_data
 
     def get_trading_days(self, market, start_date=None, end_date=None):
         '''
@@ -95,7 +108,8 @@ class LF(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        #print(ret_data)
+        table = 'ft_stock_basicinfo'
+        self.storeservice.insert_many(table, ret_data, 'append')
         return ret_code, ret_data
 
     def get_multiple_history_kline(self, codelist=[], start=None, end=None, ktype=KLType.K_DAY, autype=AuType.QFQ):
@@ -132,6 +146,9 @@ class LF(object):
             print(ret_data)
             #exit()
         # print(ret_data)
+        table = 'ft_history_kline'
+        for item in ret_data:
+            self.storeservice.insert_many(table, item, 'append')
         return ret_code, ret_data
 
     def get_history_kline(self, code, start=None, end=None, ktype=KLType.K_DAY, autype=AuType.QFQ,fields=KL_FIELD.ALL):
@@ -197,6 +214,14 @@ class LF(object):
             print(ret_data)
             #exit()
         #print(ret_data)
+        if ktype == KLType.K_DAY:
+            table = 'ft_history_kline'
+        else:
+            table = 'ft_history_kline_' + ktype
+        if not isinstance(ret_data,str):
+            if len(ret_data) > 0 :
+                self.storeservice.insert_many(table, ret_data, 'append')
+                print(">>>>>>0")
         return ret_code, ret_data
 
     def get_autype_list(self, code_list):
@@ -232,6 +257,8 @@ class LF(object):
             print(ret_data)
             #exit()
         #print(ret_data)
+        table = 'ft_autype'
+        self.storeservice.insert_many(table, ret_data, 'append')
         return ret_code, ret_data
 
     @rate_limit(FREQ.GET_MARKET_SNAPSHOT)
@@ -345,6 +372,8 @@ class LF(object):
             print(ret_data)
             exit()
         #print(ret_data)
+        table = 'ft_market_snapshot'
+        self.storeservice.insert_many(table, ret_data, 'append')
         return ret_code, ret_data
 
     @rate_limit(FREQ.GET_PLATE_STOCK)
@@ -373,6 +402,8 @@ class LF(object):
             print(ret_data)
             exit()
         # print(ret_data)
+        table = 'ft_plate_stock'
+        self.storeservice.insert_many(table, ret_data, 'append')
         return ret_code, ret_data
 
     @rate_limit(FREQ.GET_PLATE_LIST)
@@ -403,6 +434,8 @@ class LF(object):
             print(ret_data)
             exit()
         #print(ret_data)
+        table = 'ft_plate_list'
+        self.storeservice.insert_many(table, ret_data, 'append')
         return ret_code, ret_data
 
     def get_global_state(self):
@@ -429,7 +462,6 @@ class LF(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        #print(ret_data)
         return ret_code, ret_data
 
     @clock()

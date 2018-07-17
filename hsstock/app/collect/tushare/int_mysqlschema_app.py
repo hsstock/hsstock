@@ -808,7 +808,7 @@ def main():
         #     ]
         # },
         {
-            "table": "ts2_hist_data_5",
+            "table": "ts2_hist_data_5m",
             "dtype": {
                 "date": sa.types.DATETIME,
                 "open": sa.types.FLOAT,

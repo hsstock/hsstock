@@ -82,12 +82,12 @@ def job_once_global_5m(ts):
     global is_closing
     df = ts.get_stock_basics()
     cont = False
-    lastsymbol = '600122'
+    #lastsymbol = '600122'
     for symbol in df['name'].index.values:
-        if symbol == lastsymbol:
-            cont = True
-        if not cont:
-            continue
+        # if symbol == lastsymbol:
+        #     cont = True
+        # if not cont:
+        #     continue
         if not is_closing:
             ts.get_hist_data(symbol,None,None,'5')
             time.sleep(2)
