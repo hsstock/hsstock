@@ -1022,10 +1022,10 @@ class HSBrokerHandler(BrokerHandlerBase):
     功能：异步处理推送的经纪数据。
     '''
     def on_recv_rsp(self, rsp_str):
-        ret_code, data = super(HSBrokerHandler, self).on_recv_rsp(rsp_str)
+        ret_code, code, data = super(HSBrokerHandler, self).on_recv_rsp(rsp_str)
         if ret_code != RET_OK:
-            print("HSBrokerHandler: error, msg: %s" % data)
-            return RET_ERROR, data
+            print("HSBrokerHandler: error, msg: %s" % code)
+            return RET_ERROR, code
 
         print("HSBrokerHandler ", data)  # HSBrokerHandler自己的处理逻辑
 

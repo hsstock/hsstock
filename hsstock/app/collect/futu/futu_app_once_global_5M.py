@@ -73,6 +73,8 @@ def job_once_global_m5(worker):
 
         plate_stock = []
         for i in range(0,len(plate_list),1):
+            if is_closing is True:
+                break
             for j in range(0, len(plate_list[i]), 1):
                 print(plate_list[i].iloc[j].code)
                 ret_code, ret_data = worker.get_plate_stock(plate_list[i].iloc[j].code)
@@ -84,6 +86,8 @@ def job_once_global_m5(worker):
                 time.sleep(FREQLIMIT[FREQ.TOTAL_SECONDS] / FREQLIMIT[FREQ.GET_PLATE_LIST])
 
         for i in range(0,len(plate_stock),1):
+            if is_closing is True:
+                break
             for j in range(0, len(plate_stock[i]), 1):
                 print(plate_stock[i].iloc[j].code)
                 worker.get_history_kline(plate_stock[i].iloc[j].code, '2018-01-01','2018-07-17',ktype=KLType.K_5M)

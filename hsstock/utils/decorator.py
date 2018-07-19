@@ -18,7 +18,7 @@ def clock(fmt=DEFAULT_FMT):
         return clocked
     return decorate
 
-def rate_limit(act):
+def rate_limit(act,retry_count=3,wait=2):
     def decorate(func):
         def rate_limited(*_args):
             freqlimit = FreqLimit()
@@ -27,6 +27,13 @@ def rate_limit(act):
                 _ret_code, _ret_data = func(*_args)
                 return _ret_code, _ret_data
             else:
+                for retry in range(1,retry_count,1):
+                    time.sleep(wait)
+                    print("retry *******{}".format(retry))
+                    _result = freqlimit.rate_limit(act)
+                    if _result is not True:
+                        _ret_code, _ret_data = func(*_args)
+                        return _ret_code, _ret_data
                 print('rate limited')
                  #result = repr(_ret_code,_ret_data)
                 return _result, None
