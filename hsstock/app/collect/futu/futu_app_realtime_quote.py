@@ -150,9 +150,17 @@ def job_hf(worker):
         # if is_closing is True:
         #     break
     print( enumclass_to_list(SubType) )
-    worker.subservice.subscribe(['SH.000063','SZ.002624','SH.601138','SH.601965','SZ.002230','SZ.300077','SH.601766','US.JMEI','US.MARA'],[SubType.TICKER,SubType.QUOTE,SubType.ORDER_BOOK,SubType.RT_DATA,SubType.BROKER])
+    worker.subservice.subscribe(
+        ['SH.000063', 'SZ.002624', 'SH.601138', 'SH.601965', 'SZ.002230', 'SZ.300077', 'SH.601766', 'US.JMEI',
+         'US.MARA'], [SubType.TICKER, SubType.QUOTE, SubType.ORDER_BOOK, SubType.RT_DATA, SubType.BROKER])
+
     worker.ctx.set_handler(HSStockQuoteHandler())
-    worker.ctx.set_handler(HSOrderBookHandler())
+    #worker.ctx.set_handler(HSOrderBookHandler())
+    # {'code': ('SH.000063',),
+    #  'Bid': [(0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0),
+    #          (0.0, 0, 0), (0.0, 0, 0)],
+    #  'Ask': [(0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0),
+    #          (0.0, 0, 0), (0.0, 0, 0)]}
     worker.ctx.set_handler(HSCurKlineHandler())
     worker.ctx.set_handler(HSTickerHandler())
     worker.ctx.set_handler(HSRTDataHandler())

@@ -1,4 +1,6 @@
 # -*- coding: UTF-8 -*-
+
+from abc import ABC
 from hsstock.futuquant import *
 
 from hsstock.model.subscribe import SubItem
@@ -947,7 +949,14 @@ class Quota(object):
         quota *= len(code_list)
         return quota
 
-class HSStockQuoteHandler(StockQuoteHandlerBase):
+class HSHandler(ABC):
+    def __init__(self):
+        self.storeservice = StoreService()
+
+class HSStockQuoteHandler(HSHandler,StockQuoteHandlerBase):
+    def __init__(self):
+        super(HSStockQuoteHandler,self).__init__()
+
     '''
     功能：异步处理推送的订阅股票的报价。
     '''
@@ -958,10 +967,17 @@ class HSStockQuoteHandler(StockQuoteHandlerBase):
             return RET_ERROR, data
 
         print("HSStockQuoteHandler ", data)  # HSStockQuoteHandler自己的处理逻辑
+        if len(data) > 0:
+            table = 'ft_stockquote'
+            self.storeservice.insert_many(table, data, 'append')
 
         return RET_OK, data
 
-class HSOrderBookHandler(OrderBookHandlerBase):
+class HSOrderBookHandler(HSHandler,OrderBookHandlerBase):
+
+    def __init__(self):
+        super(HSOrderBookHandler, self).__init__()
+
     '''
     功能：异步处理推送的实时摆盘。
     '''
@@ -972,10 +988,17 @@ class HSOrderBookHandler(OrderBookHandlerBase):
             return RET_ERROR, data
 
         print("HSOrderBookHandler ", data)  # HSOrderBookHandler自己的处理逻辑
+        if len(data) > 0:
+            table = 'ft_orderbook'
+            self.storeservice.insert_many(table, data, 'append')
 
         return RET_OK, data
 
-class HSCurKlineHandler(CurKlineHandlerBase):
+class HSCurKlineHandler(HSHandler,CurKlineHandlerBase):
+
+    def __init__(self):
+        super(HSCurKlineHandler, self).__init__()
+
     '''
     功能：异步处理推送的k线数据。
     '''
@@ -986,10 +1009,17 @@ class HSCurKlineHandler(CurKlineHandlerBase):
             return RET_ERROR, data
 
         print("HSCurKlineHandler ", data)  # HSCurKlineHandler自己的处理逻辑
+        if len(data) > 0:
+            table = 'ft_curkline'
+            self.storeservice.insert_many(table, data, 'append')
 
         return RET_OK, data
 
-class HSTickerHandler(TickerHandlerBase):
+class HSTickerHandler(HSHandler,TickerHandlerBase):
+
+    def __init__(self):
+        super(HSTickerHandler, self).__init__()
+
     '''
     功能：异步处理推送的逐笔数据。
     '''
@@ -1000,10 +1030,17 @@ class HSTickerHandler(TickerHandlerBase):
             return RET_ERROR, data
 
         print("HSTickerHandler ", data)  # HSTickerHandler自己的处理逻辑
+        if len(data) > 0:
+            table = 'ft_ticker'
+            self.storeservice.insert_many(table, data, 'append')
 
         return RET_OK, data
 
-class HSRTDataHandler(RTDataHandlerBase):
+class HSRTDataHandler(HSHandler,RTDataHandlerBase):
+
+    def __init__(self):
+        super(HSRTDataHandler, self).__init__()
+
     '''
     功能：异步处理推送的分时数据。
     '''
@@ -1015,9 +1052,17 @@ class HSRTDataHandler(RTDataHandlerBase):
 
         print("HSRTDataHandler ", data)  # HSRTDataHandler自己的处理逻辑
 
+        if len(data) > 0:
+            table = 'ft_rtdata'
+            self.storeservice.insert_many(table, data, 'append')
+
         return RET_OK, data
 
-class HSBrokerHandler(BrokerHandlerBase):
+class HSBrokerHandler(HSHandler,BrokerHandlerBase):
+
+    def __init__(self):
+        super(HSBrokerHandler, self).__init__()
+
     '''
     功能：异步处理推送的经纪数据。
     '''
@@ -1028,5 +1073,12 @@ class HSBrokerHandler(BrokerHandlerBase):
             return RET_ERROR, code
 
         print("HSBrokerHandler ", data)  # HSBrokerHandler自己的处理逻辑
+
+        if len(data) > 0:
+            table = 'ft_broker'
+            bid = data[0]
+            ask = data[1]
+            self.storeservice.insert_many(table, bid, 'append')
+            self.storeservice.insert_many(table, ask, 'append')
 
         return RET_OK, data

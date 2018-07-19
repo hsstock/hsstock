@@ -147,6 +147,8 @@ class Trade(ABC):
             dealt_avg_price	float	成交均价，无精度限制
             last_err_msg	str	最后的错误描述，如果有错误，会有此描述最后一次错误的原因，无错误为
         '''
+
+
         ret_code, ret_data = self.ctx.order_list_query(order_id, status_filter_list, code, start, end, trd_env,acc_id)
         return ret_code, ret_data
 
@@ -193,6 +195,11 @@ class Trade(ABC):
             create_time	str	创建时间，严格按YYYY-MM-DD HH:MM:SS或YYYY-MM-DD HH:MM:SS.MS格式传
             counter_broker_id	int	对手经纪号，港股有效
             counter_broker_name	str	对手经纪名称，港股有效
+
+            ['trd_env', 'code', 'stock_name', 'deal_id', 'order_id',
+                        'qty', 'price', 'trd_side', 'create_time', 'counter_broker_id',
+                        'counter_broker_name', 'trd_market',
+                        ]
         '''
         ret_code, ret_data = self.ctx.deal_list_query(code,trd_env,acc_id)
         return ret_code, ret_data
