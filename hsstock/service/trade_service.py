@@ -9,6 +9,7 @@ from hsstock.common.constant import *
 class Trade(ABC):
     def __init__(self,trade_ctx):
         self.ctx = trade_ctx
+        self.storeservice = StoreService()
 
     def get_acc_list(self):
         '''
@@ -23,6 +24,9 @@ class Trade(ABC):
         trd_env	str	交易环境，TrdEnv.REAL(真实环境)或TrdEnv.SIMULATE(仿真环境)
         '''
         ret_code, ret_data = self.ctx.get_acc_list()
+        if ret_code is True:
+            table = 'ft_acc'
+            self.storeservice.insert_many(table, ret_data, 'append')
         return ret_code, ret_data
 
     @rate_limit(FREQ.UNLOCK_TRADE)
@@ -61,6 +65,9 @@ class Trade(ABC):
                 avl_withdrawal_cash	float	可提金额
         '''
         ret_code, ret_data = self.ctx.accinfo_query(trd_env,acc_id)
+        if ret_code is True:
+            table = 'ft_accinfo'
+            self.storeservice.insert_many(table, ret_data, 'append')
         return ret_code, ret_data
 
     def position_list_query(self, code='', pl_ratio_min=None, pl_ratio_max=None, trd_env=TrdEnv.REAL, acc_id=0):
@@ -95,6 +102,9 @@ class Trade(ABC):
             today_sell_val	float	今日卖出总额
         '''
         ret_code, ret_data = self.ctx.position_list_query(code, pl_ratio_min, pl_ratio_max, trd_env, acc_id)
+        if ret_code is True:
+            table = 'ft_position'
+            self.storeservice.insert_many(table, ret_data, 'append')
         return ret_code, ret_data
 
     @rate_limit(FREQ.PLACE_ORDER)
@@ -150,6 +160,9 @@ class Trade(ABC):
 
 
         ret_code, ret_data = self.ctx.order_list_query(order_id, status_filter_list, code, start, end, trd_env,acc_id)
+        if ret_code is True:
+            table = 'ft_orders'
+            self.storeservice.insert_many(table, ret_data, 'append')
         return ret_code, ret_data
 
     @rate_limit(FREQ.MODIFY_ORDER)
@@ -202,6 +215,9 @@ class Trade(ABC):
                         ]
         '''
         ret_code, ret_data = self.ctx.deal_list_query(code,trd_env,acc_id)
+        if ret_code is True:
+            table = 'ft_deals'
+            self.storeservice.insert_many(table, ret_data, 'append')
         return ret_code, ret_data
 
     @rate_limit(FREQ.HISTORY_ORDER_LIST_QUERY)
@@ -220,6 +236,9 @@ class Trade(ABC):
             ret_code为RET_OK时，ret_data为DataFrame数据，否则为错误原因字符串，DataFrame数据跟上面的 order-list-query (获取订单列表)相同
         '''
         ret_code, ret_data = self.ctx.history_order_list_query(status_filter_list, code, start, end, trd_env, acc_id)
+        if ret_code is True:
+            table = 'ft_history_orders'
+            self.storeservice.insert_many(table, ret_data, 'append')
         return ret_code, ret_data
 
     @rate_limit(FREQ.HISTORY_DEAL_LIST_QUERY)
@@ -234,6 +253,9 @@ class Trade(ABC):
         :return: ret_code为RET_OK时，ret_data为DataFrame数据，否则为错误原因字符串，DataFrame数据跟上面的 deal-list-query (获取成交列表)相同。
         '''
         ret_code, ret_data = self.ctx.history_deal_list_query(code, start, end, trd_env, acc_id)
+        if ret_code is True:
+            table = 'ft_history_deals'
+            self.storeservice.insert_many(table, ret_data, 'append')
         return ret_code, ret_data
 
 class HSTradeDeal(TradeDealHandlerBase):
@@ -253,6 +275,10 @@ class HSTradeDeal(TradeDealHandlerBase):
         if ret == RET_OK:
             print("HSTradeDeal content={}".format(content))
 
+            if len(content) > 0:
+                table = 'ft_trade_deal'
+                self.storeservice.insert_many(table, content, 'append')
+
         return ret, content
 
 class HSTradeOrder(TradeOrderHandlerBase):
@@ -264,4 +290,8 @@ class HSTradeOrder(TradeOrderHandlerBase):
 
         if ret == RET_OK:
             print('*HSTradeOrder content={}'.format(content))
+
+            if len(content) > 0:
+                table = 'ft_trade_order'
+                self.storeservice.insert_many(table, content, 'append')
         return ret, content

@@ -14,3 +14,4 @@ hsstock/vnpy/trader/CtaTrading/temp/
 *.h5
 logs
 hsstock/futuquant
+tests/echarts/render.html

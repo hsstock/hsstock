@@ -223,7 +223,6 @@ class LF(object):
         if not isinstance(ret_data,str):
             if len(ret_data) > 0 :
                 self.storeservice.insert_many(table, ret_data, 'append')
-                print(">>>>>>0")
         return ret_code, ret_data
 
     def get_autype_list(self, code_list):
@@ -464,6 +463,8 @@ class LF(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
+        table = 'ft_global_state'
+        self.storeservice.insert_many(table, ret_data, 'append')
         return ret_code, ret_data
 
     @clock()
@@ -988,9 +989,14 @@ class HSOrderBookHandler(HSHandler,OrderBookHandlerBase):
             return RET_ERROR, data
 
         print("HSOrderBookHandler ", data)  # HSOrderBookHandler自己的处理逻辑
-        if len(data) > 0:
-            table = 'ft_orderbook'
-            self.storeservice.insert_many(table, data, 'append')
+        # 不是DataFrame
+        # table = 'ft_orderbook'
+        # self.storeservice.insert_many(table, data, 'append')
+        # {'code': ('SH.000063',),
+        #  'Bid': [(0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0),
+        #          (0.0, 0, 0), (0.0, 0, 0)],
+        #  'Ask': [(0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0), (0.0, 0, 0),
+        #          (0.0, 0, 0), (0.0, 0, 0)]}
 
         return RET_OK, data
 

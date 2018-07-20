@@ -24,6 +24,7 @@ class AppConfig:
         AppConfig.pull_quarter = int(AppConfig.config.get('pull_time', 'quarter'))
         AppConfig.custom_stocks = AppConfig.config.get('custom', 'stocks').split(',')
         AppConfig.custom_indexes = AppConfig.config.get('custom', 'indexes').split(',')
+        AppConfig.custom_ft_stocks = AppConfig.config.get('custom_ft', 'stocks').split(',')
 
     @staticmethod
     def get_config():
@@ -50,6 +51,12 @@ class AppConfig:
     def write_custom_stocks(stocks):
         stocks_str = ','.join(stocks)
         AppConfig.get_config().set("custom", "stocks", stocks_str)
+        AppConfig.get_config().write(open(AppConfig.path, "w"))
+
+    @staticmethod
+    def write_custom_ft_stocks(stocks):
+        stocks_str = ','.join(stocks)
+        AppConfig.get_config().set("custom_ft", "stocks", stocks_str)
         AppConfig.get_config().write(open(AppConfig.path, "w"))
 
 

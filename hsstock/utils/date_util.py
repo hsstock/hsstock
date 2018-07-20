@@ -91,6 +91,19 @@ class DateUtil():
     def datetime_toTimestamp(dateTim):
         return time.mktime(dateTim.timetuple())
 
+    @staticmethod
+    def millisecond_to_date(millisecond, format):
+        return time.strftime(format, time.localtime(millisecond / 1000))
+
+    @staticmethod
+    def date_to_millisecond(date="20100101", format='%Y%m%d'):
+        return int(time.mktime(time.strptime(date, format)) * 1000)
+
+    @staticmethod
+    def date_str_to_int(date="2010-01-01"):
+        return int(date.replace("-", ""))
+
+
 if __name__ == "__main__":
     print( DateUtil.getTodayStr() )
     print(DateUtil.getDatetimeToday())
@@ -100,3 +113,5 @@ if __name__ == "__main__":
     print(DateUtil.string_toDatetime(DateUtil.format_date('07-02 06:00')))
     print(DateUtil.string_toTimestamp(DateUtil.format_date('07-02 06:00')))
     print(DateUtil.timestamp_toString(DateUtil.string_toTimestamp(DateUtil.format_date('07-02 06:00'))))
+    print(DateUtil.date_str_to_int('2007-07-07'))
+    print(DateUtil.date_to_millisecond(str(DateUtil.date_str_to_int('2007-07-07'))))

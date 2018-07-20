@@ -20,141 +20,16 @@ from hsstock.common.constant import *
 from hsstock.service.quote_service import Subscribe
 from hsstock.service.trade_service import *
 from hsstock.utils.lang_util import *
+from hsstock.app.collect.environment import Environment
 
 
 sched = BlockingScheduler()
+env = Environment()
+env_us = Environment()
 
 is_closing = False
-lf_ctx  = None
-hf_ctx = None
-hk_ctx = None
+hk_ctx  = None
 us_ctx = None
-
-def job_once_global(worker):
-    '''
-    功能：获取一次性的全局数据
-    :param worker:
-    :return:
-    '''
-    global is_closing
-
-def job_once_custom(worker):
-    '''
-
-    :param worker:
-    :return:
-    '''
-    global is_closing
-
-def job_realtime_global(worker):
-    '''
-
-    :param workery:
-    :return:
-    '''
-    global is_closing
-
-def job_lf(worker):
-    '''
-    线程工作：低频数据接口
-    :return:
-    '''
-    global is_closing
-
-    while not is_closing:
-        begin = time.time()
-        markets = enumclass_to_list(Market)
-        for market in markets:
-            worker.get_trading_days(market)
-        if is_closing is True:
-            break
-        securitytypes = enumclass_to_list(SecurityType)
-        for market in markets:
-            for securitytype in securitytypes:
-                worker.get_stock_basicinfo(market, securitytype)
-        if is_closing is True:
-            break
-
-        worker.get_multiple_history_kline(['US.NTES','US.BABA'], '2018-06-20', '2018-06-25', KLType.K_DAY, AuType.QFQ)
-        if is_closing is True:
-            break
-        worker.get_multiple_history_kline(['HK.00771','HK.00700'], '2018-06-20', '2018-06-25',
-                                                                  KLType.K_DAY, AuType.QFQ)
-        if is_closing is True:
-             break
-
-        worker.get_history_kline('US.AAPL','2018-01-01', '2018-06-29',KLType.K_5M)
-        if is_closing is True:
-            break
-        worker.get_history_kline('HK.00700', '2018-01-01', '2018-06-29',KLType.K_5M)
-        if is_closing is True:
-            break
-        break
-        worker.get_autype_list(['US.AAPL','HK.00700'])
-        if is_closing is True:
-            break
-        worker.get_autype_list(['HK.00700'])
-        if is_closing is True:
-            break
-        worker.get_market_snapshot(['HK.00700', 'US.AAPL'])
-        if is_closing is True:
-            break
-
-        plate_list = []
-        for market in markets:
-            ret_code, ret_data = worker.get_plate_list(market)
-            if ret_code is RET_OK:
-                plate_list.append(ret_data)
-        if is_closing is True:
-            break
-
-        # for i in range(0,len(plate_list),1):
-        #     for j in range(0, len(plate_list[i]), 1):
-        #         worker.get_plate_stock(plate_list[i].iloc[j].code)
-        #         print('get_plate_stock current progress - {}.{}'.format(i,j))
-        #         time.sleep(FREQLIMIT[FREQ.TOTAL_SECONDS]/FREQLIMIT[FREQ.GET_PLATE_STOCK])
-        # if is_closing is True:
-        #     break
-
-        worker.get_global_state()
-        if is_closing is True:
-            break
-
-        end = time.time()
-        print(end-begin)
-        time.sleep(FREQLIMIT[FREQ.TOTAL_SECONDS] - end + begin)
-
-def job_hf(worker):
-    '''
-    线程工作：高频数据接口
-    :return:
-    '''
-    global is_closing
-    while not is_closing:
-        worker.get_stock_quote(['US.AAPL','HK.00700'])
-        if is_closing is True:
-            break
-        worker.get_rt_data('HK.00700')
-        if is_closing is True:
-            break
-        worker.get_rt_data('US.AAPL')
-        if is_closing is True:
-            break
-        worker.get_rt_ticker('HK.00700',500)
-        if is_closing is True:
-            break
-        worker.get_cur_kline('HK.00700',1000)
-        if is_closing is True:
-            break
-        worker.get_order_book('HK.00700')
-        if is_closing is True:
-            break
-        worker.ctx.set_handler(HSStockQuoteHandler())
-        worker.ctx.set_handler(HSOrderBookHandler())
-        worker.ctx.set_handler(HSCurKlineHandler())
-        worker.ctx.set_handler(HSTickerHandler())
-        worker.ctx.set_handler(HSRTDataHandler())
-        worker.ctx.set_handler(HSBrokerHandler())
 
 def job_hk_trade(worker):
     '''
@@ -164,26 +39,34 @@ def job_hk_trade(worker):
     global is_closing
     global hk_ctx
     while not is_closing:
-        worker.get_acc_list()
+        print('hk')
+        ret_code, ret_data = worker.get_acc_list()
+        env.accs = ret_data
         if is_closing is True:
             break
-        worker.accinfo_query(TrdEnv.REAL)
+        ret_code, ret_data = worker.accinfo_query(TrdEnv.REAL)
+        env.account_info = ret_data
         if is_closing is True:
             break
-        worker.accinfo_query(TrdEnv.SIMULATE)
+        ret_code, ret_data = worker.accinfo_query(TrdEnv.REAL)
+        env.account_info_simulate = ret_data
         if is_closing is True:
             break
-        worker.position_list_query()
+        ret_code, ret_data = worker.position_list_query()
+        env.account_info_positions = ret_data
         if is_closing is True:
             break
-        worker.place_order(0.1, 1000, 'HK.01060')
+        ret_code, ret_data = worker.place_order(0.1, 1000, 'HK.01060')
+        env.curr_order = ret_data
         if is_closing is True:
             break
-        worker.order_list_query()
+        ret_code, ret_data = worker.order_list_query()
+        env.orders = ret_data
         if is_closing is True:
             break
         #worker.modify_order( modify_order_op, order_id, qty,price, adjust_limit, trd_env, acc_id)
-        worker.deal_list_query()
+        ret_code, ret_data = worker.deal_list_query()
+        env.deals = ret_data
         if is_closing is True:
             break
         worker.history_order_list_query()
@@ -205,26 +88,34 @@ def job_us_trade(worker):
     global is_closing
     global us_ctx
     while not is_closing:
-        worker.get_acc_list()
+        print('us')
+        ret_code, ret_data = worker.get_acc_list()
+        env_us.accs = ret_data
         if is_closing is True:
             break
-        worker.accinfo_query(TrdEnv.REAL)
+        ret_code, ret_data = worker.accinfo_query(TrdEnv.REAL)
+        env_us.account_info = ret_data
         if is_closing is True:
             break
-        worker.accinfo_query(TrdEnv.SIMULATE)
+        ret_code, ret_data = worker.accinfo_query(TrdEnv.REAL)
+        env_us.account_info_simulate = ret_data
         if is_closing is True:
             break
-        worker.position_list_query()
+        ret_code, ret_data = worker.position_list_query()
+        env.account_info_positions = ret_data
         if is_closing is True:
             break
-        worker.place_order(1.88, 100, 'US.JMEI')
+        ret_code, ret_data = worker.place_order(1.88, 100, 'US.JMEI')
+        env.curr_order = ret_data
         if is_closing is True:
             break
-        worker.order_list_query()
+        ret_code, ret_data = worker.order_list_query()
+        env.orders = ret_data
         if is_closing is True:
             break
         #worker.modify_order( modify_order_op, order_id, qty,price, adjust_limit, trd_env, acc_id)
-        worker.deal_list_query()
+        ret_code, ret_data = worker.deal_list_query()
+        env.deals = ret_data
         if is_closing is True:
             break
         worker.history_order_list_query()
@@ -241,16 +132,10 @@ def job_us_trade(worker):
 
 def signal_int_handler(signum, frame):
     global is_closing
-    global lf_ctx
-    global hf_ctx
     global hk_ctx
     global us_ctx
     logging.info('exiting...')
     is_closing = True
-    lf_ctx.stop()
-    lf_ctx.close()
-    hf_ctx.stop()
-    hf_ctx.close()
     hk_ctx.stop()
     hk_ctx.close()
     us_ctx.stop()
@@ -267,16 +152,10 @@ def signal_int_handler(signum, frame):
 
 def signal_term_handler(*args):
     global is_closing
-    global lf_ctx
-    global hf_ctx
     global hk_ctx
     global us_ctx
     logging.info('killed, exiting...')
     is_closing = True
-    lf_ctx.stop()
-    lf_ctx.close()
-    hf_ctx.stop()
-    hf_ctx.close()
     hk_ctx.stop()
     hk_ctx.close()
     us_ctx.stop()
@@ -289,13 +168,6 @@ def try_exit():
         # clean up here
         logging.info('exit success')
 
-def lf_task(worker):
-    tfn = MyThread('job_lf',job_lf,worker)
-    tfn.start()
-
-def hf_task(worker):
-    tfn = MyThread('job_hf', job_hf,worker)
-    tfn.start()
 
 def hk_trade_task(worker):
     tfn = MyThread('job_hk_trade', job_hk_trade,worker)
@@ -306,8 +178,6 @@ def us_trade_task(worker):
     tfn.start()
 
 def main():
-    global lf_ctx
-    global hf_ctx
     global hk_ctx
     global us_ctx
     config = AppConfig.get_config()
@@ -318,16 +188,6 @@ def main():
     order_book = config.get('quota', 'order_book')
     rt_data = config.get('quota', 'rt_data')
     broker = config.get('quota', 'broker')
-    lf_ctx = ft.OpenQuoteContext(config.get('ftserver', 'host'), int(config.get('ftserver', 'port')))
-    lf_ctx.start()
-    lf = LF(lf_ctx)
-    #lf_task(lf)
-
-    hf_ctx = ft.OpenQuoteContext(config.get('ftserver', 'host'), int(config.get('ftserver', 'port')))
-    hf_ctx.start()
-    sub = Subscribe(hf_ctx, total, kline, tiker, quote, order_book, rt_data, broker)
-    hf = HF(hf_ctx, sub)
-    #hf_task(hf)
 
     hk_ctx = ft.OpenHKTradeContext(config.get('ftserver', 'host'), int(config.get('ftserver', 'port')))
     hk_trade = Trade(hk_ctx)

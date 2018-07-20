@@ -1,6 +1,9 @@
+from enum  import Enum, unique
+
 from hsstock.common.constant import *
 
-class FREQ:
+@unique
+class FREQ(Enum):
     UNLOCK_TRADE = "unlock_trade"
     PLACE_ORDER = "place_order"
     MODIFY_ORDER = "modify_order"
@@ -25,3 +28,14 @@ FREQLIMIT={
     FREQ.GET_PLATE_STOCK:10,
     FREQ.TOTAL_SECONDS:30
 }
+
+# can't add the modifier @unique
+class Empty(Enum):
+    EMPTY_STRING = ""
+    EMPTY_INT = int(0)
+    EMPTY_FLOAT = float(0.0)
+
+if __name__ == '__main__':
+    print(FREQ.GET_PLATE_LIST)
+    print(FREQ.GET_PLATE_LIST.value)
+    print(FREQLIMIT[FREQ.GET_PLATE_LIST])
