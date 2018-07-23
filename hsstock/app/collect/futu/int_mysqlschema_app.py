@@ -14,6 +14,7 @@ def main():
         {
             "table": "ft_stock_basicinfo",
             "dtype": {
+                "id":sa.types.BIGINT,
                 "code": sa.types.NVARCHAR(20),
                 "name": sa.types.NVARCHAR(200),
                 "lot_size": sa.types.BIGINT,
@@ -24,7 +25,8 @@ def main():
                 "stock_id": sa.types.BIGINT
             },
             "clauses": [
-                'ALTER TABLE `{0}` ADD INDEX (`name`);',
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`name`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
                 'ALTER TABLE `{0}` ADD INDEX (`stock_type`);',
                 'ALTER TABLE `{0}` MODIFY COLUMN lot_size BIGINT COMMENT  \'每手数量\';'
@@ -38,6 +40,7 @@ def main():
         {
             "table": "ft_history_kline",
             "dtype": {
+                "id": sa.types.BIGINT,
                 "code": sa.types.NVARCHAR(20),
                 "time_key": sa.types.DATETIME,
                 "open": sa.types.FLOAT,
@@ -52,6 +55,7 @@ def main():
                 "last_close": sa.types.FLOAT
             },
             "clauses": [
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
                 'ALTER TABLE `{0}` ADD INDEX (`time_key`);'
                 'ALTER TABLE `{0}` MODIFY COLUMN pe_ratio FLOAT COMMENT  \'市盈率\';'
@@ -65,6 +69,7 @@ def main():
         {
             "table": "ft_history_kline_K_5M",
             "dtype": {
+                "id": sa.types.BIGINT,
                 "code": sa.types.NVARCHAR(20),
                 "time_key": sa.types.DATETIME,
                 "open": sa.types.FLOAT,
@@ -79,6 +84,7 @@ def main():
                 "last_close": sa.types.FLOAT
             },
             "clauses": [
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
                 'ALTER TABLE `{0}` ADD INDEX (`time_key`);'
                 'ALTER TABLE `{0}` MODIFY COLUMN pe_ratio FLOAT COMMENT  \'市盈率\';'
@@ -92,6 +98,7 @@ def main():
         {
             "table": "ft_broker",
             "dtype": {
+                "id": sa.types.BIGINT,
                 "code": sa.types.NVARCHAR(20),
                 "bid_broker_id": sa.types.BIGINT,
                 "bid_broker_name": sa.types.NVARCHAR(100),
@@ -101,12 +108,14 @@ def main():
                 "ask_broker_pos": sa.types.BIGINT
             },
             "clauses": [
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
             ]
         },
         {
             "table": "ft_rtdata",
             "dtype": {
+                "id": sa.types.BIGINT,
                 "code": sa.types.NVARCHAR(20),
                 "time": sa.types.DATETIME,
                 "is_blank": sa.types.INT,
@@ -118,6 +127,7 @@ def main():
                 "volume": sa.types.FLOAT
              },
             "clauses": [
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
                 'ALTER TABLE `{0}` ADD INDEX (`time`);'
                 'ALTER TABLE `{0}` MODIFY COLUMN opened_mins INT COMMENT  \'零点到当前多少分钟\';'
@@ -131,6 +141,7 @@ def main():
         {
             "table": "ft_stockquote",
             "dtype": {
+                "id": sa.types.BIGINT,
                 "code": sa.types.NVARCHAR(20),
                 "data_date": sa.types.DATE,
                 "data_time": sa.types.TIME,
@@ -148,6 +159,7 @@ def main():
                 "price_spread": sa.types.FLOAT,
             },
             "clauses": [
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
                 'ALTER TABLE `{0}` ADD INDEX (`data_date`);'
                 'ALTER TABLE `{0}` ADD INDEX (`data_time`);'
@@ -162,6 +174,7 @@ def main():
         {
             "table": "ft_ticker",
             "dtype": {
+                "id": sa.types.BIGINT,
                 "code": sa.types.NVARCHAR(20),
                 "time": sa.types.DATETIME,
                 "price": sa.types.FLOAT,
@@ -172,6 +185,7 @@ def main():
                 "recv_time": sa.types.DATETIME,
             },
             "clauses": [
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
                 'ALTER TABLE `{0}` ADD INDEX (`time`);'
                 'ALTER TABLE `{0}` ADD INDEX (`sequence`);',
@@ -184,6 +198,7 @@ def main():
         {
             "table": "ft_tradeorder",
             "dtype": {
+                "id": sa.types.BIGINT,
                 "code": sa.types.NVARCHAR(20),
                 "stock_name": sa.types.NVARCHAR(100),
                 "dealt_avg_price": sa.types.FLOAT,
@@ -201,6 +216,7 @@ def main():
                 "trd_env": sa.types.NVARCHAR(30),
             },
             "clauses": [
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
                 'ALTER TABLE `{0}` ADD INDEX (`stock_name`);',
                 'ALTER TABLE `{0}` ADD INDEX (`create_time`);'
@@ -212,6 +228,7 @@ def main():
         {
             "table": "ft_tradedetail",
             "dtype": {
+                "id": sa.types.BIGINT,
                 "code": sa.types.NVARCHAR(20),
                 "stock_name": sa.types.NVARCHAR(100),
                 "trd_env": sa.types.NVARCHAR(20),
@@ -226,6 +243,7 @@ def main():
                 "trd_market": sa.types.NVARCHAR(50),
             },
             "clauses": [
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
                 'ALTER TABLE `{0}` ADD INDEX (`stock_name`);'
                 'ALTER TABLE `{0}` ADD INDEX (`create_time`);',
@@ -243,6 +261,7 @@ def main():
         {
             "table": "ft_autype",
             "dtype": {
+                "id": sa.types.BIGINT,
                 "code": sa.types.NVARCHAR(20),
                 "ex_div_date": sa.types.DATE,
                 "split_ratio": sa.types.FLOAT,
@@ -259,6 +278,7 @@ def main():
                 "backward_adj_factorB": sa.types.FLOAT
             },
             "clauses": [
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
                 'ALTER TABLE `{0}` ADD INDEX (`ex_div_date`);'
                 'ALTER TABLE `{0}` MODIFY COLUMN ex_div_date DATE COMMENT  \'除权除息日\';'
@@ -279,6 +299,7 @@ def main():
         {
             "table": "ft_market_snapshot",
             "dtype": {
+                "id": sa.types.BIGINT,
                 "code": sa.types.NVARCHAR(20),
                 "update_time": sa.types.DATETIME,
                 "last_price": sa.types.FLOAT,
@@ -321,6 +342,7 @@ def main():
                 "price_spread": sa.types.FLOAT
             },
             "clauses": [
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
                 'ALTER TABLE `{0}` ADD INDEX (`update_time`);'
                 'ALTER TABLE `{0}` MODIFY COLUMN last_price FLOAT COMMENT  \'最新价格\';'
@@ -365,11 +387,13 @@ def main():
         {
             "table": "ft_plate_list",
             "dtype": {
+                "id": sa.types.BIGINT,
                 "code": sa.types.NVARCHAR(20),
                 "plate_name": sa.types.NVARCHAR(50),
                 "plate_id": sa.types.NVARCHAR(20),
             },
             "clauses": [
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
                 'ALTER TABLE `{0}` ADD INDEX (`plate_name`);'
                 'ALTER TABLE `{0}` MODIFY COLUMN code VARCHAR(20) COMMENT  \'股票代码\';'
@@ -380,6 +404,7 @@ def main():
         {
             "table": "ft_plate_stock",
             "dtype": {
+                "id": sa.types.BIGINT,
                 "code": sa.types.NVARCHAR(20),
                 "lot_size": sa.types.BIGINT,
                 "stock_name": sa.types.NVARCHAR(100),
@@ -390,6 +415,7 @@ def main():
                 "stock_id": sa.types.BIGINT,
             },
             "clauses": [
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
                 'ALTER TABLE `{0}` ADD INDEX (`stock_name`);'
                 'ALTER TABLE `{0}` ADD INDEX (`stock_child_type`);'

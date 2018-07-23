@@ -463,8 +463,6 @@ class LF(object):
         if ret_code == RET_ERROR:
             print(ret_data)
             exit()
-        table = 'ft_global_state'
-        self.storeservice.insert_many(table, ret_data, 'append')
         return ret_code, ret_data
 
     @clock()

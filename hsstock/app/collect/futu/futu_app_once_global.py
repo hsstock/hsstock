@@ -40,76 +40,76 @@ def job_once_global(worker):
     while not is_closing:
         begin = time.time()
 
-        logging.info("fetching trading_days")
-        markets = enumclass_to_list(Market)
-        for market in markets:
-            ret_code, ret_data = worker.get_trading_days(market)
-            env.trading_days[market] = ret_data
-        if is_closing is True:
-            break
-
-        securitytypes = enumclass_to_list(SecurityType)
-        for market in markets:
-            for securitytype in securitytypes:
-                if is_closing is True:
-                    break
-                ret_code, ret_data = worker.get_stock_basicinfo(market, securitytype)
-                env.stock_basicinfos[market+'_'+securitytype]  = ret_data
-                logging.info("fetching stock_baseinfo {}-{}".format(market,securitytype))
-        if is_closing is True:
-            break
-
-        # 多个的网关返回有问题？
-        # worker.get_multiple_history_kline(['US.NTES','US.BABA'], '2018-06-20', '2018-06-25', KLType.K_DAY, AuType.QFQ)
+        # logging.info("fetching trading_days")
+        # markets = enumclass_to_list(Market)
+        # for market in markets:
+        #     ret_code, ret_data = worker.get_trading_days(market)
+        #     env.trading_days[market] = ret_data
         # if is_closing is True:
         #     break
-        # worker.get_multiple_history_kline(['HK.00771','HK.00700'], '2018-06-20', '2018-06-25',
-        #                                                           KLType.K_DAY, AuType.QFQ)
-        # if is_closing is True:
-        #      break
         #
-
-        # worker.get_history_kline('US.AAPL','2018-01-01', '2018-06-29',KLType.K_5M)
+        # securitytypes = enumclass_to_list(SecurityType)
+        # for market in markets:
+        #     for securitytype in securitytypes:
+        #         if is_closing is True:
+        #             break
+        #         ret_code, ret_data = worker.get_stock_basicinfo(market, securitytype)
+        #         env.stock_basicinfos[market+'_'+securitytype]  = ret_data
+        #         logging.info("fetching stock_baseinfo {}-{}".format(market,securitytype))
         # if is_closing is True:
         #     break
-        # worker.get_history_kline('HK.00700', '2018-01-01', '2018-06-29',KLType.K_5M)
+        #
+        # # 多个的网关返回有问题？
+        # # worker.get_multiple_history_kline(['US.NTES','US.BABA'], '2018-06-20', '2018-06-25', KLType.K_DAY, AuType.QFQ)
+        # # if is_closing is True:
+        # #     break
+        # # worker.get_multiple_history_kline(['HK.00771','HK.00700'], '2018-06-20', '2018-06-25',
+        # #                                                           KLType.K_DAY, AuType.QFQ)
+        # # if is_closing is True:
+        # #      break
+        # #
+        #
+        # # worker.get_history_kline('US.AAPL','2018-01-01', '2018-06-29',KLType.K_5M)
+        # # if is_closing is True:
+        # #     break
+        # # worker.get_history_kline('HK.00700', '2018-01-01', '2018-06-29',KLType.K_5M)
+        # # if is_closing is True:
+        # #     break
+        # # break
+        # # worker.get_autype_list(['US.AAPL','HK.00700'])
+        # # if is_closing is True:
+        # #     break
+        # # worker.get_autype_list(['HK.00700'])
+        # # if is_closing is True:
+        # #     break
+        #
+        # plate_list = []
+        # for market in markets:
+        #     ret_code, ret_data = worker.get_plate_list(market)
+        #     if ret_code is RET_OK:
+        #         plate_list.append(ret_data)
+        #         env.plates[market] = ret_data
+        #         logging.info("fetching plate for {} market".format(market))
         # if is_closing is True:
         #     break
-        # break
-        # worker.get_autype_list(['US.AAPL','HK.00700'])
+        #
+        # for i in range(2,len(plate_list),1):
+        #     for j in range(0, len(plate_list[i]), 1):
+        #         if i == 2 and j < 121:
+        #             continue
+        #         plat_code = plate_list[i].iloc[j].code
+        #         ret_code, ret_data = worker.get_plate_stock(plat_code)
+        #         env.plate_stocks[plat_code]  = ret_data
+        #         logging.info("fetching plate stock , currrent progress: {}-{}-{}".format(plat_code,i,j))
+        #         time.sleep(FREQLIMIT[FREQ.TOTAL_SECONDS]/FREQLIMIT[FREQ.GET_PLATE_STOCK])
         # if is_closing is True:
         #     break
-        # worker.get_autype_list(['HK.00700'])
+        #
+        # ret_code, ret_data = worker.get_global_state()
+        # env.global_state = ret_data
+        # logging.info("fetching global state")
         # if is_closing is True:
         #     break
-
-        plate_list = []
-        for market in markets:
-            ret_code, ret_data = worker.get_plate_list(market)
-            if ret_code is RET_OK:
-                plate_list.append(ret_data)
-                env.plates[market] = ret_data
-                logging.info("fetching plate for {} market".format(market))
-        if is_closing is True:
-            break
-
-        for i in range(2,len(plate_list),1):
-            for j in range(0, len(plate_list[i]), 1):
-                if i == 2 and j < 121:
-                    continue
-                plat_code = plate_list[i].iloc[j].code
-                ret_code, ret_data = worker.get_plate_stock(plat_code)
-                env.plate_stocks[plat_code]  = ret_data
-                logging.info("fetching plate stock , currrent progress: {}-{}-{}".format(plat_code,i,j))
-                time.sleep(FREQLIMIT[FREQ.TOTAL_SECONDS]/FREQLIMIT[FREQ.GET_PLATE_STOCK])
-        if is_closing is True:
-            break
-
-        ret_code, ret_data = worker.get_global_state()
-        env.global_state = ret_data
-        logging.info("fetching global state")
-        if is_closing is True:
-            break
 
         # TODO
         # worker.get_market_snapshot(['HK.00700', 'US.AAPL'])
