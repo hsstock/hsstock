@@ -3,12 +3,12 @@ import logging
 import sqlalchemy as sa
 import pandas as pd
 
-from hsstock.service.store_service import StoreService
+from hsstock.service.mysql_service import MysqlService
 from hsstock.utils.app_logging import setup_logging
 
 def main():
 
-    storeservice = StoreService()
+    storeservice = MysqlService()
 
     schemaArr = [
         # {

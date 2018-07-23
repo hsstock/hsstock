@@ -4,7 +4,7 @@ import logging
 import time
 
 from sqlalchemy.exc import OperationalError
-from hsstock.service.store_service import StoreService
+from hsstock.service.mysql_service import MysqlService
 from hsstock.utils.app_logging import setup_logging
 from hsstock.utils.date_util import DateUtil
 import hsstock.utils.decorator  as tick
@@ -21,7 +21,7 @@ class TUShare_service(object):
     def __init__(self):
         self.tushare_version = ts.__version__
         setup_logging()
-        self.storeservice = StoreService()
+        self.storeservice = MysqlService()
         print('tushare_versin', self.tushare_version)
 
     @tick.clock()

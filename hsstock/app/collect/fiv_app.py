@@ -11,7 +11,7 @@ import datetime
 import random
 import pandas as pd
 
-from hsstock.service.store_service import StoreService
+from hsstock.service.mysql_service import MysqlService
 from hsstock.utils.fiv_crawler import Crawler
 from hsstock.utils.app_logging import setup_logging
 
@@ -21,7 +21,7 @@ sched = BlockingScheduler()
 def scheduled_job():
     logging.info('This job is run every weekday at 5pm')
     crawler = Crawler('##')
-    storeservice = StoreService()
+    storeservice = MysqlService()
 
     pos = 2331
     while pos < 7101:

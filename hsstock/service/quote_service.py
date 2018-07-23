@@ -6,7 +6,7 @@ from hsstock.futuquant import *
 from hsstock.model.subscribe import SubItem
 from hsstock.utils.decorator import *
 from hsstock.common.constant import *
-from hsstock.service.store_service import StoreService
+from hsstock.service.mysql_service import MysqlService
 
 
 '''
@@ -49,7 +49,7 @@ K线	2
 class LF(object):
     def __init__(self,quote_ctx):
         self.ctx = quote_ctx
-        self.storeservice = StoreService()
+        self.storeservice = MysqlService()
 
     def is_holiday(self,market,date):
         '''
@@ -952,7 +952,7 @@ class Quota(object):
 
 class HSHandler(ABC):
     def __init__(self):
-        self.storeservice = StoreService()
+        self.storeservice = MysqlService()
 
 class HSStockQuoteHandler(HSHandler,StockQuoteHandlerBase):
     def __init__(self):

@@ -82,10 +82,6 @@ def job_once_global(worker):
         # worker.get_autype_list(['HK.00700'])
         # if is_closing is True:
         #     break
-        # TODO
-        worker.get_market_snapshot(['HK.00700', 'US.AAPL'])
-        if is_closing is True:
-            break
 
         plate_list = []
         for market in markets:
@@ -97,13 +93,14 @@ def job_once_global(worker):
         if is_closing is True:
             break
 
-        for i in range(0,len(plate_list),1):
+        for i in range(2,len(plate_list),1):
             for j in range(0, len(plate_list[i]), 1):
+                if i == 2 and j < 121:
+                    continue
                 plat_code = plate_list[i].iloc[j].code
                 ret_code, ret_data = worker.get_plate_stock(plat_code)
                 env.plate_stocks[plat_code]  = ret_data
-                print('get_plate_stock current progress - {}.{}'.format(i,j))
-                logging.info("fetching plate stock , currrent progress: {}-{}".format(i,j))
+                logging.info("fetching plate stock , currrent progress: {}-{}-{}".format(plat_code,i,j))
                 time.sleep(FREQLIMIT[FREQ.TOTAL_SECONDS]/FREQLIMIT[FREQ.GET_PLATE_STOCK])
         if is_closing is True:
             break
@@ -113,6 +110,11 @@ def job_once_global(worker):
         logging.info("fetching global state")
         if is_closing is True:
             break
+
+        # TODO
+        # worker.get_market_snapshot(['HK.00700', 'US.AAPL'])
+        # if is_closing is True:
+        #     break
 
         end = time.time()
         logging.info("fetching for one  period , cost time: {}".format((end-begin)))

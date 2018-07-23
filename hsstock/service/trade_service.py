@@ -9,7 +9,7 @@ from hsstock.common.constant import *
 class Trade(ABC):
     def __init__(self,trade_ctx):
         self.ctx = trade_ctx
-        self.storeservice = StoreService()
+        self.storeservice = MysqlService()
 
     def get_acc_list(self):
         '''
