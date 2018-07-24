@@ -40,7 +40,7 @@ def job_once_global(worker):
     while not is_closing:
         begin = time.time()
 
-        # logging.info("fetching trading_days")
+        logging.info("fetching trading_days")
         # markets = enumclass_to_list(Market)
         # for market in markets:
         #     ret_code, ret_data = worker.get_trading_days(market)
@@ -58,31 +58,17 @@ def job_once_global(worker):
         #         logging.info("fetching stock_baseinfo {}-{}".format(market,securitytype))
         # if is_closing is True:
         #     break
-        #
-        # # 多个的网关返回有问题？
-        # # worker.get_multiple_history_kline(['US.NTES','US.BABA'], '2018-06-20', '2018-06-25', KLType.K_DAY, AuType.QFQ)
-        # # if is_closing is True:
-        # #     break
-        # # worker.get_multiple_history_kline(['HK.00771','HK.00700'], '2018-06-20', '2018-06-25',
-        # #                                                           KLType.K_DAY, AuType.QFQ)
-        # # if is_closing is True:
-        # #      break
-        # #
-        #
-        # # worker.get_history_kline('US.AAPL','2018-01-01', '2018-06-29',KLType.K_5M)
-        # # if is_closing is True:
-        # #     break
-        # # worker.get_history_kline('HK.00700', '2018-01-01', '2018-06-29',KLType.K_5M)
-        # # if is_closing is True:
-        # #     break
-        # # break
-        # # worker.get_autype_list(['US.AAPL','HK.00700'])
-        # # if is_closing is True:
-        # #     break
-        # # worker.get_autype_list(['HK.00700'])
-        # # if is_closing is True:
-        # #     break
-        #
+
+            # 多个的网关返回有问题？
+            # worker.get_multiple_history_kline(['US.NTES','US.BABA'], '2018-06-20', '2018-06-25', KLType.K_DAY, AuType.QFQ)
+            # if is_closing is True:
+            #     break
+            # worker.get_multiple_history_kline(['HK.00771','HK.00700'], '2018-06-20', '2018-06-25',
+            #                                                           KLType.K_DAY, AuType.QFQ)
+            # if is_closing is True:
+            #      break
+            #
+
         # plate_list = []
         # for market in markets:
         #     ret_code, ret_data = worker.get_plate_list(market)
@@ -93,10 +79,8 @@ def job_once_global(worker):
         # if is_closing is True:
         #     break
         #
-        # for i in range(2,len(plate_list),1):
+        # for i in range(0,len(plate_list),1):
         #     for j in range(0, len(plate_list[i]), 1):
-        #         if i == 2 and j < 121:
-        #             continue
         #         plat_code = plate_list[i].iloc[j].code
         #         ret_code, ret_data = worker.get_plate_stock(plat_code)
         #         env.plate_stocks[plat_code]  = ret_data
@@ -111,10 +95,18 @@ def job_once_global(worker):
         # if is_closing is True:
         #     break
 
-        # TODO
-        # worker.get_market_snapshot(['HK.00700', 'US.AAPL'])
-        # if is_closing is True:
-        #     break
+        codes = worker.storeservice.find_all_stockcodes()
+
+        offset = 0
+        limit = 200
+        total = len(codes)
+        while offset < total:
+            print("offet:{} limit:{} partial codes:{}".format(offset, limit, codes[offset:offset + limit]))
+            offset += limit
+            worker.get_market_snapshot(codes[offset:offset + limit])
+            if is_closing is True:
+                break
+        break
 
         end = time.time()
         logging.info("fetching for one  period , cost time: {}".format((end-begin)))
@@ -181,3 +173,5 @@ if __name__ == "__main__":
     setup_logging()
     main()
     sched.start()
+
+

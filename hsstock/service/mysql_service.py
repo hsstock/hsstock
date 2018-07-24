@@ -108,13 +108,11 @@ class MysqlService():
     def insert_many(self, table, df,if_exists='append', index=False, index_label=None):
         self.mysqlStore.insert_many(table,df,if_exists, index, index_label)
 
-    def find(self, query):
-        a = self.mysqlStore.session.query(FTStockBasicInfo.code, FTStockBasicInfo.name)
-        print(a)
+    def find_all_stockcodes(self):
+        ret_codes = []
         for code,name in self.mysqlStore.session.query(FTStockBasicInfo.code,FTStockBasicInfo.name):
-            print(code,name)
-
-        pass
+            ret_codes.append(code)
+        return ret_codes
 
     def update(self, query, newitem):
         pass

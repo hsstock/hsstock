@@ -25,6 +25,7 @@ def main():
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`title`);',
                 'ALTER TABLE `{0}` ADD UNIQUE KEY (`url`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
             ]
         },
         {
@@ -105,7 +106,8 @@ def main():
             },
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
-                'ALTER TABLE `{0}` ADD PRIMARY KEY (`Ticker`);'
+                'ALTER TABLE `{0}` ADD UNIQUE INDEX (`Ticker`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
             ]
         },
         {
@@ -118,6 +120,7 @@ def main():
             },
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY KEY(`code`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
             ]
         },
         {
@@ -137,6 +140,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN cf_sales FLOAT COMMENT  \'经营现金净流量对销售收入比率\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN rateofreturn FLOAT COMMENT  \'资产的经营现金流量回报率\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN cf_nm FLOAT COMMENT  \'经营现金净流量与净利润的比率\';',
@@ -156,6 +160,7 @@ def main():
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 # Code有重复
                 'ALTER TABLE `{0}` ADD KEY (`code`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
             ]
         },
         {
@@ -167,6 +172,7 @@ def main():
             },
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN month VARCHAR(10) COMMENT  \'年.月\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN cpi FLOAT COMMENT  \'价格指数\';'
             ]
@@ -189,6 +195,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN currentratio FLOAT COMMENT  \'流动比率\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN quickratio FLOAT COMMENT  \'速动比率\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN cashratio FLOAT COMMENT  \'速动比率\';',
@@ -208,6 +215,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`date`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN deposit_type VARCHAR(50) COMMENT  \'存款种类\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN rate  FLOAT COMMENT \'利率(百分比)\';'
             ]
@@ -227,6 +235,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN pre_eps FLOAT COMMENT  \'上年同期每股收益\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN `range` VARCHAR(30) COMMENT  \'业绩变动范围40~60百分比\';'
             ]
@@ -249,6 +258,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN nums BIGINT COMMENT  \'基金家数\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN nlast BIGINT COMMENT  \'与上期相比（增加或减少了）\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN count FLOAT COMMENT  \'基金持股数（万股）\';',
@@ -271,6 +281,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`year`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN gdp_yoy FLOAT COMMENT  \'国内生产总值\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN pi FLOAT COMMENT  \'第一产业献率\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN si FLOAT COMMENT  \'第二产业献率\';'
@@ -293,6 +304,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`year`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN end_for FLOAT COMMENT  \'最终消费支出贡献率(百分比)\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN for_rate FLOAT COMMENT  \'资本形成总额贡献率(百分比)\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN asset_for FLOAT COMMENT  \'资本形成总额贡献率(百分比)\';'
@@ -315,6 +327,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`year`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN gdp_yoy FLOAT COMMENT  \'国内生产总值同比增长(百分比)\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN pi FLOAT COMMENT  \'第一产业拉动率(百分比)\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN si FLOAT COMMENT  \'第二产业拉动率(百分比)\';'
@@ -339,6 +352,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`quarter`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN gdp FLOAT COMMENT  \'国内生产总值(亿元)\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN gdp_yoy FLOAT COMMENT  \'国内生产总值同比增长(百分比)\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN pi FLOAT COMMENT  \'第一产业增加值(亿元)\';'
@@ -368,6 +382,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`year`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN gdp FLOAT COMMENT  \'国内生产总值(亿元)\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN pc_gdp FLOAT COMMENT  \'人均国内生产总值(元)\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN gnp FLOAT COMMENT  \'国民生产总值(亿元)\';'
@@ -390,6 +405,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
             ]
         },
         {
@@ -409,6 +425,7 @@ def main():
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
                 'ALTER TABLE `{0}` ADD INDEX (`date`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
             ]
         },
         {
@@ -423,6 +440,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
             ]
         },
         {
@@ -436,6 +454,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
             ]
         },
         {
@@ -449,6 +468,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`date`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN loan_type VARCHAR (100) COMMENT  \'存款种类\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN rate FLOAT COMMENT  \'利率(百分比)\';'
             ]
@@ -478,6 +498,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`month`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN m2 FLOAT COMMENT  \'货币和准货币（广义货币M2）(亿元)\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN m2_yoy FLOAT COMMENT  \'货币和准货币（广义货币M2）同比增长(百分比)\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN m1 FLOAT COMMENT  \'货币(狭义货币M1)(亿元)\';',
@@ -513,6 +534,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`year`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN m2 FLOAT COMMENT  \'货币和准货币(亿元)\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN m1 FLOAT COMMENT  \'货币(亿元)\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN m0 FLOAT COMMENT  \'流通中现金(亿元)\';'
@@ -543,6 +565,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN ipo_date DATE COMMENT  \'上网发行日期\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN issue_date BIGINT COMMENT  \'上市日期\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN amount BIGINT COMMENT  \'发行数量(万股)\';',
@@ -571,6 +594,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN arturnover FLOAT COMMENT  \'应收账款周转率(次)\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN arturndays FLOAT COMMENT  \'应收账款周转天数(天)\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN inventory_turnover FLOAT COMMENT  \'存货周转率(次)\';'
@@ -598,6 +622,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`month`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN month FLOAT COMMENT  \'年.月\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN ppiip FLOAT COMMENT  \'工业品出厂价格指数\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN ppi FLOAT COMMENT  \'生产资料价格指数\';'
@@ -630,6 +655,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN roe FLOAT COMMENT  \'净资产收益率(百分比)\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN net_profit_ratio FLOAT COMMENT  \'净利率(百分比)\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN gross_profit_rate FLOAT COMMENT  \'毛利率(百分比)\';',
@@ -653,6 +679,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN divi FLOAT COMMENT  \'分红金额（每10股）\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN shares FLOAT COMMENT  \'转增和送股数（每10股）\';',
             ]
@@ -677,6 +704,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN eps FLOAT COMMENT  \'每股收益\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN eps_yoy FLOAT COMMENT  \'每股收益同比(百分比)\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN bvps FLOAT COMMENT  \'每股净资产\';',
@@ -699,6 +727,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`date`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN changed FLOAT COMMENT  \'调整幅度(百分比)\';'
             ]
         },
@@ -713,6 +742,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
             ]
         },
         {
@@ -725,6 +755,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
             ]
         },
 
@@ -739,6 +770,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
             ]
         },
         {
@@ -754,6 +786,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN ratio FLOAT COMMENT  \'占总盘比率\';'
             ]
         },
@@ -769,6 +802,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
             ]
         },
         {
@@ -789,6 +823,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN mbrg FLOAT COMMENT  \'主营业务收入增长率(百分比)\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN nprg FLOAT COMMENT  \'净利润增长率(百分比)\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN nav FLOAT COMMENT  \'净资产增长率\';'
@@ -828,6 +863,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN pe FLOAT COMMENT  \'市盈率\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN outstanding FLOAT COMMENT  \'流通股本(亿)\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN totals FLOAT COMMENT  \'总股本(亿)\';',
@@ -874,6 +910,7 @@ def main():
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`date`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN p_change FLOAT COMMENT  \'涨跌变动\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN turnover FLOAT COMMENT  \'换手率\';'
             ]
@@ -903,6 +940,7 @@ def main():
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`date`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN p_change FLOAT COMMENT  \'涨跌变动\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN turnover FLOAT COMMENT  \'换手率\';'
             ]
@@ -919,6 +957,7 @@ def main():
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);'
                 'ALTER TABLE `{0}` COMMENT  \'大单数据表\';',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN name VARCHAR(255) COMMENT  \'代码名称\';'
             ]
         },
@@ -941,6 +980,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
             ]
         },
         {
@@ -967,6 +1007,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN changepercent FLOAT COMMENT  \'涨跌率\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN trade FLOAT COMMENT  \'现价\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN settlement FLOAT COMMENT  \'昨日收盘价\';',
@@ -995,6 +1036,7 @@ def main():
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
                 'ALTER TABLE `{0}` ADD INDEX (`date`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
             ]
         },
         {
@@ -1038,6 +1080,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
             ]
         },
         {
@@ -1056,6 +1099,7 @@ def main():
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`date`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN type VARCHAR(10) COMMENT  \'买卖类型【买盘、卖盘、中性盘】\';'
             ]
         },

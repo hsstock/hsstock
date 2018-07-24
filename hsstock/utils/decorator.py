@@ -18,7 +18,7 @@ def clock(fmt=DEFAULT_FMT):
         return clocked
     return decorate
 
-def rate_limit(act,retry_count=3,wait=2):
+def rate_limit(act,retry_count=15,wait=3):
     def decorate(func):
         def rate_limited(*_args):
             freqlimit = FreqLimit()
