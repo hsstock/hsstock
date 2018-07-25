@@ -31,6 +31,17 @@ class DateUtil():
         return DateUtil.date_toString(past)
 
     @staticmethod
+    def getNextHalfYear(start, end,ndays=180):
+        future = start
+        while future < end:
+            if future + timedelta(days=ndays) < end:
+                future += timedelta(days=ndays)
+                yield DateUtil.date_toString(future)
+            else:
+                yield DateUtil.date_toString(end)
+                break
+
+    @staticmethod
     def getTodayStr():
         return time.strftime('%Y-%m-%d', time.localtime())
 
@@ -115,3 +126,11 @@ if __name__ == "__main__":
     print(DateUtil.timestamp_toString(DateUtil.string_toTimestamp(DateUtil.format_date('07-02 06:00'))))
     print(DateUtil.date_str_to_int('2007-07-07'))
     print(DateUtil.date_to_millisecond(str(DateUtil.date_str_to_int('2007-07-07'))))
+
+    gen = DateUtil.getNextHalfYear( DateUtil.string_toDate('2016-01-01'),DateUtil.string_toDate('2018-01-01') )
+    while True:
+        try:
+            print( next(gen) )
+        except StopIteration as e:
+            print(e)
+            break

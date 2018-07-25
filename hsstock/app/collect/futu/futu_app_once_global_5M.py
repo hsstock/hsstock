@@ -35,38 +35,48 @@ def job_once_global_m5(worker):
     global is_closing
 
     while not is_closing:
-        markets = enumclass_to_list(Market)
-        plate_list = []
-        for market in markets:
-            ret_code, ret_data = worker.get_plate_list(market)
-            if ret_code is RET_OK:
-                plate_list.append(ret_data)
-        if is_closing is True:
-            break
+        begin = time.time()
+        ret_arr = worker.storeservice.find_all_stocks()
+        todayStr = DateUtil.getTodayStr()
+        total = len(ret_arr)
+        curr = 0
+        for code, listing_date in ret_arr:
+            curr += 1
+            logging.info("current fetching progress {}/{} ".format(curr,total))
 
-        plate_stock = []
-        for i in range(0,len(plate_list),1):
-            if is_closing is True:
-                break
-            for j in range(0, len(plate_list[i]), 1):
-                print(plate_list[i].iloc[j].code)
-                ret_code, ret_data = worker.get_plate_stock(plate_list[i].iloc[j].code)
-                if ret_code is RET_OK:
-                    plate_stock.append(ret_data)
+            start = DateUtil.date_toString(listing_date)
+            end = todayStr
+            gen = DateUtil.getNextHalfYear(DateUtil.string_toDate(start), DateUtil.string_toDate(end))
+            while True:
+                try:
+                    end = next(gen)
+
+                    if is_closing is True:
+                        break
+
+                    logging.info("fetching {} K_5M_LINE listing_date:{} start: {} end:{}".format(code, listing_date, start, end))
+                    worker.get_history_kline(code, start, end, ktype=KLType.K_5M)
+
+                    if is_closing is True:
+                        break
+
+                    logging.info("fetching {} K_DAY listing_date: {} start: {} end:{}".format(code, listing_date, start, end))
+                    worker.get_history_kline(code, start, end, ktype=KLType.K_DAY)
+
+                    start = end
+                except StopIteration as e:
+                    print(e)
+                    break
+
                 if is_closing is True:
                     break
-                print('get_plate_stock current progress - {}.{}'.format(i,j))
-                time.sleep(FREQLIMIT[FREQ.TOTAL_SECONDS] / FREQLIMIT[FREQ.GET_PLATE_LIST])
 
-        for i in range(0,len(plate_stock),1):
             if is_closing is True:
                 break
-            for j in range(0, len(plate_stock[i]), 1):
-                print(plate_stock[i].iloc[j].code)
-                worker.get_history_kline(plate_stock[i].iloc[j].code, '2018-01-01','2018-07-17',ktype=KLType.K_5M)
-                if is_closing is True:
-                    break
-                print('get_history_kline current progress - {}.{}'.format(i,j))
+
+        end = time.time()
+        logging.info("fetching for one  period , cost time: {}".format((end - begin)))
+
         break
 
 

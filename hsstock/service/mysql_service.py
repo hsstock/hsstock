@@ -114,6 +114,12 @@ class MysqlService():
             ret_codes.append(code)
         return ret_codes
 
+    def find_all_stocks(self):
+        ret_arr = []
+        for code, listing_date in self.mysqlStore.session.query(FTStockBasicInfo.code,FTStockBasicInfo.listing_date):
+            ret_arr.append((code,listing_date))
+        return ret_arr
+
     def update(self, query, newitem):
         pass
 

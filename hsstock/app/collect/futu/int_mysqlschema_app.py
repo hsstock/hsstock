@@ -307,143 +307,144 @@ def main():
         #         'ALTER TABLE `{0}` MODIFY COLUMN backward_adj_factorB FLOAT COMMENT  \'后复权因子B\';'
         #     ]
         # },
-        {
-            "table": "ft_market_snapshot",
-            "dtype": {
-                "id": sa.types.BIGINT,
-                "code": sa.types.NVARCHAR(20),
-                "update_time": sa.types.DATETIME,
-                "last_price": sa.types.FLOAT,
-                "open_price": sa.types.FLOAT,
-                "high_price": sa.types.FLOAT,
-                "low_price": sa.types.FLOAT,
-                "prev_close_price": sa.types.FLOAT,
-                "volume": sa.types.BIGINT,
-                "turnover": sa.types.BIGINT,
-                "turnover_rate": sa.types.FLOAT,
-                "suspension": sa.types.INT,
-                "listing_date": sa.types.DATE,
-                "circular_market_val": sa.types.FLOAT,
-                "low_price": sa.types.FLOAT,
-                "total_market_val": sa.types.FLOAT,
-                "wrt_valid": sa.types.INT,
-                "wrt_conversion_ratio": sa.types.FLOAT,
-                "wrt_type": sa.types.NVARCHAR(20),
-                "wrt_strike_price": sa.types.FLOAT,
-                "wrt_maturity_date": sa.types.DATE,
-                "wrt_end_trade": sa.types.DATE,
-                "wrt_code": sa.types.NVARCHAR(50),
-                "wrt_recovery_price": sa.types.FLOAT,
-                "wrt_street_vol": sa.types.FLOAT,
-                "wrt_issue_vol": sa.types.FLOAT,
-                "wrt_street_ratio": sa.types.FLOAT,
-                "wrt_delta": sa.types.FLOAT,
-                "wrt_implied_volatility": sa.types.FLOAT,
-                "wrt_premium": sa.types.FLOAT,
-                "lot_size": sa.types.BIGINT,
-                "issued_Shares": sa.types.BIGINT,
-                "net_asset": sa.types.FLOAT,
-                "net_profit": sa.types.FLOAT,
-                "earning_per_share": sa.types.FLOAT,
-                "outstanding_shares": sa.types.BIGINT,
-                "net_asset_per_share": sa.types.FLOAT,
-                "ey_ratio": sa.types.FLOAT,
-                "pe_ratio": sa.types.FLOAT,
-                "pb_ratio": sa.types.FLOAT,
-                "price_spread": sa.types.FLOAT
-            },
-            "clauses": [
-                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
-                'ALTER TABLE `{0}` ADD INDEX (`code`);',
-                'ALTER TABLE `{0}` ADD INDEX (`update_time`);'
-                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN last_price FLOAT COMMENT  \'最新价格\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN open_price FLOAT COMMENT  \'今日开盘价\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN high_price FLOAT COMMENT  \'最高价格\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN low_price FLOAT COMMENT  \'最低价格\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN prev_close_price FLOAT COMMENT  \'昨收盘价格\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN volume BIGINT COMMENT  \'成交数量\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN turnover FLOAT COMMENT  \'成交金额\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN turnover_rate FLOAT COMMENT  \'换手率\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN suspension INT COMMENT  \'是否停牌(True表示停牌)\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN listing_date DATE COMMENT  \'上市日期 (yyyy-MM-dd)\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN circular_market_val FLOAT COMMENT  \'流通市值\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN total_market_val FLOAT COMMENT  \'总市值\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN wrt_valid INT COMMENT  \'是否是窝轮\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN wrt_conversion_ratio FLOAT COMMENT  \'换股比率\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN wrt_type VARCHAR(20) COMMENT  \'窝轮类型；1=认购证 2=认沽证 3=牛证 4=熊证 \';'
-                'ALTER TABLE `{0}` MODIFY COLUMN wrt_strike_price FLOAT COMMENT  \'行使价格\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN wrt_maturity_date DATE COMMENT  \'格式化窝轮到期时间\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN wrt_end_trade DATE COMMENT  \'格式化窝轮最后交易时间\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN wrt_code VARCHAR(50) COMMENT  \'窝轮对应的正股\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN wrt_recovery_price FLOAT COMMENT  \'窝轮回收价\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN wrt_street_vol FLOAT COMMENT  \'窝轮街货量\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN wrt_issue_vol FLOAT COMMENT  \'窝轮发行量\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN wrt_street_ratio FLOAT COMMENT  \'窝轮街货占比\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN wrt_delta FLOAT COMMENT  \'窝轮对冲值\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN wrt_implied_volatility FLOAT COMMENT  \'窝轮引伸波幅\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN wrt_premium FLOAT COMMENT  \'窝轮溢价\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN lot_size BIGINT COMMENT  \'每手股数\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN issued_Shares BIGINT COMMENT  \'发行股本\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN net_asset FLOAT COMMENT  \'资产净值\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN net_profit FLOAT COMMENT  \'净利润\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN earning_per_share FLOAT COMMENT  \'每股盈利\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN outstanding_shares BIGINT COMMENT  \'流通股本\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN net_asset_per_share FLOAT COMMENT  \'每股净资产\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN ey_ratio FLOAT COMMENT  \'收益率\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN pe_ratio FLOAT COMMENT  \'市盈率\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN pb_ratio FLOAT COMMENT  \'市净率\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN price_spread FLOAT COMMENT  \'当前摆盘价差亦即摆盘数据的买档或卖档的相邻档位的报价差\';'
-            ]
-        },
         # {
-        #     "table": "ft_plate_list",
+        #     "table": "ft_market_snapshot",
         #     "dtype": {
         #         "id": sa.types.BIGINT,
         #         "code": sa.types.NVARCHAR(20),
-        #         "plate_name": sa.types.NVARCHAR(50),
-        #         "plate_id": sa.types.NVARCHAR(20),
-        #     },
-        #     "clauses": [
-        #         'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
-        #         'ALTER TABLE `{0}` ADD UNIQUE INDEX (`code`);',
-        #         'ALTER TABLE `{0}` ADD INDEX (`plate_name`);'
-        #         'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
-        #         'ALTER TABLE `{0}` MODIFY COLUMN code VARCHAR(20) COMMENT  \'股票代码\';'
-        #         'ALTER TABLE `{0}` MODIFY COLUMN plate_name VARCHAR(50) COMMENT  \'板块名字\';'
-        #         'ALTER TABLE `{0}` MODIFY COLUMN plate_id VARCHAR(20) COMMENT  \'板块id\';'
-        #     ]
-        # },
-        # {
-        #     "table": "ft_plate_stock",
-        #     "dtype": {
-        #         "id": sa.types.BIGINT,
-        #         "code": sa.types.NVARCHAR(20),
+        #         "update_time": sa.types.DATETIME,
+        #         "last_price": sa.types.FLOAT,
+        #         "open_price": sa.types.FLOAT,
+        #         "high_price": sa.types.FLOAT,
+        #         "low_price": sa.types.FLOAT,
+        #         "prev_close_price": sa.types.FLOAT,
+        #         "volume": sa.types.BIGINT,
+        #         "turnover": sa.types.BIGINT,
+        #         "turnover_rate": sa.types.FLOAT,
+        #         "suspension": sa.types.INT,
+        #         "listing_date": sa.types.DATE,
+        #         "circular_market_val": sa.types.FLOAT,
+        #         "low_price": sa.types.FLOAT,
+        #         "total_market_val": sa.types.FLOAT,
+        #         "wrt_valid": sa.types.INT,
+        #         "wrt_conversion_ratio": sa.types.FLOAT,
+        #         "wrt_type": sa.types.NVARCHAR(20),
+        #         "wrt_strike_price": sa.types.FLOAT,
+        #         "wrt_maturity_date": sa.types.DATE,
+        #         "wrt_end_trade": sa.types.DATE,
+        #         "wrt_code": sa.types.NVARCHAR(50),
+        #         "wrt_recovery_price": sa.types.FLOAT,
+        #         "wrt_street_vol": sa.types.FLOAT,
+        #         "wrt_issue_vol": sa.types.FLOAT,
+        #         "wrt_street_ratio": sa.types.FLOAT,
+        #         "wrt_delta": sa.types.FLOAT,
+        #         "wrt_implied_volatility": sa.types.FLOAT,
+        #         "wrt_premium": sa.types.FLOAT,
         #         "lot_size": sa.types.BIGINT,
-        #         "stock_name": sa.types.NVARCHAR(100),
-        #         "stock_owner": sa.types.NVARCHAR(100),
-        #         "stock_child_type": sa.types.NVARCHAR(20),
-        #         "stock_type": sa.types.NVARCHAR(20),
-        #         "list_time": sa.types.DATE,
-        #         "stock_id": sa.types.BIGINT,
+        #         "issued_Shares": sa.types.BIGINT,
+        #         "net_asset": sa.types.FLOAT,
+        #         "net_profit": sa.types.FLOAT,
+        #         "earning_per_share": sa.types.FLOAT,
+        #         "outstanding_shares": sa.types.BIGINT,
+        #         "net_asset_per_share": sa.types.FLOAT,
+        #         "ey_ratio": sa.types.FLOAT,
+        #         "pe_ratio": sa.types.FLOAT,
+        #         "pb_ratio": sa.types.FLOAT,
+        #         "price_spread": sa.types.FLOAT
         #     },
         #     "clauses": [
         #         'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
         #         'ALTER TABLE `{0}` ADD INDEX (`code`);',
-        #         'ALTER TABLE `{0}` ADD INDEX (`stock_name`);'
-        #         'ALTER TABLE `{0}` ADD INDEX (`stock_child_type`);'
-        #         'ALTER TABLE `{0}` ADD INDEX (`stock_type`);'
+        #         'ALTER TABLE `{0}` ADD INDEX (`update_time`);'
         #         'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
-        #         'ALTER TABLE `{0}` MODIFY COLUMN code VARCHAR(20) COMMENT  \'股票代码\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN last_price FLOAT COMMENT  \'最新价格\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN open_price FLOAT COMMENT  \'今日开盘价\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN high_price FLOAT COMMENT  \'最高价格\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN low_price FLOAT COMMENT  \'最低价格\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN prev_close_price FLOAT COMMENT  \'昨收盘价格\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN volume BIGINT COMMENT  \'成交数量\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN turnover FLOAT COMMENT  \'成交金额\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN turnover_rate FLOAT COMMENT  \'换手率\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN suspension INT COMMENT  \'是否停牌(True表示停牌)\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN listing_date DATE COMMENT  \'上市日期 (yyyy-MM-dd)\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN circular_market_val FLOAT COMMENT  \'流通市值\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN total_market_val FLOAT COMMENT  \'总市值\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN wrt_valid INT COMMENT  \'是否是窝轮\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN wrt_conversion_ratio FLOAT COMMENT  \'换股比率\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN wrt_type VARCHAR(20) COMMENT  \'窝轮类型；1=认购证 2=认沽证 3=牛证 4=熊证 \';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN wrt_strike_price FLOAT COMMENT  \'行使价格\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN wrt_maturity_date DATE COMMENT  \'格式化窝轮到期时间\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN wrt_end_trade DATE COMMENT  \'格式化窝轮最后交易时间\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN wrt_code VARCHAR(50) COMMENT  \'窝轮对应的正股\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN wrt_recovery_price FLOAT COMMENT  \'窝轮回收价\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN wrt_street_vol FLOAT COMMENT  \'窝轮街货量\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN wrt_issue_vol FLOAT COMMENT  \'窝轮发行量\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN wrt_street_ratio FLOAT COMMENT  \'窝轮街货占比\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN wrt_delta FLOAT COMMENT  \'窝轮对冲值\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN wrt_implied_volatility FLOAT COMMENT  \'窝轮引伸波幅\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN wrt_premium FLOAT COMMENT  \'窝轮溢价\';'
         #         'ALTER TABLE `{0}` MODIFY COLUMN lot_size BIGINT COMMENT  \'每手股数\';'
-        #         'ALTER TABLE `{0}` MODIFY COLUMN stock_name VARCHAR(100) COMMENT  \'股票名称\';'
-        #         'ALTER TABLE `{0}` MODIFY COLUMN stock_owner VARCHAR(100) COMMENT  \'所属正股的代码\';'
-        #         'ALTER TABLE `{0}` MODIFY COLUMN stock_child_type VARCHAR(100) COMMENT  \'股票子类型，参见WrtType\';'
-        #         'ALTER TABLE `{0}` MODIFY COLUMN stock_type VARCHAR(20) COMMENT  \'股票类型，参见SecurityType\';'
-        #         'ALTER TABLE `{0}` MODIFY COLUMN list_time DATE COMMENT  \'上市时间\';'
-        #         'ALTER TABLE `{0}` MODIFY COLUMN stock_id BIGINT COMMENT  \'股票id\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN issued_Shares BIGINT COMMENT  \'发行股本\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN net_asset FLOAT COMMENT  \'资产净值\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN net_profit FLOAT COMMENT  \'净利润\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN earning_per_share FLOAT COMMENT  \'每股盈利\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN outstanding_shares BIGINT COMMENT  \'流通股本\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN net_asset_per_share FLOAT COMMENT  \'每股净资产\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN ey_ratio FLOAT COMMENT  \'收益率\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN pe_ratio FLOAT COMMENT  \'市盈率\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN pb_ratio FLOAT COMMENT  \'市净率\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN price_spread FLOAT COMMENT  \'当前摆盘价差亦即摆盘数据的买档或卖档的相邻档位的报价差\';'
         #     ]
-        #},
+        # },
+        {
+            "table": "ft_plate_list",
+            "dtype": {
+                "id": sa.types.BIGINT,
+                "code": sa.types.NVARCHAR(20),
+                "plate_name": sa.types.NVARCHAR(50),
+                "plate_id": sa.types.NVARCHAR(20),
+            },
+            "clauses": [
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
+                # code aren't unique
+                'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` ADD INDEX (`plate_name`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN code VARCHAR(20) COMMENT  \'股票代码\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN plate_name VARCHAR(50) COMMENT  \'板块名字\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN plate_id VARCHAR(20) COMMENT  \'板块id\';'
+            ]
+        },
+        {
+            "table": "ft_plate_stock",
+            "dtype": {
+                "id": sa.types.BIGINT,
+                "code": sa.types.NVARCHAR(20),
+                "lot_size": sa.types.BIGINT,
+                "stock_name": sa.types.NVARCHAR(100),
+                "stock_owner": sa.types.NVARCHAR(100),
+                "stock_child_type": sa.types.NVARCHAR(20),
+                "stock_type": sa.types.NVARCHAR(20),
+                "list_time": sa.types.DATE,
+                "stock_id": sa.types.BIGINT,
+            },
+            "clauses": [
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
+                'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` ADD INDEX (`stock_name`);'
+                'ALTER TABLE `{0}` ADD INDEX (`stock_child_type`);'
+                'ALTER TABLE `{0}` ADD INDEX (`stock_type`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN code VARCHAR(20) COMMENT  \'股票代码\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN lot_size BIGINT COMMENT  \'每手股数\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN stock_name VARCHAR(100) COMMENT  \'股票名称\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN stock_owner VARCHAR(100) COMMENT  \'所属正股的代码\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN stock_child_type VARCHAR(100) COMMENT  \'股票子类型，参见WrtType\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN stock_type VARCHAR(20) COMMENT  \'股票类型，参见SecurityType\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN list_time DATE COMMENT  \'上市时间\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN stock_id BIGINT COMMENT  \'股票id\';'
+            ]
+        },
     ]
 
     try:
