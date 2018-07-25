@@ -63,7 +63,7 @@ def job_once_global_m5(worker):
                     logging.info("fetching {} K_DAY listing_date: {} start: {} end:{}".format(code, listing_date, start, end))
                     worker.get_history_kline(code, start, end, ktype=KLType.K_DAY)
 
-                    start = end
+                    start = DateUtil.getDatetimeFutureStr(DateUtil.string_toDate(end),1)
                 except StopIteration as e:
                     print(e)
                     break

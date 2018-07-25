@@ -130,7 +130,10 @@ if __name__ == "__main__":
     gen = DateUtil.getNextHalfYear( DateUtil.string_toDate('2016-01-01'),DateUtil.string_toDate('2018-01-01') )
     while True:
         try:
-            print( next(gen) )
+            end = next(gen)
+            print( end )
+            print( DateUtil.getDatetimeFutureStr(DateUtil.string_toDate(end),1) )
+
         except StopIteration as e:
             print(e)
             break
