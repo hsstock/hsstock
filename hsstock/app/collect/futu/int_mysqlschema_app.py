@@ -67,6 +67,7 @@ def main():
         #         'ALTER TABLE `{0}` MODIFY COLUMN turnover FLOAT COMMENT  \'成交额\';'
         #         'ALTER TABLE `{0}` MODIFY COLUMN change_rate FLOAT COMMENT  \'涨跌幅\';'
         #         'ALTER TABLE `{0}` MODIFY COLUMN last_close FLOAT COMMENT  \'昨收价\';'
+        #         'ALTER TABLE `{0}` ENGINE=MyISAM;'
         #     ]
         # },
         # {
@@ -97,6 +98,7 @@ def main():
         #         'ALTER TABLE `{0}` MODIFY COLUMN turnover FLOAT COMMENT  \'成交额\';'
         #         'ALTER TABLE `{0}` MODIFY COLUMN change_rate FLOAT COMMENT  \'涨跌幅\';'
         #         'ALTER TABLE `{0}` MODIFY COLUMN last_close FLOAT COMMENT  \'昨收价\';'
+        #         'ALTER TABLE `{0}` ENGINE=MyISAM;'
         #     ]
         # },
         # {
@@ -396,53 +398,70 @@ def main():
         #         'ALTER TABLE `{0}` MODIFY COLUMN price_spread FLOAT COMMENT  \'当前摆盘价差亦即摆盘数据的买档或卖档的相邻档位的报价差\';'
         #     ]
         # },
+        # {
+        #     "table": "ft_plate_list",
+        #     "dtype": {
+        #         "id": sa.types.BIGINT,
+        #         "code": sa.types.NVARCHAR(20),
+        #         "plate_name": sa.types.NVARCHAR(50),
+        #         "plate_id": sa.types.NVARCHAR(20),
+        #     },
+        #     "clauses": [
+        #         'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
+        #         # code aren't unique
+        #         'ALTER TABLE `{0}` ADD INDEX (`code`);',
+        #         'ALTER TABLE `{0}` ADD INDEX (`plate_name`);'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN code VARCHAR(20) COMMENT  \'股票代码\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN plate_name VARCHAR(50) COMMENT  \'板块名字\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN plate_id VARCHAR(20) COMMENT  \'板块id\';'
+        #     ]
+        # },
+        # {
+        #     "table": "ft_plate_stock",
+        #     "dtype": {
+        #         "id": sa.types.BIGINT,
+        #         "code": sa.types.NVARCHAR(20),
+        #         "lot_size": sa.types.BIGINT,
+        #         "stock_name": sa.types.NVARCHAR(100),
+        #         "stock_owner": sa.types.NVARCHAR(100),
+        #         "stock_child_type": sa.types.NVARCHAR(20),
+        #         "stock_type": sa.types.NVARCHAR(20),
+        #         "list_time": sa.types.DATE,
+        #         "stock_id": sa.types.BIGINT,
+        #     },
+        #     "clauses": [
+        #         'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
+        #         'ALTER TABLE `{0}` ADD INDEX (`code`);',
+        #         'ALTER TABLE `{0}` ADD INDEX (`stock_name`);'
+        #         'ALTER TABLE `{0}` ADD INDEX (`stock_child_type`);'
+        #         'ALTER TABLE `{0}` ADD INDEX (`stock_type`);'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN code VARCHAR(20) COMMENT  \'股票代码\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN lot_size BIGINT COMMENT  \'每手股数\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN stock_name VARCHAR(100) COMMENT  \'股票名称\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN stock_owner VARCHAR(100) COMMENT  \'所属正股的代码\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN stock_child_type VARCHAR(100) COMMENT  \'股票子类型，参见WrtType\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN stock_type VARCHAR(20) COMMENT  \'股票类型，参见SecurityType\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN list_time DATE COMMENT  \'上市时间\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN stock_id BIGINT COMMENT  \'股票id\';'
+        #     ]
+        # },
         {
-            "table": "ft_plate_list",
+            "table": "sys_sharding",
             "dtype": {
                 "id": sa.types.BIGINT,
                 "code": sa.types.NVARCHAR(20),
-                "plate_name": sa.types.NVARCHAR(50),
-                "plate_id": sa.types.NVARCHAR(20),
-            },
-            "clauses": [
-                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
-                # code aren't unique
-                'ALTER TABLE `{0}` ADD INDEX (`code`);',
-                'ALTER TABLE `{0}` ADD INDEX (`plate_name`);'
-                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN code VARCHAR(20) COMMENT  \'股票代码\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN plate_name VARCHAR(50) COMMENT  \'板块名字\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN plate_id VARCHAR(20) COMMENT  \'板块id\';'
-            ]
-        },
-        {
-            "table": "ft_plate_stock",
-            "dtype": {
-                "id": sa.types.BIGINT,
-                "code": sa.types.NVARCHAR(20),
-                "lot_size": sa.types.BIGINT,
-                "stock_name": sa.types.NVARCHAR(100),
-                "stock_owner": sa.types.NVARCHAR(100),
-                "stock_child_type": sa.types.NVARCHAR(20),
-                "stock_type": sa.types.NVARCHAR(20),
-                "list_time": sa.types.DATE,
-                "stock_id": sa.types.BIGINT,
+                "dtype": sa.types.Enum('hk','hk_5m'),
+                "tindex": sa.types.SMALLINT,
             },
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
                 'ALTER TABLE `{0}` ADD INDEX (`code`);',
-                'ALTER TABLE `{0}` ADD INDEX (`stock_name`);'
-                'ALTER TABLE `{0}` ADD INDEX (`stock_child_type`);'
-                'ALTER TABLE `{0}` ADD INDEX (`stock_type`);'
                 'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
                 'ALTER TABLE `{0}` MODIFY COLUMN code VARCHAR(20) COMMENT  \'股票代码\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN lot_size BIGINT COMMENT  \'每手股数\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN stock_name VARCHAR(100) COMMENT  \'股票名称\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN stock_owner VARCHAR(100) COMMENT  \'所属正股的代码\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN stock_child_type VARCHAR(100) COMMENT  \'股票子类型，参见WrtType\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN stock_type VARCHAR(20) COMMENT  \'股票类型，参见SecurityType\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN list_time DATE COMMENT  \'上市时间\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN stock_id BIGINT COMMENT  \'股票id\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN tindex SMALLINT COMMENT  \'表索引\';'
+                'ALTER TABLE `{0}` ENGINE = MEMORY;'
             ]
         },
     ]

@@ -42,11 +42,25 @@ def job_once_global_m5(worker):
         curr = 0
         for code, listing_date in ret_arr:
             curr += 1
+            #1 - (1~2998包含)
+            #2 - (2999~15918不含）
+            #3 - （15918~18986不含）
+            #4 - （18986~19430不含）default InnoDB,
+            #5 -  (19430~21898不含) MyISAM engine,ft_history_kline_5
+            #6 - (21898~24768不含) MyISAM engine,ft_history_kline_6
+            #7 - (24768~26347不含） MyISAM engine, ft_history_kline_7
+            #8 - (26347~27096不含) MyISAM engine, ft_history_kline_8， trigged by docker upgrade
+            #9 - (27096~28123不含) MyISAM engine, ft_history_kline_9
+            #10 - (28123~31918) MyISAM engine, ft_history_kline_10
             logging.info("current fetching progress {}/{} ".format(curr,total))
+            if curr < 35000:
+                continue
+
 
             start = DateUtil.date_toString(listing_date)
             end = todayStr
             gen = DateUtil.getNextHalfYear(DateUtil.string_toDate(start), DateUtil.string_toDate(end))
+            b = time.time()
             while True:
                 try:
                     end = next(gen)
@@ -54,22 +68,30 @@ def job_once_global_m5(worker):
                     if is_closing is True:
                         break
 
-                    logging.info("fetching {} K_5M_LINE listing_date:{} start: {} end:{}".format(code, listing_date, start, end))
+                    b1 = time.time()
                     worker.get_history_kline(code, start, end, ktype=KLType.K_5M)
+                    e1 = time.time()
+                    logging.info(
+                        "fetching {} K_5M_LINE listing_date:{} start: {} end:{} cost time {}".format(code, listing_date, start, end,e1-b1))
 
                     if is_closing is True:
                         break
 
-                    logging.info("fetching {} K_DAY listing_date: {} start: {} end:{}".format(code, listing_date, start, end))
+                    b2 = time.time()
                     worker.get_history_kline(code, start, end, ktype=KLType.K_DAY)
+                    e2 = time.time()
+                    logging.info(
+                        "fetching {} K_DAY listing_date: {} start: {} end:{} cost time {}".format(code, listing_date, start, end, e2-b2))
 
                     start = DateUtil.getDatetimeFutureStr(DateUtil.string_toDate(end),1)
                 except StopIteration as e:
                     print(e)
                     break
+                # if is_closing is True:
+                #     break
 
-                if is_closing is True:
-                    break
+            e = time.time()
+            logging.info("position {} fetching {} const time {}".format(curr, code, e - b))
 
             if is_closing is True:
                 break
