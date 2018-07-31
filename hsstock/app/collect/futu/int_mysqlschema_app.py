@@ -39,8 +39,72 @@ def main():
         #         'ALTER TABLE `{0}` MODIFY COLUMN stock_id BIGINT COMMENT  \'股票id\';'
         #     ]
         # },
+        {
+            "table": "ft_history_kline",
+            "dtype": {
+                "id": sa.types.BIGINT,
+                "code": sa.types.NVARCHAR(20),
+                "time_key": sa.types.DATETIME,
+                "open": sa.types.FLOAT,
+                "close": sa.types.FLOAT,
+                "high": sa.types.FLOAT,
+                "low": sa.types.FLOAT,
+                "pe_ratio": sa.types.FLOAT,
+                "turnover_rate": sa.types.FLOAT,
+                "volume": sa.types.BIGINT,
+                "turnover": sa.types.FLOAT,
+                "change_rate": sa.types.FLOAT,
+                "last_close": sa.types.FLOAT
+            },
+            "clauses": [
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
+                'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` ADD INDEX (`time_key`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';',
+                'ALTER TABLE `{0}` MODIFY COLUMN pe_ratio FLOAT COMMENT  \'市盈率\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN turnover_rate FLOAT COMMENT  \'换手率\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN volume BIGINT COMMENT  \'成交量\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN turnover FLOAT COMMENT  \'成交额\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN change_rate FLOAT COMMENT  \'涨跌幅\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN last_close FLOAT COMMENT  \'昨收价\';'
+                #'ALTER TABLE `{0}` ENGINE=MRG_MyISAM UNION=(ft_history_kline_1,ft_history_kline_2,ft_history_kline_3,ft_history_kline_4,ft_history_kline_5,ft_history_kline_6,ft_history_kline_7,ft_history_kline_8,ft_history_kline_9,ft_history_kline_10,ft_history_kline_11) INSERT_METHOD=LAST;'
+                'ALTER TABLE `{0}` ENGINE=MyISAM;'
+            ]
+        },
+        {
+            "table": "ft_history_kline_K_5M",
+            "dtype": {
+                "id": sa.types.BIGINT,
+                "code": sa.types.NVARCHAR(20),
+                "time_key": sa.types.DATETIME,
+                "open": sa.types.FLOAT,
+                "close": sa.types.FLOAT,
+                "high": sa.types.FLOAT,
+                "low": sa.types.FLOAT,
+                "pe_ratio": sa.types.FLOAT,
+                "turnover_rate": sa.types.FLOAT,
+                "volume": sa.types.BIGINT,
+                "turnover": sa.types.FLOAT,
+                "change_rate": sa.types.FLOAT,
+                "last_close": sa.types.FLOAT
+            },
+            "clauses": [
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
+                'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` ADD INDEX (`time_key`);'
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';',
+                'ALTER TABLE `{0}` MODIFY COLUMN pe_ratio FLOAT COMMENT  \'市盈率\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN turnover_rate FLOAT COMMENT  \'换手率\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN volume BIGINT COMMENT  \'成交量\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN turnover FLOAT COMMENT  \'成交额\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN change_rate FLOAT COMMENT  \'涨跌幅\';'
+                'ALTER TABLE `{0}` MODIFY COLUMN last_close FLOAT COMMENT  \'昨收价\';'
+                #'ALTER TABLE `{0}` ENGINE=MRG_MyISAM UNION=(ft_history_kline_K_5M_1,ft_history_kline_K_5M_2,ft_history_kline_K_5M_3,ft_history_kline_K_5M_4,ft_history_kline_K_5M_5,ft_history_kline_K_5M_6,ft_history_kline_K_5M_7,ft_history_kline_K_5M_8,ft_history_kline_K_5M_9,ft_history_kline_K_5M_10,ft_history_kline_K_5M_11) INSERT_METHOD=LAST;'
+                'ALTER TABLE `{0}` ENGINE=MyISAM;'
+            ]
+        },
         # {
-        #     "table": "ft_history_kline",
+        #     "table": "ft_history_kline_MyISAM",
         #     "dtype": {
         #         "id": sa.types.BIGINT,
         #         "code": sa.types.NVARCHAR(20),
@@ -71,7 +135,7 @@ def main():
         #     ]
         # },
         # {
-        #     "table": "ft_history_kline_K_5M",
+        #     "table": "ft_history_kline_K_5M_MyISAM",
         #     "dtype": {
         #         "id": sa.types.BIGINT,
         #         "code": sa.types.NVARCHAR(20),
@@ -447,23 +511,23 @@ def main():
         #         'ALTER TABLE `{0}` MODIFY COLUMN stock_id BIGINT COMMENT  \'股票id\';'
         #     ]
         # },
-        {
-            "table": "sys_sharding",
-            "dtype": {
-                "id": sa.types.BIGINT,
-                "code": sa.types.NVARCHAR(20),
-                "dtype": sa.types.Enum('hk','hk_5m'),
-                "tindex": sa.types.SMALLINT,
-            },
-            "clauses": [
-                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
-                'ALTER TABLE `{0}` ADD INDEX (`code`);',
-                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN code VARCHAR(20) COMMENT  \'股票代码\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN tindex SMALLINT COMMENT  \'表索引\';'
-                'ALTER TABLE `{0}` ENGINE = MEMORY;'
-            ]
-        },
+        # {
+        #     "table": "sys_sharding",
+        #     "dtype": {
+        #         "id": sa.types.BIGINT,
+        #         "code": sa.types.NVARCHAR(20),
+        #         "dtype": sa.types.Enum('hk','hk_5m'),
+        #         "tindex": sa.types.SMALLINT,
+        #     },
+        #     "clauses": [
+        #         'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
+        #         'ALTER TABLE `{0}` ADD INDEX (`code`);',
+        #         'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN code VARCHAR(20) COMMENT  \'股票代码\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN tindex SMALLINT COMMENT  \'表索引\';'
+        #         'ALTER TABLE `{0}` ENGINE = MEMORY;'
+        #     ]
+        # },
     ]
 
     try:

@@ -40,6 +40,9 @@ def rate_limit(act,retry_count=15,wait=3):
         return rate_limited
     return decorate
 
+def table(table):
+    def decorate(kclass):
+        old_table
 if __name__ == '__main__':
 
     @clock()

@@ -20,6 +20,7 @@ from hsstock.common.constant import *
 from hsstock.service.quote_service import Subscribe
 from hsstock.service.trade_service import *
 from hsstock.utils.lang_util import *
+from hsstock.model.mysql.ft_history_kline import FTHistoryKline
 
 
 sched = BlockingScheduler()
@@ -52,6 +53,11 @@ def job_once_global_m5(worker):
             #8 - (26347~27096不含) MyISAM engine, ft_history_kline_8， trigged by docker upgrade
             #9 - (27096~28123不含) MyISAM engine, ft_history_kline_9
             #10 - (28123~31918) MyISAM engine, ft_history_kline_10
+            # ft_history_kline tale as the mrg_myisam
+
+            fthistorykline = FTHistoryKline.model('US.NTES','hk',worker.storeservice)
+            gd = fthistorykline.filter_by(code=code,dtype='hk').first()
+            print(gd)
             logging.info("current fetching progress {}/{} ".format(curr,total))
             if curr < 35000:
                 continue
