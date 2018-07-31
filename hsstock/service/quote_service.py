@@ -216,10 +216,20 @@ class LF(object):
             print(ret_data)
             #exit()
         #print(ret_data)
+
+
         if ktype == KLType.K_DAY:
             table = 'ft_history_kline'
+            tindex = self.storeservice.find_tindex(code, 'hk')
+            if tindex != -1:
+                table += ('_' + tindex)
         else:
             table = 'ft_history_kline_' + ktype
+            if ktype == KLType.K_5M:
+                tindex = self.storeservice.find_tindex(code, 'hk_5m')
+                if tindex != -1:
+                    table += ('_' + tindex)
+
         if not isinstance(ret_data,str):
             if len(ret_data) > 0 :
                 self.storeservice.insert_many(table, ret_data, 'append')

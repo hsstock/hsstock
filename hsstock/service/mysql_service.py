@@ -12,6 +12,7 @@ from sqlalchemy.pool import QueuePool
 
 from hsstock.utils.app_config import AppConfig
 from hsstock.model.mysql.ft_stock_basicinfo import FTStockBasicInfo
+from hsstock.model.mysql.sys_sharding import SysSharding
 
 class Store(ABC):
     def __init__(self,engine):
@@ -119,6 +120,14 @@ class MysqlService():
         for code, listing_date in self.mysqlStore.session.query(FTStockBasicInfo.code,FTStockBasicInfo.listing_date):
             ret_arr.append((code,listing_date))
         return ret_arr
+
+    def find_tindex(self,code,dtype):
+        #TODO , now 12 as the last table
+        tindex = 12
+        syssharding = self.mysqlStore.session.query(SysSharding).filter_by(code=code,dtype=dtype).first()
+        if syssharding is not None:
+            tindex = syssharding.tindex
+        return tindex
 
     def update(self, query, newitem):
         pass
