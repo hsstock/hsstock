@@ -4,8 +4,8 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
-class FTHistoryKline(Base):
-    __tablename__ = 'ft_history_kline'
+class FTHistoryKline5M(Base):
+    __tablename__ = 'ft_history_kline_K_5M'
 
     code = Column(String,primary_key=True)
     time_key = Column(DateTime)
@@ -21,11 +21,11 @@ class FTHistoryKline(Base):
     last_close = Column(Float)
 
     def __repr__(self):
-        return "<ft_history_kline(code={},time_key={},open={},close={})>".format(self.code, self.time_key,self.open, self.close)
+        return "<ft_history_kline_K_5M(code={},time_key={},open={},close={})>".format(self.code, self.time_key,self.open, self.close)
 
 
 if __name__ == '__main__':
-    print(FTHistoryKline.__table__)
+    print(FTHistoryKline5M.__table__)
 
 # pip3 install flask-sqlalchemy
 # class FTHistoryKline(object):

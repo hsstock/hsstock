@@ -13,6 +13,9 @@ from sqlalchemy.pool import QueuePool
 from hsstock.utils.app_config import AppConfig
 from hsstock.model.mysql.ft_stock_basicinfo import FTStockBasicInfo
 from hsstock.model.mysql.sys_sharding import SysSharding
+from hsstock.model.mysql.ft_history_kline import FTHistoryKline
+from hsstock.model.mysql.ft_history_kline_K_5M import FTHistoryKline5M
+from sqlalchemy.sql import func
 
 class Store(ABC):
     def __init__(self,engine):
@@ -122,12 +125,17 @@ class MysqlService():
         return ret_arr
 
     def find_tindex(self,code,dtype):
-        #TODO , now 12 as the last table
-        tindex = 12
+        #TODO , now 11 as the last table
+        tindex = 11
         syssharding = self.mysqlStore.session.query(SysSharding).filter_by(code=code,dtype=dtype).first()
         if syssharding is not None:
             tindex = syssharding.tindex
         return tindex
+
+    def find_lastdate(self,code):
+        time_keys = self.mysqlStore.session.query(func.max(FTHistoryKline.time_key)).filter_by(code=code).first()
+        for time in time_keys:
+            return time
 
     def update(self, query, newitem):
         pass

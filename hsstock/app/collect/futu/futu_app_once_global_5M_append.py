@@ -28,7 +28,7 @@ sched = BlockingScheduler()
 is_closing = False
 ctx  = None
 
-def job_once_global_m5(worker):
+def job_once_global_m5_append(worker):
     '''
     线程工作：低频数据接口
     :return:
@@ -55,15 +55,17 @@ def job_once_global_m5(worker):
             #10 - (28123~31918) MyISAM engine, ft_history_kline_10
             # ft_history_kline tale as the mrg_myisam
 
-            fthistorykline = FTHistoryKline.model('US.NTES','hk',worker.storeservice)
-            gd = fthistorykline.filter_by(code=code,dtype='hk').first()
-            print(gd)
             logging.info("current fetching progress {}/{} ".format(curr,total))
-            if curr < 35000:
+            if curr < 7902:
                 continue
 
+            start = None
+            lastdate = worker.storeservice.find_lastdate(code)
 
-            start = DateUtil.date_toString(listing_date)
+            if lastdate is not None and lastdate.date() > listing_date:
+                start = DateUtil.getDatetimeFutureStr( lastdate.date(),1 )
+            else:
+                start = DateUtil.date_toString(listing_date)
             end = todayStr
             gen = DateUtil.getNextHalfYear(DateUtil.string_toDate(start), DateUtil.string_toDate(end))
             b = time.time()
@@ -142,7 +144,7 @@ def try_exit():
         logging.info('exit success')
 
 def once_global_m5_task(worker):
-    tfn = MyThread('job_lf',job_once_global_m5,worker)
+    tfn = MyThread('job_lf',job_once_global_m5_append,worker)
     tfn.start()
 
 
