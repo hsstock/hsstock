@@ -10,3 +10,4 @@ tushare
 mysqlclient
 protobuf
 pyecharts
+python3-gearman

@@ -133,9 +133,18 @@ class MysqlService():
         return tindex
 
     def find_lastdate(self,code):
-        time_keys = self.mysqlStore.session.query(func.max(FTHistoryKline.time_key)).filter_by(code=code).first()
-        for time in time_keys:
-            return time
+        time_keys = self.mysqlStore.session.query(FTHistoryKline.time_key).filter_by(code=code).order_by(FTHistoryKline.time_key.desc()).limit(1).first()
+        if time_keys is not None :
+            for time in time_keys:
+                return time
+        return None
+
+    def find_lastdate_5M(self, code):
+        time_keys = self.mysqlStore.session.query(FTHistoryKline.time_key).filter_by(code=code).order_by(FTHistoryKline.time_key.desc()).limit(1).first()
+        if time_keys is not None:
+            for time in time_keys:
+                return time
+        return None
 
     def update(self, query, newitem):
         pass

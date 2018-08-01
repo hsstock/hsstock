@@ -56,14 +56,45 @@ def job_once_global_m5_append(worker):
             # ft_history_kline tale as the mrg_myisam
 
             logging.info("current fetching progress {}/{} ".format(curr,total))
-            if curr < 7902:
+            if curr < 2818:
                 continue
 
+
+
+            # KLType.K_DAY
             start = None
             lastdate = worker.storeservice.find_lastdate(code)
-
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr( lastdate.date(),1 )
+            else:
+                start = DateUtil.date_toString(listing_date)
+            end = todayStr
+            gen = DateUtil.getNextHalfYear(DateUtil.string_toDate(start), DateUtil.string_toDate(end))
+            b = time.time()
+            while True:
+                try:
+                    end = next(gen)
+
+                    if is_closing is True:
+                        break
+
+                    b2 = time.time()
+                    worker.get_history_kline(code, start, end, ktype=KLType.K_DAY)
+                    e2 = time.time()
+                    logging.info(
+                        "fetching {} K_DAY listing_date: {} start: {} end:{} cost time {}".format(code, listing_date, start, end, e2-b2))
+
+                    start = DateUtil.getDatetimeFutureStr(DateUtil.string_toDate(end),1)
+                except StopIteration as e:
+                    print(e)
+                    break
+
+            # KLType.K_5M
+            start = None
+            lastdate = worker.storeservice.find_lastdate_5M(code)
+
+            if lastdate is not None and lastdate.date() > listing_date:
+                start = DateUtil.getDatetimeFutureStr(lastdate.date(), 1)
             else:
                 start = DateUtil.date_toString(listing_date)
             end = todayStr
@@ -80,23 +111,15 @@ def job_once_global_m5_append(worker):
                     worker.get_history_kline(code, start, end, ktype=KLType.K_5M)
                     e1 = time.time()
                     logging.info(
-                        "fetching {} K_5M_LINE listing_date:{} start: {} end:{} cost time {}".format(code, listing_date, start, end,e1-b1))
-
-                    if is_closing is True:
-                        break
-
-                    b2 = time.time()
-                    worker.get_history_kline(code, start, end, ktype=KLType.K_DAY)
-                    e2 = time.time()
-                    logging.info(
-                        "fetching {} K_DAY listing_date: {} start: {} end:{} cost time {}".format(code, listing_date, start, end, e2-b2))
-
-                    start = DateUtil.getDatetimeFutureStr(DateUtil.string_toDate(end),1)
+                        "fetching {} K_5M_LINE listing_date:{} start: {} end:{} cost time {}".format(code,
+                                                                                                     listing_date,
+                                                                                                     start, end,
+                                                                                                     e1 - b1))
+                    start = DateUtil.getDatetimeFutureStr(DateUtil.string_toDate(end), 1)
                 except StopIteration as e:
                     print(e)
                     break
-                # if is_closing is True:
-                #     break
+
 
             e = time.time()
             logging.info("position {} fetching {} const time {}".format(curr, code, e - b))

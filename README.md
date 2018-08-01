@@ -222,6 +222,10 @@ brew install zmq
 
 [tushare](http://tushare.org/)
 
+[SQLAlchemy](http://docs.sqlalchemy.org/en/latest/orm/query.html)
+
+[SQLAlchemy Paginate](https://www.cnblogs.com/rgcLOVEyaya/p/RGC_LOVE_YAYA_350days.html)
+
 
 #### [Python教程](http://www.runoob.com/python3/python3-built-in-functions.html)
 

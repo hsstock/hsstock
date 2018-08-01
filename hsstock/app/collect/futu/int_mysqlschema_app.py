@@ -525,7 +525,7 @@ def main():
         #         'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
         #         'ALTER TABLE `{0}` MODIFY COLUMN code VARCHAR(20) COMMENT  \'股票代码\';'
         #         'ALTER TABLE `{0}` MODIFY COLUMN tindex SMALLINT COMMENT  \'表索引\';'
-        #         'ALTER TABLE `{0}` ENGINE = MEMORY;'
+        #         'ALTER TABLE `{0}` ENGINE = MyISAM;'
         #     ]
         # },
     ]
