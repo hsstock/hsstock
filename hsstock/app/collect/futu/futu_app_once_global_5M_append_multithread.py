@@ -9,6 +9,7 @@ from hsstock.utils.app_logging import setup_logging
 import hsstock.utils.decorator  as tick
 from hsstock.utils.date_util import DateUtil
 from hsstock.utils.threadutil import MyThread
+from hsstock.utils.threadutil import MyThread2
 from hsstock.utils.app_config import AppConfig
 import hsstock.futuquant as ft
 from hsstock.futuquant.common.constant import *
@@ -28,16 +29,19 @@ sched = BlockingScheduler()
 is_closing = False
 ctx  = None
 
-def job_once_global_m5_append(worker):
+def job_once_global_m5_append_multithread(*_args):
     '''
     线程工作：低频数据接口
     :return:
     '''
     global is_closing
 
+    worker = _args[0][0]
+    arr = _args[0][1]
+
     while not is_closing:
         begin = time.time()
-        ret_arr = worker.storeservice.find_all_stocks()
+        ret_arr = arr
         todayStr = DateUtil.getTodayStr()
         total = len(ret_arr)
         curr = 0
@@ -56,7 +60,7 @@ def job_once_global_m5_append(worker):
             # ft_history_kline tale as the mrg_myisam
 
             logging.info("current fetching progress {}/{} ".format(curr,total))
-            if curr < 18985:
+            if curr < 1:
                 continue
 
 
@@ -168,8 +172,8 @@ def try_exit():
         # clean up here
         logging.info('exit success')
 
-def once_global_m5_task(worker):
-    tfn = MyThread('job_lf',job_once_global_m5_append,worker)
+def once_global_m5_task(thread_name,arr,worker):
+    tfn = MyThread2(thread_name,job_once_global_m5_append_multithread,worker,arr)
     tfn.start()
 
 
@@ -186,7 +190,23 @@ def main():
     ctx = ft.OpenQuoteContext(config.get('ftserver', 'host'), int(config.get('ftserver', 'port')))
     ctx.start()
     lf = LF(ctx)
-    once_global_m5_task(lf)
+
+    ret_arr = lf.storeservice.find_all_stocks()
+    total_threads = 10
+    step_length = int(len(ret_arr)/total_threads)
+    mode = len(ret_arr)%total_threads
+    for i in range(0,total_threads,1):
+        lf = LF(ctx)
+        thread_name = 'job_lf_{}'.format(i)
+
+        start = i*step_length
+        if i == (total_threads-1):
+            end = start+step_length+mode
+        else:
+            end = start + step_length
+        arr = ret_arr[start:end]
+
+        once_global_m5_task(thread_name,arr,lf)
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_int_handler)
@@ -195,3 +215,16 @@ if __name__ == "__main__":
     setup_logging()
     main()
     sched.start()
+
+    # ret_arr = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    # total_threads = 6
+    # step_length = int(len(ret_arr)/total_threads)
+    # mode = len(ret_arr)%total_threads
+    # for i in range(0,total_threads,1):
+    #     start = i*step_length
+    #     if i == (total_threads-1):
+    #         end = start+step_length+mode
+    #     else:
+    #         end = start + step_length
+    #     arr = ret_arr[start:end]
+    #     print('index-{} arr:{}'.format(i,arr))

@@ -133,10 +133,15 @@ class MysqlService():
         return tindex
 
     def find_lastdate(self,code):
-        time_keys = self.mysqlStore.session.query(FTHistoryKline.time_key).filter_by(code=code).order_by(FTHistoryKline.time_key.desc()).limit(1).first()
-        if time_keys is not None :
-            for time in time_keys:
-                return time
+        try:
+            time_keys = self.mysqlStore.session.query(FTHistoryKline.time_key).filter_by(code=code).order_by(FTHistoryKline.time_key.desc()).limit(1).first()
+            if time_keys is not None :
+                for time in time_keys:
+                    return time
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            logging.error('Error:********')
         return None
 
     def find_lastdate_5M(self, code):
