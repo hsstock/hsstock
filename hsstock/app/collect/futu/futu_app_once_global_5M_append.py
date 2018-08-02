@@ -55,8 +55,8 @@ def job_once_global_m5_append(worker):
             #10 - (28123~31918) MyISAM engine, ft_history_kline_10
             # ft_history_kline tale as the mrg_myisam
 
-            logging.info("current fetching progress {}/{} ".format(curr,total))
-            if curr < 18985:
+            logging.info("current fetching progress {}/{} code:{} ".format(curr,total,code))
+            if curr < 31918:
                 continue
 
 
@@ -67,6 +67,8 @@ def job_once_global_m5_append(worker):
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr( lastdate.date(),1 )
             else:
+                if listing_date.year == 1970:
+                    listing_date = listing_date.replace(year=1997)
                 start = DateUtil.date_toString(listing_date)
             end = todayStr
             gen = DateUtil.getNextHalfYear(DateUtil.string_toDate(start), DateUtil.string_toDate(end))
@@ -85,7 +87,7 @@ def job_once_global_m5_append(worker):
                         "fetching {} K_DAY listing_date: {} start: {} end:{} cost time {}".format(code, listing_date, start, end, e2-b2))
 
                     start = DateUtil.getDatetimeFutureStr(DateUtil.string_toDate(end),1)
-                    time.sleep(0.1)
+                    time.sleep(0.2)
                 except StopIteration as e:
                     print(e)
                     break
@@ -97,6 +99,8 @@ def job_once_global_m5_append(worker):
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr(lastdate.date(), 1)
             else:
+                if listing_date.year == 1970:
+                    listing_date = listing_date.replace(year=1997)
                 start = DateUtil.date_toString(listing_date)
             end = todayStr
             gen = DateUtil.getNextHalfYear(DateUtil.string_toDate(start), DateUtil.string_toDate(end))
@@ -117,7 +121,7 @@ def job_once_global_m5_append(worker):
                                                                                                      start, end,
                                                                                                      e1 - b1))
                     start = DateUtil.getDatetimeFutureStr(DateUtil.string_toDate(end), 1)
-                    time.sleep(0.1)
+                    time.sleep(0.2)
                 except StopIteration as e:
                     print(e)
                     break
@@ -195,3 +199,9 @@ if __name__ == "__main__":
     setup_logging()
     main()
     sched.start()
+
+    # str = '1970-01-01'
+    # dt = DateUtil.string_toDate(str)
+    # if dt.year == 1970:
+    #     dt = dt.replace(year=1993)
+    #     print(dt)

@@ -141,7 +141,7 @@ class MysqlService():
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
         else:
-            logging.error('Error:********')
+            pass
         return None
 
     def find_lastdate_5M(self, code):

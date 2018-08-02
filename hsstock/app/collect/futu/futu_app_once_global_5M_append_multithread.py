@@ -71,6 +71,8 @@ def job_once_global_m5_append_multithread(*_args):
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr( lastdate.date(),1 )
             else:
+                if listing_date.year == 1970:
+                    listing_date = listing_date.replace(year=1997)
                 start = DateUtil.date_toString(listing_date)
             end = todayStr
             gen = DateUtil.getNextHalfYear(DateUtil.string_toDate(start), DateUtil.string_toDate(end))
@@ -101,6 +103,8 @@ def job_once_global_m5_append_multithread(*_args):
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr(lastdate.date(), 1)
             else:
+                if listing_date.year == 1970:
+                    listing_date = listing_date.replace(year=1997)
                 start = DateUtil.date_toString(listing_date)
             end = todayStr
             gen = DateUtil.getNextHalfYear(DateUtil.string_toDate(start), DateUtil.string_toDate(end))
@@ -192,7 +196,7 @@ def main():
     lf = LF(ctx)
 
     ret_arr = lf.storeservice.find_all_stocks()
-    total_threads = 10
+    total_threads = 30
     step_length = int(len(ret_arr)/total_threads)
     mode = len(ret_arr)%total_threads
     for i in range(0,total_threads,1):

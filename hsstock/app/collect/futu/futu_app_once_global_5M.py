@@ -56,7 +56,8 @@ def job_once_global_m5(worker):
             if curr < 35000:
                 continue
 
-
+            if listing_date.year == 1970:
+                listing_date = listing_date.replace(year=1997)
             start = DateUtil.date_toString(listing_date)
             end = todayStr
             gen = DateUtil.getNextHalfYear(DateUtil.string_toDate(start), DateUtil.string_toDate(end))

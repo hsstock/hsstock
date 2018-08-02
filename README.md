@@ -225,7 +225,8 @@ brew install zmq
 [SQLAlchemy](http://docs.sqlalchemy.org/en/latest/orm/query.html)
 
 [SQLAlchemy Paginate](https://www.cnblogs.com/rgcLOVEyaya/p/RGC_LOVE_YAYA_350days.html)
-
+[MySQL Config](https://www.cnblogs.com/zengkefu/p/5634858.html)
+[MySQL QueryCache](https://blog.csdn.net/qq_27238185/article/details/54096069)
 
 #### [Python教程](http://www.runoob.com/python3/python3-built-in-functions.html)
 
