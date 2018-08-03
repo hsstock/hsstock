@@ -39,6 +39,8 @@ def job_once_global_m5_append(worker):
         begin = time.time()
         ret_arr = worker.storeservice.find_all_stocks()
         todayStr = DateUtil.getTodayStr()
+        last_fetchdate = DateUtil.string_toDate( DateUtil.getDatetimePastStr( DateUtil.string_toDate(todayStr),30) )
+
         total = len(ret_arr)
         curr = 0
         for code, listing_date in ret_arr:
@@ -56,20 +58,21 @@ def job_once_global_m5_append(worker):
             # ft_history_kline tale as the mrg_myisam
 
             logging.info("current fetching progress {}/{} code:{} ".format(curr,total,code))
-            if curr < 31918:
+            if curr < 1:
                 continue
 
 
 
             # KLType.K_DAY
             start = None
-            lastdate = worker.storeservice.find_lastdate(code)
+            lastdate = worker.storeservice.find_lastdate(code,last_fetchdate)
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr( lastdate.date(),1 )
             else:
-                if listing_date.year == 1970:
-                    listing_date = listing_date.replace(year=1997)
-                start = DateUtil.date_toString(listing_date)
+                # if listing_date.year == 1970:
+                #     listing_date = listing_date.replace(year=1997)
+                # start = DateUtil.date_toString(listing_date)
+                start = DateUtil.date_toString(last_fetchdate)
             end = todayStr
             gen = DateUtil.getNextHalfYear(DateUtil.string_toDate(start), DateUtil.string_toDate(end))
             b = time.time()
@@ -94,14 +97,15 @@ def job_once_global_m5_append(worker):
 
             # KLType.K_5M
             start = None
-            lastdate = worker.storeservice.find_lastdate_5M(code)
+            lastdate = worker.storeservice.find_lastdate_5M(code,last_fetchdate)
 
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr(lastdate.date(), 1)
             else:
-                if listing_date.year == 1970:
-                    listing_date = listing_date.replace(year=1997)
-                start = DateUtil.date_toString(listing_date)
+                # if listing_date.year == 1970:
+                #     listing_date = listing_date.replace(year=1997)
+                # start = DateUtil.date_toString(listing_date)
+                start = DateUtil.date_toString(last_fetchdate)
             end = todayStr
             gen = DateUtil.getNextHalfYear(DateUtil.string_toDate(start), DateUtil.string_toDate(end))
             b = time.time()
@@ -200,8 +204,3 @@ if __name__ == "__main__":
     main()
     sched.start()
 
-    # str = '1970-01-01'
-    # dt = DateUtil.string_toDate(str)
-    # if dt.year == 1970:
-    #     dt = dt.replace(year=1993)
-    #     print(dt)

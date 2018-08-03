@@ -15,6 +15,8 @@ from hsstock.model.mysql.ft_stock_basicinfo import FTStockBasicInfo
 from hsstock.model.mysql.sys_sharding import SysSharding
 from hsstock.model.mysql.ft_history_kline import FTHistoryKline
 from hsstock.model.mysql.ft_history_kline_K_5M import FTHistoryKline5M
+from hsstock.model.mysql.ft_stock_basicinfo_now_nohistdata import FTStockBasicInfoNoHistData
+
 from sqlalchemy.sql import func
 
 class Store(ABC):
@@ -120,7 +122,8 @@ class MysqlService():
 
     def find_all_stocks(self):
         ret_arr = []
-        for code, listing_date in self.mysqlStore.session.query(FTStockBasicInfo.code,FTStockBasicInfo.listing_date):
+        subquery = self.mysqlStore.session.query(FTStockBasicInfoNoHistData.code)
+        for code, listing_date in self.mysqlStore.session.query(FTStockBasicInfo.code,FTStockBasicInfo.listing_date).filter(~FTStockBasicInfo.code.in_(subquery)):
             ret_arr.append((code,listing_date))
         return ret_arr
 
@@ -132,9 +135,9 @@ class MysqlService():
             tindex = syssharding.tindex
         return tindex
 
-    def find_lastdate(self,code):
+    def find_lastdate(self,code,lastdate):
         try:
-            time_keys = self.mysqlStore.session.query(FTHistoryKline.time_key).filter_by(code=code).order_by(FTHistoryKline.time_key.desc()).limit(1).first()
+            time_keys = self.mysqlStore.session.query(FTHistoryKline.time_key).filter_by(code=code).filter(FTHistoryKline.time_key > lastdate).order_by(FTHistoryKline.time_key.desc()).limit(1).first()
             if time_keys is not None :
                 for time in time_keys:
                     return time
@@ -144,8 +147,8 @@ class MysqlService():
             pass
         return None
 
-    def find_lastdate_5M(self, code):
-        time_keys = self.mysqlStore.session.query(FTHistoryKline.time_key).filter_by(code=code).order_by(FTHistoryKline.time_key.desc()).limit(1).first()
+    def find_lastdate_5M(self, code,lastdate):
+        time_keys = self.mysqlStore.session.query(FTHistoryKline5M.time_key).filter_by(code=code).filter(FTHistoryKline5M.time_key > lastdate).order_by(FTHistoryKline5M.time_key.desc()).limit(1).first()
         if time_keys is not None:
             for time in time_keys:
                 return time

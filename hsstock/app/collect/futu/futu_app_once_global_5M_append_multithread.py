@@ -43,6 +43,8 @@ def job_once_global_m5_append_multithread(*_args):
         begin = time.time()
         ret_arr = arr
         todayStr = DateUtil.getTodayStr()
+        last_fetchdate = DateUtil.string_toDate(DateUtil.getDatetimePastStr(DateUtil.string_toDate(todayStr), 30))
+
         total = len(ret_arr)
         curr = 0
         for code, listing_date in ret_arr:
@@ -67,13 +69,14 @@ def job_once_global_m5_append_multithread(*_args):
 
             # KLType.K_DAY
             start = None
-            lastdate = worker.storeservice.find_lastdate(code)
+            lastdate = worker.storeservice.find_lastdate(code,last_fetchdate)
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr( lastdate.date(),1 )
             else:
-                if listing_date.year == 1970:
-                    listing_date = listing_date.replace(year=1997)
-                start = DateUtil.date_toString(listing_date)
+                # if listing_date.year == 1970:
+                #     listing_date = listing_date.replace(year=1997)
+                # start = DateUtil.date_toString(listing_date)
+                start = DateUtil.date_toString(last_fetchdate)
             end = todayStr
             gen = DateUtil.getNextHalfYear(DateUtil.string_toDate(start), DateUtil.string_toDate(end))
             b = time.time()
@@ -91,21 +94,22 @@ def job_once_global_m5_append_multithread(*_args):
                         "fetching {} K_DAY listing_date: {} start: {} end:{} cost time {}".format(code, listing_date, start, end, e2-b2))
 
                     start = DateUtil.getDatetimeFutureStr(DateUtil.string_toDate(end),1)
-                    time.sleep(0.1)
+                    time.sleep(0.3)
                 except StopIteration as e:
                     print(e)
                     break
 
             # KLType.K_5M
             start = None
-            lastdate = worker.storeservice.find_lastdate_5M(code)
+            lastdate = worker.storeservice.find_lastdate_5M(code,last_fetchdate)
 
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr(lastdate.date(), 1)
             else:
-                if listing_date.year == 1970:
-                    listing_date = listing_date.replace(year=1997)
-                start = DateUtil.date_toString(listing_date)
+                # if listing_date.year == 1970:
+                #     listing_date = listing_date.replace(year=1997)
+                # start = DateUtil.date_toString(listing_date)
+                start = DateUtil.date_toString(last_fetchdate)
             end = todayStr
             gen = DateUtil.getNextHalfYear(DateUtil.string_toDate(start), DateUtil.string_toDate(end))
             b = time.time()
@@ -125,7 +129,7 @@ def job_once_global_m5_append_multithread(*_args):
                                                                                                      start, end,
                                                                                                      e1 - b1))
                     start = DateUtil.getDatetimeFutureStr(DateUtil.string_toDate(end), 1)
-                    time.sleep(0.1)
+                    time.sleep(0.3)
                 except StopIteration as e:
                     print(e)
                     break
@@ -196,7 +200,7 @@ def main():
     lf = LF(ctx)
 
     ret_arr = lf.storeservice.find_all_stocks()
-    total_threads = 30
+    total_threads = 10
     step_length = int(len(ret_arr)/total_threads)
     mode = len(ret_arr)%total_threads
     for i in range(0,total_threads,1):
