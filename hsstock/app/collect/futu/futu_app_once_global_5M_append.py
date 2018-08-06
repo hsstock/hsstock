@@ -39,7 +39,8 @@ def job_once_global_m5_append(worker):
         begin = time.time()
         ret_arr = worker.storeservice.find_all_stocks()
         todayStr = DateUtil.getTodayStr()
-        last_fetchdate = DateUtil.string_toDate( DateUtil.getDatetimePastStr( DateUtil.string_toDate(todayStr),30) )
+        #last_fetchdate = DateUtil.string_toDate( DateUtil.getDatetimePastStr( DateUtil.string_toDate(todayStr),30) )
+        last_fetchdate = DateUtil.string_toDate('2018-08-02')
 
         total = len(ret_arr)
         curr = 0
@@ -58,14 +59,14 @@ def job_once_global_m5_append(worker):
             # ft_history_kline tale as the mrg_myisam
 
             logging.info("current fetching progress {}/{} code:{} ".format(curr,total,code))
-            if curr < 1:
+            if curr < 1 :
                 continue
 
 
 
             # KLType.K_DAY
             start = None
-            lastdate = worker.storeservice.find_lastdate(code,last_fetchdate)
+            lastdate = last_fetchdate # worker.storeservice.find_lastdate(code,last_fetchdate)
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr( lastdate.date(),1 )
             else:
@@ -90,14 +91,14 @@ def job_once_global_m5_append(worker):
                         "fetching {} K_DAY listing_date: {} start: {} end:{} cost time {}".format(code, listing_date, start, end, e2-b2))
 
                     start = DateUtil.getDatetimeFutureStr(DateUtil.string_toDate(end),1)
-                    time.sleep(0.2)
+                    #time.sleep(0.2)
                 except StopIteration as e:
                     print(e)
                     break
 
             # KLType.K_5M
             start = None
-            lastdate = worker.storeservice.find_lastdate_5M(code,last_fetchdate)
+            lastdate = last_fetchdate #worker.storeservice.find_lastdate_5M(code,last_fetchdate)
 
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr(lastdate.date(), 1)
@@ -125,7 +126,7 @@ def job_once_global_m5_append(worker):
                                                                                                      start, end,
                                                                                                      e1 - b1))
                     start = DateUtil.getDatetimeFutureStr(DateUtil.string_toDate(end), 1)
-                    time.sleep(0.2)
+                    #time.sleep(0.2)
                 except StopIteration as e:
                     print(e)
                     break

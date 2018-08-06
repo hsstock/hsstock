@@ -128,8 +128,13 @@ class MysqlService():
         return ret_arr
 
     def find_tindex(self,code,dtype):
-        #TODO , now 11 as the last table
-        tindex = 11
+        #TODO , now 17 as the last kl_K_5M table, 11 as the last kl table
+        tindex = 17
+        if dtype == 'hk_5m':
+            tindex = 17
+        else:
+            tindex = 11
+
         syssharding = self.mysqlStore.session.query(SysSharding).filter_by(code=code,dtype=dtype).first()
         if syssharding is not None:
             tindex = syssharding.tindex
