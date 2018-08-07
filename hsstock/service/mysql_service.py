@@ -13,8 +13,8 @@ from sqlalchemy.pool import QueuePool
 from hsstock.utils.app_config import AppConfig
 from hsstock.model.mysql.ft_stock_basicinfo import FTStockBasicInfo
 from hsstock.model.mysql.sys_sharding import SysSharding
-from hsstock.model.mysql.ft_history_kline import FTHistoryKline
-from hsstock.model.mysql.ft_history_kline_K_5M import FTHistoryKline5M
+from hsstock.model.mysql.ft_history_kline import *
+from hsstock.model.mysql.ft_history_kline_K_5M import *
 from hsstock.model.mysql.ft_stock_basicinfo_now_nohistdata import FTStockBasicInfoNoHistData
 
 from sqlalchemy.sql import func
@@ -142,7 +142,9 @@ class MysqlService():
 
     def find_lastdate(self,code,lastdate):
         try:
-            time_keys = self.mysqlStore.session.query(FTHistoryKline.time_key).filter_by(code=code).filter(FTHistoryKline.time_key > lastdate).order_by(FTHistoryKline.time_key.desc()).limit(1).first()
+            tindex = self.find_tindex(code,'hk')
+            cls = getClassByIndex(tindex)
+            time_keys = self.mysqlStore.session.query(cls.time_key).filter_by(code=code).filter(cls.time_key > lastdate).order_by(cls.time_key.desc()).limit(1).first()
             if time_keys is not None :
                 for time in time_keys:
                     return time
@@ -153,10 +155,17 @@ class MysqlService():
         return None
 
     def find_lastdate_5M(self, code,lastdate):
-        time_keys = self.mysqlStore.session.query(FTHistoryKline5M.time_key).filter_by(code=code).filter(FTHistoryKline5M.time_key > lastdate).order_by(FTHistoryKline5M.time_key.desc()).limit(1).first()
-        if time_keys is not None:
-            for time in time_keys:
-                return time
+        try:
+            tindex = self.find_tindex(code, 'hk_5m')
+            cls = getClass5mByIndex(tindex)
+            time_keys = self.mysqlStore.session.query(cls.time_key).filter_by(code=code).filter(cls.time_key > lastdate).order_by(cls.time_key.desc()).limit(1).first()
+            if time_keys is not None:
+                for time in time_keys:
+                    return time
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
         return None
 
     def update(self, query, newitem):

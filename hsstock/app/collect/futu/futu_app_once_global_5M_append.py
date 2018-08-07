@@ -20,7 +20,7 @@ from hsstock.common.constant import *
 from hsstock.service.quote_service import Subscribe
 from hsstock.service.trade_service import *
 from hsstock.utils.lang_util import *
-from hsstock.model.mysql.ft_history_kline import FTHistoryKline
+from hsstock.model.mysql.ft_history_kline import FTHistoryKlineAll
 
 
 sched = BlockingScheduler()
@@ -39,8 +39,8 @@ def job_once_global_m5_append(worker):
         begin = time.time()
         ret_arr = worker.storeservice.find_all_stocks()
         todayStr = DateUtil.getTodayStr()
-        #last_fetchdate = DateUtil.string_toDate( DateUtil.getDatetimePastStr( DateUtil.string_toDate(todayStr),30) )
-        last_fetchdate = DateUtil.string_toDate('2018-08-02')
+        last_fetchdate = DateUtil.string_toDate( DateUtil.getDatetimePastStr( DateUtil.string_toDate(todayStr),30) )
+        #last_fetchdate = DateUtil.string_toDate('2018-08-02')
 
         total = len(ret_arr)
         curr = 0
@@ -59,14 +59,15 @@ def job_once_global_m5_append(worker):
             # ft_history_kline tale as the mrg_myisam
 
             logging.info("current fetching progress {}/{} code:{} ".format(curr,total,code))
-            if curr < 1 :
+            if curr < 3481:
                 continue
 
 
 
             # KLType.K_DAY
             start = None
-            lastdate = last_fetchdate # worker.storeservice.find_lastdate(code,last_fetchdate)
+            #lastdate = last_fetchdate # worker.storeservice.find_lastdate(code,last_fetchdate)
+            lastdate = worker.storeservice.find_lastdate(code,last_fetchdate)
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr( lastdate.date(),1 )
             else:
@@ -98,8 +99,8 @@ def job_once_global_m5_append(worker):
 
             # KLType.K_5M
             start = None
-            lastdate = last_fetchdate #worker.storeservice.find_lastdate_5M(code,last_fetchdate)
-
+            #lastdate = last_fetchdate #worker.storeservice.find_lastdate_5M(code,last_fetchdate)
+            lastdate = worker.storeservice.find_lastdate_5M(code,last_fetchdate)
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr(lastdate.date(), 1)
             else:
