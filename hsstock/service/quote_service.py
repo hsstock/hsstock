@@ -217,7 +217,7 @@ class LF(object):
             #exit()
         #print(ret_data)
 
-
+        lastdate = None
         if not isinstance(ret_data,str):
             if len(ret_data) > 0 :
 
@@ -232,8 +232,9 @@ class LF(object):
                         tindex = self.storeservice.find_tindex(code, 'hk_5m')
                         if tindex != -1:
                             table += ('_' + str(tindex))
+                lastdate = ret_data['time_key'][len(ret_data)-1]
                 self.storeservice.insert_many(table, ret_data, 'append')
-        return ret_code, ret_data
+        return ret_code, ret_data, lastdate
 
     def get_autype_list(self, code_list):
         '''获取复权因子

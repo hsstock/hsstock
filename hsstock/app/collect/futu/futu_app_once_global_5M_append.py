@@ -46,28 +46,15 @@ def job_once_global_m5_append(worker):
         curr = 0
         for code, listing_date in ret_arr:
             curr += 1
-            #1 - (1~2998包含)
-            #2 - (2999~15918不含）
-            #3 - （15918~18986不含）
-            #4 - （18986~19430不含）default InnoDB,
-            #5 -  (19430~21898不含) MyISAM engine,ft_history_kline_5
-            #6 - (21898~24768不含) MyISAM engine,ft_history_kline_6
-            #7 - (24768~26347不含） MyISAM engine, ft_history_kline_7
-            #8 - (26347~27096不含) MyISAM engine, ft_history_kline_8， trigged by docker upgrade
-            #9 - (27096~28123不含) MyISAM engine, ft_history_kline_9
-            #10 - (28123~31918) MyISAM engine, ft_history_kline_10
-            # ft_history_kline tale as the mrg_myisam
 
             logging.info("current fetching progress {}/{} code:{} ".format(curr,total,code))
             if curr < 1:
                 continue
 
-
-
             # KLType.K_DAY
             start = None
-            lastdate = last_fetchdate # worker.storeservice.find_lastdate(code,last_fetchdate)
-            #lastdate = worker.storeservice.find_lastdate(code,last_fetchdate)
+            ld = worker.storeservice.find_lastdate2(code,'hk')
+            lastdate = last_fetchdate if ld == None else ld
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr( lastdate.date(),1 )
             else:
@@ -86,7 +73,9 @@ def job_once_global_m5_append(worker):
                         break
 
                     b2 = time.time()
-                    worker.get_history_kline(code, start, end, ktype=KLType.K_DAY)
+                    _, _, lastest_date = worker.get_history_kline(code, start, end, ktype=KLType.K_DAY)
+                    if lastest_date is not None:
+                        worker.storeservice.update_lastdate(code, 'hk', DateUtil.string_toDatetime(lastest_date))
                     e2 = time.time()
                     logging.info(
                         "fetching {} K_DAY listing_date: {} start: {} end:{} cost time {}".format(code, listing_date, start, end, e2-b2))
@@ -99,8 +88,8 @@ def job_once_global_m5_append(worker):
 
             # KLType.K_5M
             start = None
-            lastdate = last_fetchdate #worker.storeservice.find_lastdate_5M(code,last_fetchdate)
-            #lastdate = worker.storeservice.find_lastdate_5M(code,last_fetchdate)
+            ld = worker.storeservice.find_lastdate2(code,'hk_5m')
+            lastdate = last_fetchdate if ld == None else ld
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr(lastdate.date(), 1)
             else:
@@ -119,7 +108,9 @@ def job_once_global_m5_append(worker):
                         break
 
                     b1 = time.time()
-                    worker.get_history_kline(code, start, end, ktype=KLType.K_5M)
+                    _,_,lastest_date = worker.get_history_kline(code, start, end, ktype=KLType.K_5M)
+                    if lastest_date is not None:
+                        worker.storeservice.update_lastdate(code, 'hk_5m',lastest_date)
                     e1 = time.time()
                     logging.info(
                         "fetching {} K_5M_LINE listing_date:{} start: {} end:{} cost time {}".format(code,

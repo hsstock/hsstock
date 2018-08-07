@@ -11,6 +11,7 @@ import sqlalchemy as sa
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.pool import QueuePool
+from sqlalchemy import update
 
 from hsstock.utils.app_config import AppConfig
 from hsstock.model.mysql.ft_stock_basicinfo import FTStockBasicInfo
@@ -199,6 +200,19 @@ class MysqlService():
             pass
         return None
 
+    def find_lastdate2(self,code,dtype):
+        try:
+            time_keys = self.mysqlStore.session.query(SysSharding.lastdate).filter(and_(SysSharding.code==code,SysSharding.dtype==dtype)).limit(1).first()
+            if time_keys is not None :
+                for time in time_keys:
+                    return time
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
+        return None
+
+
     def find_lastdate_5M(self, code,lastdate):
         try:
             tindex = self.find_tindex(code, 'hk_5m')
@@ -212,6 +226,17 @@ class MysqlService():
         else:
             pass
         return None
+
+    def update_lastdate(self, code, dtype, lastest_date):
+        try:
+            self.mysqlStore.session.query(SysSharding).filter(and_(SysSharding.code==code,SysSharding.dtype==dtype)).update({SysSharding.lastdate:lastest_date},synchronize_session=False)
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
+        return None
+
+
 
     def update(self, query, newitem):
         pass

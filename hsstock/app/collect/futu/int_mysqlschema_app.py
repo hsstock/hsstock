@@ -518,6 +518,7 @@ def main():
         #         "code": sa.types.NVARCHAR(20),
         #         "dtype": sa.types.Enum('hk','hk_5m'),
         #         "tindex": sa.types.SMALLINT,
+        #         "lastdate": sa.types.DATE,
         #     },
         #     "clauses": [
         #         'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
