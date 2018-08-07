@@ -3,6 +3,8 @@
 from abc import ABC
 import logging
 from sqlalchemy import create_engine
+from sqlalchemy import and_
+from sqlalchemy import text
 from sqlalchemy.orm import sessionmaker
 
 import sqlalchemy as sa
@@ -15,7 +17,11 @@ from hsstock.model.mysql.ft_stock_basicinfo import FTStockBasicInfo
 from hsstock.model.mysql.sys_sharding import SysSharding
 from hsstock.model.mysql.ft_history_kline import *
 from hsstock.model.mysql.ft_history_kline_K_5M import *
+from hsstock.model.mysql.ft_plate_list import FTPlateList
+from hsstock.model.mysql.ft_plate_stock import FTPlateStock
+
 from hsstock.model.mysql.ft_stock_basicinfo_now_nohistdata import FTStockBasicInfoNoHistData
+from hsstock.utils.date_util import DateUtil
 
 from sqlalchemy.sql import func
 
@@ -101,7 +107,7 @@ class MysqlService():
         '''
         self.config = AppConfig.get_config()
         self.connect_url = self.config.get('mysql', 'connecturl')
-        self.mysql_engine = create_engine(self.connect_url,poolclass=QueuePool,pool_pre_ping=True,pool_recycle=3600)
+        self.mysql_engine = create_engine(self.connect_url,poolclass=QueuePool,pool_pre_ping=True,pool_recycle=3600,pool_size=20)
         self.mysqlStore = MysqlStore(self.mysql_engine)
 
 
@@ -126,6 +132,45 @@ class MysqlService():
         for code, listing_date in self.mysqlStore.session.query(FTStockBasicInfo.code,FTStockBasicInfo.listing_date).filter(~FTStockBasicInfo.code.in_(subquery)):
             ret_arr.append((code,listing_date))
         return ret_arr
+
+    def find_stocks(self,dtype,tindex):
+        ret_arr = []
+        subquery = self.mysqlStore.session.query(FTStockBasicInfoNoHistData.code)
+        subquery2 = self.mysqlStore.session.query(SysSharding.code).filter_by(dtype=dtype,tindex=tindex)
+        for code, listing_date in self.mysqlStore.session.query(FTStockBasicInfo.code,
+                                                                FTStockBasicInfo.listing_date).filter(
+                ~FTStockBasicInfo.code.in_(subquery)).filter(FTStockBasicInfo.code.in_(subquery2)):
+            ret_arr.append((code, listing_date))
+        return ret_arr
+
+    def find_plate_stock(self):
+        ret = []
+        col_list = ['code', 'lot_size', 'stock_name','stock_owner','stock_child_type','stock_type','list_time','stock_id']
+        cls = FTPlateStock
+        for code, lot_size, stock_name, stock_owner, stock_child_type, stock_type, list_time,stock_id in self.mysqlStore.session.query(cls.code, cls.lot_size, cls.stock_name,cls.stock_owner,cls.stock_child_type,cls.stock_type,cls.list_time,cls.stock_id).all():
+            item = (code, lot_size, stock_name, stock_owner, stock_child_type, stock_type, list_time,stock_id )
+            ret.append(item)
+        return ret
+
+    def find_plate_list(self):
+        ret = []
+        cls = FTPlateList
+        for code, plate_name, plate_id in self.mysqlStore.session.query(cls.code, cls.plate_name, cls.plate_id).all():
+            item = (code, plate_name, plate_id)
+            ret.append(item)
+        return ret
+
+    def find_history_kline(self,code,dtype,start,end):
+        tindex = self.find_tindex(code, dtype)
+        cls = getClassByIndex(tindex)
+        ret = []
+        #for item in self.mysqlStore.session.query(FTHistoryKline6).filter(cls.code == code).filter(and_(text('time_key>:start'),text('time_key<:end')).params(start=start,end=end)).all():
+        #,cls.code,cls.time_key,cls.open,cls.close,cls.high,cls.low,cls.pe_ratio,cls.turnover_rate,cls.volume,cls.turnover,cls.change_rate,cls.last_close
+        #(code, time_key, open, close, high, low, pe_ratio, turnover_rate, volume, turnover, change_rate, last_close)
+        for code, time_key, open, close, high, low, pe_ratio, turnover_rate, volume, turnover, change_rate, last_close in self.mysqlStore.session.query(cls.code, cls.time_key,cls.open,cls.close,cls.high,cls.low,cls.pe_ratio,cls.turnover_rate,cls.volume,cls.turnover,cls.change_rate,cls.last_close).filter(cls.code == code).filter(and_(cls.time_key>=start, cls.time_key<=end)).order_by(cls.time_key).all():
+            item = (code, DateUtil.datetime_toString(time_key), open, close, high, low, pe_ratio, turnover_rate, volume, turnover, change_rate, last_close)
+            ret.append(item)
+        return ret
 
     def find_tindex(self,code,dtype):
         #TODO , now 17 as the last kl_K_5M table, 11 as the last kl table

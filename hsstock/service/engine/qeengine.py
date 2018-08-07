@@ -6,6 +6,7 @@ from hsstock.utils.app_config import AppConfig
 from hsstock.service.quote_service import *
 from hsstock.service.trade_service import Trade
 from hsstock.service.query_history_service import QueryHistory
+from hsstock.service.mysql_service import MysqlService
 
 
 class QEEngine(object):
@@ -38,6 +39,7 @@ class QEEngine(object):
         self.ustrade = Trade(self.tradeus_ctx)
         self.ustrade.unlock_trade(self.decipher)
         self.queryhistory = QueryHistory(quote_ctx)
+        self.mysqlService = MysqlService()
 
     def stop(self):
         self.quote_ctx.stop()
@@ -49,3 +51,6 @@ class QEEngine(object):
 
     def get_queryhistory(self):
         return self.queryhistory
+
+    def get_mysqlservice(self):
+        return self.mysqlService

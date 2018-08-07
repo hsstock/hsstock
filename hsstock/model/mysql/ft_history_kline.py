@@ -21,8 +21,8 @@ class FTHistoryBase(object):
     last_close = Column(Float)
 
     def __repr__(self):
-        return "<ft_history_kline(code={},time_key={},open={},close={})>".format(self.code, self.time_key, self.open,
-                                                                                 self.close)
+        print(self.time_key)
+        return "({},{},{},{},{},{},{},{},{},{},{},{})".format(self.code,*self.time_key,self.open,self.close,self.high,self.low,self.pe_ratio,self.turnover_rate,self.volume,self.turnover,self.change_rate,self.last_close)
 
 
 class FTHistoryKlineAll(Base,FTHistoryBase):

@@ -21,7 +21,7 @@ from hsstock.common.constant import *
 from hsstock.service.quote_service import Subscribe
 from hsstock.service.trade_service import *
 from hsstock.utils.lang_util import *
-from hsstock.model.mysql.ft_history_kline import FTHistoryKline
+from hsstock.model.mysql.ft_history_kline import *
 
 
 sched = BlockingScheduler()
@@ -198,22 +198,42 @@ def main():
     ctx.start()
     lf = LF(ctx)
 
-    ret_arr = lf.storeservice.find_all_stocks()
-    total_threads = 10
-    step_length = int(len(ret_arr)/total_threads)
-    mode = len(ret_arr)%total_threads
-    for i in range(0,total_threads,1):
+    # ret_arr = lf.storeservice.find_all_stocks()
+    # total_threads = 10
+    # step_length = int(len(ret_arr)/total_threads)
+    # mode = len(ret_arr)%total_threads
+    # for i in range(0,total_threads,1):
+    #     lf = LF(ctx)
+    #     thread_name = 'job_lf_{}'.format(i)
+    #
+    #     start = i*step_length
+    #     if i == (total_threads-1):
+    #         end = start+step_length+mode
+    #     else:
+    #         end = start + step_length
+    #     arr = ret_arr[start:end]
+    #
+    #     once_global_m5_task(thread_name,arr,lf)
+
+    kline_total_tables = 11
+    kline_K_5M_total_tables = 17
+    for tindex in range(1,kline_total_tables+1,1):
+        ret_arr = lf.storeservice.find_stocks('hk',tindex)
         lf = LF(ctx)
-        thread_name = 'job_lf_{}'.format(i)
+        thread_name = 'job_lf_{}'.format(tindex)
 
-        start = i*step_length
-        if i == (total_threads-1):
-            end = start+step_length+mode
-        else:
-            end = start + step_length
-        arr = ret_arr[start:end]
+        once_global_m5_task(thread_name, ret_arr, lf)
 
-        once_global_m5_task(thread_name,arr,lf)
+
+    for tindex in range(1,kline_K_5M_total_tables+1,1):
+        ret_arr = lf.storeservice.find_stocks('hk_5m',tindex)
+        print(len(ret_arr))
+        lf = LF(ctx)
+        thread_name = 'job_lf_{}'.format(tindex)
+
+        time.sleep(5)
+        once_global_m5_task(thread_name, ret_arr, lf)
+
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_int_handler)
@@ -235,3 +255,4 @@ if __name__ == "__main__":
     #         end = start + step_length
     #     arr = ret_arr[start:end]
     #     print('index-{} arr:{}'.format(i,arr))
+
