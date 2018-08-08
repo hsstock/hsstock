@@ -81,7 +81,6 @@ def job_once_global_m5_append(worker):
                         "fetching {} K_DAY listing_date: {} start: {} end:{} cost time {}".format(code, listing_date, start, end, e2-b2))
 
                     start = DateUtil.getDatetimeFutureStr(DateUtil.string_toDate(end),1)
-                    #time.sleep(0.2)
                 except StopIteration as e:
                     print(e)
                     break
@@ -118,7 +117,6 @@ def job_once_global_m5_append(worker):
                                                                                                      start, end,
                                                                                                      e1 - b1))
                     start = DateUtil.getDatetimeFutureStr(DateUtil.string_toDate(end), 1)
-                    #time.sleep(0.2)
                 except StopIteration as e:
                     print(e)
                     break
@@ -193,7 +191,7 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_int_handler)
     #signal.signal(signal.SIGKILL, signal_term_handler)
     signal.signal(signal.SIGTERM, signal_term_handler)
-    setup_logging()
     main()
+    setup_logging()
     sched.start()
 

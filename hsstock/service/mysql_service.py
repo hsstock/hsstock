@@ -229,7 +229,12 @@ class MysqlService():
 
     def update_lastdate(self, code, dtype, lastest_date):
         try:
-            self.mysqlStore.session.query(SysSharding).filter(and_(SysSharding.code==code,SysSharding.dtype==dtype)).update({SysSharding.lastdate:lastest_date},synchronize_session=False)
+            #MyISAM work ok, but failed after changing the storage engine to InnoDB
+            #需要注意的是，update和delete在做批量操作的时候（使用 where…in(…)）操作，需要指定synchronize_session的值。
+            #self.mysqlStore.session.query(SysSharding).filter(and_(SysSharding.code==code,SysSharding.dtype==dtype)).update({SysSharding.lastdate:lastest_date},synchronize_session=False)
+            self.mysqlStore.session.query(SysSharding).filter(
+                and_(SysSharding.code == code, SysSharding.dtype == dtype)).update({SysSharding.lastdate: lastest_date})
+            self.mysqlStore.session.commit()
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
         else:

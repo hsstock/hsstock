@@ -10,7 +10,7 @@ class SysSharding(Base):
     code = Column(String,primary_key=True)
     dtype = Column(Enum('hk','hk_5m'))
     tindex = Column(SMALLINT)
-    lastdate = Column(Date)
+    lastdate = Column(DateTime)
 
     def __repr__(self):
         return "<sys_sharding(code={},dtype={},tindex={})>".format(self.code, self.dtype,self.tindex)

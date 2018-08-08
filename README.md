@@ -228,6 +228,7 @@ brew install zmq
 [SQLAlchemy Ops](https://blog.csdn.net/kikaylee/article/details/53616222)
 [MySQL Config](https://www.cnblogs.com/zengkefu/p/5634858.html)
 [MySQL QueryCache](https://blog.csdn.net/qq_27238185/article/details/54096069)
+[MySQL Lock](https://blog.csdn.net/zhanghongzheng3213/article/details/53436240)
 
 [APM](https://docs.newrelic.com/docs/agents/python-agent/getting-started/instrumented-python-packages)
 
