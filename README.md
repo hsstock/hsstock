@@ -229,7 +229,7 @@ brew install zmq
 [MySQL Config](https://www.cnblogs.com/zengkefu/p/5634858.html)
 [MySQL QueryCache](https://blog.csdn.net/qq_27238185/article/details/54096069)
 [MySQL Lock](https://blog.csdn.net/zhanghongzheng3213/article/details/53436240)
-
+[Cron](https://www.cnblogs.com/javahr/p/8318728.html)
 [APM](https://docs.newrelic.com/docs/agents/python-agent/getting-started/instrumented-python-packages)
 
 #### [Python教程](http://www.runoob.com/python3/python3-built-in-functions.html)

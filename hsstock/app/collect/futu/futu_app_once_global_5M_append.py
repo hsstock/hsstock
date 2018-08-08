@@ -9,6 +9,7 @@ from hsstock.utils.app_logging import setup_logging
 import hsstock.utils.decorator  as tick
 from hsstock.utils.date_util import DateUtil
 from hsstock.utils.threadutil import MyThread
+from hsstock.utils.threadutil import MyThread2
 from hsstock.utils.app_config import AppConfig
 import hsstock.futuquant as ft
 from hsstock.futuquant.common.constant import *
@@ -28,16 +29,19 @@ sched = BlockingScheduler()
 is_closing = False
 ctx  = None
 
-def job_once_global_m5_append(worker):
+def job_once_global_m5_append(*_args):
     '''
     线程工作：低频数据接口
     :return:
     '''
     global is_closing
 
+    worker = _args[0][0]
+    arr = _args[0][1]
+
     while not is_closing:
         begin = time.time()
-        ret_arr = worker.storeservice.find_all_stocks()
+        ret_arr = arr
         todayStr = DateUtil.getTodayStr()
         #last_fetchdate = DateUtil.string_toDate( DateUtil.getDatetimePastStr( DateUtil.string_toDate(todayStr),30) )
         last_fetchdate = DateUtil.string_toDate('2018-08-02')
@@ -140,8 +144,9 @@ def signal_int_handler(signum, frame):
     global ctx
     logging.info('exiting...')
     is_closing = True
-    ctx.stop()
-    ctx.close()
+    if ctx is not None:
+        ctx.stop()
+        ctx.close()
     sched.shutdown(True)
 
 
@@ -157,8 +162,9 @@ def signal_term_handler(*args):
     global ctx
     logging.info('killed, exiting...')
     is_closing = True
-    ctx.stop()
-    ctx.close()
+    if ctx is not None:
+        ctx.stop()
+        ctx.close()
     sched.shutdown(True)
 
 def try_exit():
@@ -167,12 +173,11 @@ def try_exit():
         # clean up here
         logging.info('exit success')
 
-def once_global_m5_task(worker):
-    tfn = MyThread('job_lf',job_once_global_m5_append,worker)
+def once_global_m5_task(thread_name,arr,worker):
+    tfn = MyThread2(thread_name,job_once_global_m5_append,worker,arr)
     tfn.start()
 
-
-def main():
+def gen_one_worker():
     global ctx
     config = AppConfig.get_config()
     total = config.get('quota', 'total')
@@ -185,13 +190,28 @@ def main():
     ctx = ft.OpenQuoteContext(config.get('ftserver', 'host'), int(config.get('ftserver', 'port')))
     ctx.start()
     lf = LF(ctx)
-    once_global_m5_task(lf)
+    return lf
+
+@sched.scheduled_job('cron',day_of_week='mon-fri',hour='17', minute='05',second='00')
+def download_chs():
+    worker = gen_one_worker()
+    ret_arr = worker.storeservice.find_chs_stocks(False)
+    thread_name = 'crawler for chs market'
+    once_global_m5_task(thread_name, ret_arr, worker)
+
+@sched.scheduled_job('cron',day_of_week='mon-fri',hour='06', minute='05',second='00')
+def download_us():
+    worker = gen_one_worker()
+    ret_arr = worker.storeservice.find_chs_stocks(True)
+    thread_name = 'crawler for us market'
+    once_global_m5_task(thread_name,ret_arr, worker)
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_int_handler)
     #signal.signal(signal.SIGKILL, signal_term_handler)
     signal.signal(signal.SIGTERM, signal_term_handler)
-    main()
+    #download_chs()
+    #download_us()
     setup_logging()
     sched.start()
 
