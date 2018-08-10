@@ -1,13 +1,15 @@
 futuquant
-tornado==4.5.3
-vnpy >= 1.7.3
+tushare
+vnpy
+tornado
 pandas
 numpy
 matplotlib
 psutil
 pymongo
-tushare
 mysqlclient
 protobuf
 pyecharts
 python3-gearman
+apscheduler
+sqlalchemy

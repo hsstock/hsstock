@@ -3,6 +3,8 @@ import os
 import time
 import threading
 
+from hsstock.utils.apollo_client import ApolloClient
+
 class AppConfig:
 
     _instance_lock = threading.Lock()
@@ -25,6 +27,8 @@ class AppConfig:
         AppConfig.custom_stocks = AppConfig.config.get('custom', 'stocks').split(',')
         AppConfig.custom_indexes = AppConfig.config.get('custom', 'indexes').split(',')
         AppConfig.custom_ft_stocks = AppConfig.config.get('custom_ft', 'stocks').split(',')
+        AppConfig.apollo_client = ApolloClient(AppConfig.config.get('apolloconfig', 'appid'), config_server_url=AppConfig.config.get('apolloconfig', 'config_server_url'))
+        AppConfig.apollo_client.start()
 
     @staticmethod
     def get_config():
@@ -59,10 +63,18 @@ class AppConfig:
         AppConfig.get_config().set("custom_ft", "stocks", stocks_str)
         AppConfig.get_config().write(open(AppConfig.path, "w"))
 
+    # Apollo配置中心
+    @staticmethod
+    def get_apollo_config():
+        return AppConfig.instance().apollo_client
 
 if __name__ == "__main__":
-    port = AppConfig.get_config().get('web','port')
-    print(port)
-    AppConfig.write_news_pulltime('a')
+    # port = AppConfig.get_config().get('web','port')
+    # print(port)
+    # AppConfig.write_news_pulltime('a')
+    appid = AppConfig.get_apollo_config().get_value('host')
+    print(appid)
+
+
 
 

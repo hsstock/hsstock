@@ -231,6 +231,7 @@ brew install zmq
 [MySQL Lock](https://blog.csdn.net/zhanghongzheng3213/article/details/53436240)
 [Cron](https://www.cnblogs.com/javahr/p/8318728.html)
 [APM](https://docs.newrelic.com/docs/agents/python-agent/getting-started/instrumented-python-packages)
+[Config Center](https://github.com/ctripcorp/apollo)
 
 #### [Python教程](http://www.runoob.com/python3/python3-built-in-functions.html)
 
@@ -324,6 +325,13 @@ def _cap_tops(last=5, pageNo=1, retry_count=3, pause=0.001, dataArr=pd.DataFrame
 5.
 ```
 kill -9 $(ps aux | grep python | awk '{print $2}')
+```
+```
+rm -f $(find ./ -name *.lastUpdated)
+```
+```
+curl http://ip:5000/v2/_catalog
+curl http://ip:5000/v2/{image_name}/tags/list
 ```
 #### 数据资产
 

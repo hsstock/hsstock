@@ -199,7 +199,9 @@ def download_chs():
     thread_name = 'crawler for chs market'
     once_global_m5_task(thread_name, ret_arr, worker)
 
-@sched.scheduled_job('cron',day_of_week='mon-fri',hour='06', minute='05',second='00')
+hour='09'
+minute='05'
+@sched.scheduled_job('cron',day_of_week='mon-fri',hour=hour, minute=minute,second='00')
 def download_us():
     worker = gen_one_worker()
     ret_arr = worker.storeservice.find_chs_stocks(True)

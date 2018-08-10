@@ -1,11 +1,12 @@
-FROM python:3.6.4
+FROM python:latest
 MAINTAINER hujiabao
 
 RUN mkdir -p /app
 WORKDIR /app
-ENV PYTHONPATH=/app/crawler:$PYTHONPATH
+ENV PYTHONPATH=/app/hsstock:$PYTHONPATH
 ADD requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+RUN pip --default-timeout=200 install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade pip
+RUN pip --default-timeout=200 install -i https://pypi.tuna.tsinghua.edu.cn/simple  -r requirements.txt
 
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
