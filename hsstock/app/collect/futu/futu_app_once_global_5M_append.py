@@ -201,7 +201,7 @@ def download_chs():
 
 hour='09'
 minute='05'
-@sched.scheduled_job('cron',day_of_week='mon-fri',hour=hour, minute=minute,second='00')
+@sched.scheduled_job('cron',day_of_week='tue-sat',hour=hour, minute=minute,second='00')
 def download_us():
     worker = gen_one_worker()
     ret_arr = worker.storeservice.find_chs_stocks(True)

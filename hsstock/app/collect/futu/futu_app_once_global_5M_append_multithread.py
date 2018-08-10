@@ -3,6 +3,7 @@ import logging
 import signal
 import time
 
+
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 from hsstock.utils.app_logging import setup_logging
@@ -70,7 +71,8 @@ def job_once_global_m5_append_multithread(*_args):
 
             # KLType.K_DAY
             start = None
-            lastdate = last_fetchdate # worker.storeservice.find_lastdate(code,last_fetchdate)
+            ld = worker.storeservice.find_lastdate2(code, 'hk')
+            lastdate = last_fetchdate if ld == None else ld
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr( lastdate.date(),1 )
             else:
@@ -89,7 +91,9 @@ def job_once_global_m5_append_multithread(*_args):
                         break
 
                     b2 = time.time()
-                    worker.get_history_kline(code, start, end, ktype=KLType.K_DAY)
+                    _, _, lastest_date = worker.get_history_kline(code, start, end, ktype=KLType.K_DAY)
+                    if lastest_date is not None:
+                        worker.storeservice.update_lastdate(code, 'hk', DateUtil.string_toDatetime(lastest_date))
                     e2 = time.time()
                     logging.info(
                         "fetching {} K_DAY listing_date: {} start: {} end:{} cost time {}".format(code, listing_date, start, end, e2-b2))
@@ -101,8 +105,8 @@ def job_once_global_m5_append_multithread(*_args):
 
             # KLType.K_5M
             start = None
-            lastdate = last_fetchdate #worker.storeservice.find_lastdate_5M(code,last_fetchdate)
-
+            ld = worker.storeservice.find_lastdate2(code, 'hk_5m')
+            lastdate = last_fetchdate if ld == None else ld
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr(lastdate.date(), 1)
             else:
@@ -121,7 +125,9 @@ def job_once_global_m5_append_multithread(*_args):
                         break
 
                     b1 = time.time()
-                    worker.get_history_kline(code, start, end, ktype=KLType.K_5M)
+                    _, _, lastest_date = worker.get_history_kline(code, start, end, ktype=KLType.K_5M)
+                    if lastest_date is not None:
+                        worker.storeservice.update_lastdate(code, 'hk_5m', lastest_date)
                     e1 = time.time()
                     logging.info(
                         "fetching {} K_5M_LINE listing_date:{} start: {} end:{} cost time {}".format(code,
