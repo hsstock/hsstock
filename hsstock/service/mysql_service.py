@@ -134,16 +134,19 @@ class MysqlService():
             ret_arr.append((code,listing_date))
         return ret_arr
 
-    def find_chs_stocks(self,is_chs=False):
+    def find_chs_stocks(self, is_chs=False):
         ret_arr = []
+        subquery = self.mysqlStore.session.query(FTStockBasicInfoNoHistData.code)
         if is_chs is True:
             for code, listing_date in self.mysqlStore.session.query(FTStockBasicInfo.code,
-                                                                    FTStockBasicInfo.listing_date).filter(FTStockBasicInfo.code.like('%US.%')):
+                                                                    FTStockBasicInfo.listing_date).filter(
+                ~FTStockBasicInfo.code.in_(subquery)).filter(FTStockBasicInfo.code.like('%US.%')):
                 ret_arr.append((code, listing_date))
         else:
             ret_arr = []
             for code, listing_date in self.mysqlStore.session.query(FTStockBasicInfo.code,
-                                                                    FTStockBasicInfo.listing_date).filter(~FTStockBasicInfo.code.like('%US.%')):
+                                                                    FTStockBasicInfo.listing_date).filter(
+                ~FTStockBasicInfo.code.in_(subquery)).filter(~FTStockBasicInfo.code.like('%US.%')):
                 ret_arr.append((code, listing_date))
             return ret_arr
         return ret_arr

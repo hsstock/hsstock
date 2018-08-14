@@ -235,7 +235,7 @@ def main():
         ret_arr = lf.storeservice.find_stocks('hk_5m',tindex)
         print(len(ret_arr))
         lf = LF(ctx)
-        thread_name = 'job_lf_{}'.format(tindex)
+        thread_name = 'job_lf_5m_{}'.format(tindex)
 
         time.sleep(5)
         once_global_m5_task(thread_name, ret_arr, lf)

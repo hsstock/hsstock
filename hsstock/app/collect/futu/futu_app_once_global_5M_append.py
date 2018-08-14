@@ -212,8 +212,8 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_int_handler)
     #signal.signal(signal.SIGKILL, signal_term_handler)
     signal.signal(signal.SIGTERM, signal_term_handler)
+    setup_logging()
     #download_chs()
     #download_us()
-    setup_logging()
     sched.start()
 

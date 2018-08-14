@@ -27,8 +27,8 @@ class AppConfig:
         AppConfig.custom_stocks = AppConfig.config.get('custom', 'stocks').split(',')
         AppConfig.custom_indexes = AppConfig.config.get('custom', 'indexes').split(',')
         AppConfig.custom_ft_stocks = AppConfig.config.get('custom_ft', 'stocks').split(',')
-        AppConfig.apollo_client = ApolloClient(AppConfig.config.get('apolloconfig', 'appid'), config_server_url=AppConfig.config.get('apolloconfig', 'config_server_url'))
-        AppConfig.apollo_client.start()
+        #AppConfig.apollo_client = ApolloClient(AppConfig.config.get('apolloconfig', 'appid'), config_server_url=AppConfig.config.get('apolloconfig', 'config_server_url'))
+        #AppConfig.apollo_client.start()
 
     @staticmethod
     def get_config():

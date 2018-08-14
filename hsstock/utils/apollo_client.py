@@ -151,24 +151,24 @@ class ApolloClient(object):
         logging.getLogger(__name__).info("Listener stopped!")
         self.stopped = True
 
-
-if __name__ == '__main__':
-    root = logging.getLogger()
-    root.setLevel(logging.DEBUG)
-
-    ch = logging.StreamHandler(sys.stdout)
-    ch.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    ch.setFormatter(formatter)
-    root.addHandler(ch)
-
-    client = ApolloClient('pycrawler')
-    client.start()
-    if sys.version_info[0] < 3:
-        v = raw_input('Press any key to quit...')
-    else:
-        v = input('Press any key to quit...')
-
-    client.stop()
-    while not client.stopped:
-        pass
+#
+# if __name__ == '__main__':
+#     root = logging.getLogger()
+#     root.setLevel(logging.DEBUG)
+#
+#     ch = logging.StreamHandler(sys.stdout)
+#     ch.setLevel(logging.INFO)
+#     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+#     ch.setFormatter(formatter)
+#     root.addHandler(ch)
+#
+#     client = ApolloClient('pycrawler')
+#     client.start()
+#     if sys.version_info[0] < 3:
+#         v = raw_input('Press any key to quit...')
+#     else:
+#         v = input('Press any key to quit...')
+#
+#     client.stop()
+#     while not client.stopped:
+#         pass

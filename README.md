@@ -232,7 +232,8 @@ brew install zmq
 [Cron](https://www.cnblogs.com/javahr/p/8318728.html)
 [APM](https://docs.newrelic.com/docs/agents/python-agent/getting-started/instrumented-python-packages)
 [Config Center](https://github.com/ctripcorp/apollo)
-
+[Quandl](https://docs.quandl.com/docs#section-authentication)
+[Quantpian](https://www.quantopian.com/)
 #### [Python教程](http://www.runoob.com/python3/python3-built-in-functions.html)
 
 [sqlalchemy](https://www.sqlalchemy.org/)

@@ -114,6 +114,25 @@ class DateUtil():
     def date_str_to_int(date="2010-01-01"):
         return int(date.replace("-", ""))
 
+    @staticmethod
+    def week_today():
+        d = datetime.now()
+        return d.weekday()
+
+    K_DEFAULT_DT_FMT = "%Y-%m-%d %H:%M:%S"
+
+    @staticmethod
+    def week_of_date(date_str, fmt=K_DEFAULT_DT_FMT):
+        """
+        输入'2016-01-01' 转换为星期几，返回int 0-6分别代表周一到周日
+        :param date_str: 式时间日期str对象
+        :param fmt: 如date_str不是%Y-%m-%d形式，对应的格式str对象
+        :param fix: 是否修复日期不规范的写法，eg. 2016-1-1 fix 2016-01-01
+        :return: 返回int 0-6分别代表周一到周日
+        """
+        return datetime.strptime(date_str, fmt).weekday()
+
+
 
 if __name__ == "__main__":
     print( DateUtil.getTodayStr() )
@@ -137,3 +156,4 @@ if __name__ == "__main__":
         except StopIteration as e:
             print(e)
             break
+
