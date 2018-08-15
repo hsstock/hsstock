@@ -11,6 +11,24 @@ def main():
     storeservice = MysqlService()
 
     schemaArr = [
+        {
+            "table": "ft_stat_week_probability",
+            "dtype": {
+                "id":sa.types.BIGINT,
+                "code": sa.types.NVARCHAR(20),
+                "up_count": sa.types.SMALLINT,
+                "down_count": sa.types.SMALLINT,
+                "up_probability": sa.types.Float,
+                "down_probability": sa.types.Float,
+                "week_of_day": sa.types.SMALLINT,
+            },
+            "clauses": [
+                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`)',
+                'ALTER TABLE `{0}` ADD INDEX (`code`);',
+                'ALTER TABLE `{0}` ADD INDEX (`week_of_day`);',
+                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';',
+            ]
+        },
         # {
         #     "table": "ft_stock_basicinfo",
         #     "dtype": {
@@ -39,70 +57,70 @@ def main():
         #         'ALTER TABLE `{0}` MODIFY COLUMN stock_id BIGINT COMMENT  \'股票id\';'
         #     ]
         # },
-        {
-            "table": "ft_history_kline",
-            "dtype": {
-                "id": sa.types.BIGINT,
-                "code": sa.types.NVARCHAR(20),
-                "time_key": sa.types.DATETIME,
-                "open": sa.types.FLOAT,
-                "close": sa.types.FLOAT,
-                "high": sa.types.FLOAT,
-                "low": sa.types.FLOAT,
-                "pe_ratio": sa.types.FLOAT,
-                "turnover_rate": sa.types.FLOAT,
-                "volume": sa.types.BIGINT,
-                "turnover": sa.types.FLOAT,
-                "change_rate": sa.types.FLOAT,
-                "last_close": sa.types.FLOAT
-            },
-            "clauses": [
-                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
-                'ALTER TABLE `{0}` ADD INDEX (`code`);',
-                'ALTER TABLE `{0}` ADD INDEX (`time_key`);'
-                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';',
-                'ALTER TABLE `{0}` MODIFY COLUMN pe_ratio FLOAT COMMENT  \'市盈率\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN turnover_rate FLOAT COMMENT  \'换手率\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN volume BIGINT COMMENT  \'成交量\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN turnover FLOAT COMMENT  \'成交额\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN change_rate FLOAT COMMENT  \'涨跌幅\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN last_close FLOAT COMMENT  \'昨收价\';'
-                #'ALTER TABLE `{0}` ENGINE=MRG_MyISAM UNION=(ft_history_kline_1,ft_history_kline_2,ft_history_kline_3,ft_history_kline_4,ft_history_kline_5,ft_history_kline_6,ft_history_kline_7,ft_history_kline_8,ft_history_kline_9,ft_history_kline_10,ft_history_kline_11) INSERT_METHOD=LAST;'
-                'ALTER TABLE `{0}` ENGINE=MyISAM;'
-            ]
-        },
-        {
-            "table": "ft_history_kline_K_5M",
-            "dtype": {
-                "id": sa.types.BIGINT,
-                "code": sa.types.NVARCHAR(20),
-                "time_key": sa.types.DATETIME,
-                "open": sa.types.FLOAT,
-                "close": sa.types.FLOAT,
-                "high": sa.types.FLOAT,
-                "low": sa.types.FLOAT,
-                "pe_ratio": sa.types.FLOAT,
-                "turnover_rate": sa.types.FLOAT,
-                "volume": sa.types.BIGINT,
-                "turnover": sa.types.FLOAT,
-                "change_rate": sa.types.FLOAT,
-                "last_close": sa.types.FLOAT
-            },
-            "clauses": [
-                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
-                'ALTER TABLE `{0}` ADD INDEX (`code`);',
-                'ALTER TABLE `{0}` ADD INDEX (`time_key`);'
-                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';',
-                'ALTER TABLE `{0}` MODIFY COLUMN pe_ratio FLOAT COMMENT  \'市盈率\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN turnover_rate FLOAT COMMENT  \'换手率\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN volume BIGINT COMMENT  \'成交量\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN turnover FLOAT COMMENT  \'成交额\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN change_rate FLOAT COMMENT  \'涨跌幅\';'
-                'ALTER TABLE `{0}` MODIFY COLUMN last_close FLOAT COMMENT  \'昨收价\';'
-                #'ALTER TABLE `{0}` ENGINE=MRG_MyISAM UNION=(ft_history_kline_K_5M_1,ft_history_kline_K_5M_2,ft_history_kline_K_5M_3,ft_history_kline_K_5M_4,ft_history_kline_K_5M_5,ft_history_kline_K_5M_6,ft_history_kline_K_5M_7,ft_history_kline_K_5M_8,ft_history_kline_K_5M_9,ft_history_kline_K_5M_10,ft_history_kline_K_5M_11) INSERT_METHOD=LAST;'
-                'ALTER TABLE `{0}` ENGINE=MyISAM;'
-            ]
-        },
+        # {
+        #     "table": "ft_history_kline",
+        #     "dtype": {
+        #         "id": sa.types.BIGINT,
+        #         "code": sa.types.NVARCHAR(20),
+        #         "time_key": sa.types.DATETIME,
+        #         "open": sa.types.FLOAT,
+        #         "close": sa.types.FLOAT,
+        #         "high": sa.types.FLOAT,
+        #         "low": sa.types.FLOAT,
+        #         "pe_ratio": sa.types.FLOAT,
+        #         "turnover_rate": sa.types.FLOAT,
+        #         "volume": sa.types.BIGINT,
+        #         "turnover": sa.types.FLOAT,
+        #         "change_rate": sa.types.FLOAT,
+        #         "last_close": sa.types.FLOAT
+        #     },
+        #     "clauses": [
+        #         'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
+        #         'ALTER TABLE `{0}` ADD INDEX (`code`);',
+        #         'ALTER TABLE `{0}` ADD INDEX (`time_key`);'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';',
+        #         'ALTER TABLE `{0}` MODIFY COLUMN pe_ratio FLOAT COMMENT  \'市盈率\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN turnover_rate FLOAT COMMENT  \'换手率\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN volume BIGINT COMMENT  \'成交量\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN turnover FLOAT COMMENT  \'成交额\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN change_rate FLOAT COMMENT  \'涨跌幅\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN last_close FLOAT COMMENT  \'昨收价\';'
+        #         #'ALTER TABLE `{0}` ENGINE=MRG_MyISAM UNION=(ft_history_kline_1,ft_history_kline_2,ft_history_kline_3,ft_history_kline_4,ft_history_kline_5,ft_history_kline_6,ft_history_kline_7,ft_history_kline_8,ft_history_kline_9,ft_history_kline_10,ft_history_kline_11) INSERT_METHOD=LAST;'
+        #         'ALTER TABLE `{0}` ENGINE=MyISAM;'
+        #     ]
+        # },
+        # {
+        #     "table": "ft_history_kline_K_5M",
+        #     "dtype": {
+        #         "id": sa.types.BIGINT,
+        #         "code": sa.types.NVARCHAR(20),
+        #         "time_key": sa.types.DATETIME,
+        #         "open": sa.types.FLOAT,
+        #         "close": sa.types.FLOAT,
+        #         "high": sa.types.FLOAT,
+        #         "low": sa.types.FLOAT,
+        #         "pe_ratio": sa.types.FLOAT,
+        #         "turnover_rate": sa.types.FLOAT,
+        #         "volume": sa.types.BIGINT,
+        #         "turnover": sa.types.FLOAT,
+        #         "change_rate": sa.types.FLOAT,
+        #         "last_close": sa.types.FLOAT
+        #     },
+        #     "clauses": [
+        #         'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
+        #         'ALTER TABLE `{0}` ADD INDEX (`code`);',
+        #         'ALTER TABLE `{0}` ADD INDEX (`time_key`);'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';',
+        #         'ALTER TABLE `{0}` MODIFY COLUMN pe_ratio FLOAT COMMENT  \'市盈率\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN turnover_rate FLOAT COMMENT  \'换手率\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN volume BIGINT COMMENT  \'成交量\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN turnover FLOAT COMMENT  \'成交额\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN change_rate FLOAT COMMENT  \'涨跌幅\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN last_close FLOAT COMMENT  \'昨收价\';'
+        #         #'ALTER TABLE `{0}` ENGINE=MRG_MyISAM UNION=(ft_history_kline_K_5M_1,ft_history_kline_K_5M_2,ft_history_kline_K_5M_3,ft_history_kline_K_5M_4,ft_history_kline_K_5M_5,ft_history_kline_K_5M_6,ft_history_kline_K_5M_7,ft_history_kline_K_5M_8,ft_history_kline_K_5M_9,ft_history_kline_K_5M_10,ft_history_kline_K_5M_11) INSERT_METHOD=LAST;'
+        #         'ALTER TABLE `{0}` ENGINE=MyISAM;'
+        #     ]
+        # },
         # {
         #     "table": "ft_history_kline_MyISAM",
         #     "dtype": {

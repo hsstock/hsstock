@@ -51,7 +51,7 @@ def job_once_global_day_analysis(*_args):
             curr += 1
 
             logging.info("current fetching progress {}/{} code:{} ".format(curr, total, code))
-            if curr < 15000:
+            if curr < 1:
                 continue
 
             b1 = time.time()
@@ -68,9 +68,41 @@ def job_once_global_day_analysis(*_args):
             data['positive']=np.where( data.change_rate > 0.0, 1, 0)
             data.insert(loc=0, column='date_week', value=data.apply(lambda x: DateUtil.week_of_date(x['time_key']), axis='columns'))
             xt = pd.crosstab(data.date_week,data.positive)
-            print(xt)
             xt_pct = xt.div(xt.sum(1).astype(float), axis=0)
-            print(xt_pct)
+            add_list = []
+            col_list = ['code','up_count','down_count','up_probability','down_probability','week_of_day']
+            count =  0
+            for item in xt:
+                count += 1
+            if count == 2:
+                for week_of_day in range(0,5,1):
+                    try:
+                        if xt[0][week_of_day] is None or xt[1] is None or xt[1][week_of_day] is None:
+                            continue
+                    except KeyError as err:
+                        logging.error("OS|error: {0}".format(err))
+                        continue
+                    up_count = xt[1][week_of_day]
+                    down_count = xt[0][week_of_day]
+                    up_probability = xt_pct[1][week_of_day]
+                    down_probability = xt_pct[0][week_of_day]
+                    add_list.append((code,up_count,down_count,up_probability,down_probability,week_of_day))
+                table = 'ft_stat_week_probability'
+                worker.storeservice.insert_many(table, pd.DataFrame(add_list, columns=col_list))
+
+            # Intel MKL FATAL ERROR: Error on loading function mkl_blas_avx2_get_kernel_api_version
+
+            # xt_pct.plot(figsize=(8,5),
+            #             kind='bar',
+            #             stacked=True,
+            #             title='date_week->positive')
+            # rename can't work, TODO
+            #xt.rename(columns={'positive':'number'})
+            #print(xt)
+            #xt_pct = xt.div(xt.sum(1).astype(float), axis=0)
+            ##xt_pct.rename(index=str,columns={'positive': 'weekprobability'})
+            #print(xt_pct)
+            #print(xt_pct+xt)
 
             e1 = time.time()
             logging.info(

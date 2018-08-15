@@ -234,7 +234,10 @@ brew install zmq
 [Config Center](https://github.com/ctripcorp/apollo)
 [Quandl](https://docs.quandl.com/docs#section-authentication)
 [Quantpian](https://www.quantopian.com/)
+[Pandas](http://pandas-docs.github.io/pandas-docs-travis/)
+
 #### [Python教程](http://www.runoob.com/python3/python3-built-in-functions.html)
+
 
 [sqlalchemy](https://www.sqlalchemy.org/)
 
