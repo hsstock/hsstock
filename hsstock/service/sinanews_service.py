@@ -4,6 +4,7 @@ import time
 import random
 import hsstock.utils.logger as logger
 from hsstock.utils.date_util import DateUtil
+from hsstock.utils.decorator import retry
 
 
 class SinanewsService(object):
@@ -12,11 +13,17 @@ class SinanewsService(object):
         self.mongodbutil = mongodbutil
 
 
+    @retry()
     def get_page(self,market, code,url):
+
+        ret_code = -1
+        ret_data = ''
         self.itemArray = []
-        res = requests.get(url,timeout=10)
-        res.encoding = "gbk"
+
         try:
+            res = requests.get(url,timeout=60)
+            res.encoding = "gbk"
+
             res.raise_for_status()
             if res.status_code == 200 :
                     contentSoup = bs4.BeautifulSoup(res.text,'lxml')
@@ -36,18 +43,39 @@ class SinanewsService(object):
                         json['href'] = ele[len(ele)-1].attrs['href']
                         json['year'] = 'guess'
                         ret,content = self.get_content(json['href'],'utf-8')
-                        if ret != -1 :
-                            time.sleep(4 * random.random())
+                        # if ret != -1 :
+                        #     time.sleep(4 * random.random())
 
                         if ret == 0 :
                             json['content'] = content
                             self.itemArray.append(json)
+                        ret_code = 0
+                        ret_data = ''
         except Exception as err:
-            time.sleep(4 * random.random())
+            #time.sleep(4 * random.random())
             logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.ConnectTimeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.ReadTimeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.Timeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except:
+            logger.warning('Unfortunitely -- An Unknow Error Happened, Please wait 3 seconds')
+            time.sleep(random.random())
+            ret_code = -1
+            ret_data = ''
         finally:
             res.close()
-
+        return ret_code,ret_data
 
     def generate_page_url(self, market, code, page):
         """
@@ -73,19 +101,28 @@ class SinanewsService(object):
         else:
             return "url not found"
 
+    @retry()
     def get_hk_page(self, market, code, page):
+        """
+        :param market:
+        :param code:
+        :param page:
+        :return:  page number, -1: failed
+        """
         self.itemArray = []
+
         url = self.generate_page_url(market, code, page)
         logger.info('fetch url: {}'.format(url))
-        res = requests.get(url, timeout=10)
-        res.encoding = "gbk"
+
         try:
+            res = requests.get(url, timeout=60)
+            res.encoding = "gbk"
             res.raise_for_status()
             if res.status_code == 200:
                 contentSoup = bs4.BeautifulSoup(res.text, 'lxml')
                 elems = contentSoup.select('#js_ggzx > li,.li_point > ul > li,.col02_22 > ul > li')
                 if len(elems) < 2:
-                    return -1
+                    return -1,''
                 for elem in elems:
                     json = {}
                     json['code'] = code
@@ -100,28 +137,53 @@ class SinanewsService(object):
                     json['href'] = ele[len(ele) - 1].attrs['href']
                     json['year'] = 'real'
                     ret, content = self.get_content(json['href'], "utf-8")
-                    if ret != -1:
-                        time.sleep(4 * random.random())
+                    # if ret != -1:
+                    #     time.sleep(4 * random.random())
 
                     if ret == 0:
                         json['content'] = content
 
                         self.itemArray.append(json)
         except Exception as err:
-            time.sleep(4 * random.random())
+            #
             logger.warning(err)
+        except requests.exceptions.ConnectTimeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.ReadTimeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.Timeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except:
+            logger.warning('Unfortunitely -- An Unknow Error Happened, Please wait 3 seconds')
+            time.sleep(random.random())
+            ret_code = -1
+            ret_data = ''
         finally:
             res.close()
-        return page + 1
+        return page + 1,''
 
+    @retry()
     def get_us_page(self, market, code, page, type):
+        """
+        :param market:
+        :param code:
+        :param page:
+        :param type:
+        :return: (page_number, type), page_number:-1
+        """
         self.itemArray = []
         url = self.generate_page_url(market, code, page)
         url = url + type
         logger.info('fetch url: {}'.format(url))
-        res = requests.get(url, timeout=10)
-        res.encoding = "gbk"
         try:
+            res = requests.get(url, timeout=60)
+            res.encoding = "gbk"
             res.raise_for_status()
             if res.status_code == 200:
                 contentSoup = bs4.BeautifulSoup(res.text, 'lxml')
@@ -145,33 +207,51 @@ class SinanewsService(object):
                     json['href'] = ele[len(ele) - 1].attrs['href']
                     json['year'] = 'real'
                     ret, content = self.get_content(json['href'], "utf-8")
-                    if ret != -1:
-                        time.sleep(4 * random.random())
+                    # if ret != -1:
+                    #     time.sleep(4 * random.random())
 
                     if ret == 0:
                         json['content'] = content
                         self.itemArray.append(json)
         except Exception as err:
-            time.sleep(4 * random.random())
+            #time.sleep(4 * random.random())
             logger.warning(err)
+        except requests.exceptions.ConnectTimeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.ReadTimeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.Timeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except:
+            logger.warning('Unfortunitely -- An Unknow Error Happened, Please wait 3 seconds')
+            time.sleep(random.random())
+            ret_code = -1
+            ret_data = ''
         finally:
             res.close()
         return page + 1, type
 
+    @retry()
     def get_chn_page(self, market, code, page):
         self.itemArray = []
         url = self.generate_page_url(market, code, page)
         logger.info('fetch url: {}'.format(url))
-        res = requests.get(url, timeout=10)
-        res.encoding = "gbk"
         try:
+            res = requests.get(url, timeout=60)
+            res.encoding = "gbk"
             res.raise_for_status()
             if res.status_code == 200:
                 contentSoup = bs4.BeautifulSoup(res.text, 'lxml')
                 strList = str(contentSoup.select('.datelist > ul'))[10:-12]
                 elems = strList.split("<br/>")
                 if len(elems) < 2:
-                    return -1
+                    return -1,''
                 for elem in elems:
                     if elem == '':
                         continue
@@ -188,19 +268,25 @@ class SinanewsService(object):
                     json['title'] = parts2[0]
                     logger.info("date:{},title:{}".format(s, json['title']))
                     ret, content = self.get_content(json['href'], "utf-8")
-                    if ret != -1:
-                        time.sleep(4 * random.random())
+                    # if ret != -1:
+                    #     time.sleep(4 * random.random())
 
                     if ret == 0:
                         json['content'] = content
                         self.itemArray.append(json)
         except Exception as err:
-            time.sleep(4 * random.random())
+            #time.sleep(4 * random.random())
             logger.warning(err)
+        except:
+            logger.warning('Unfortunitely -- An Unknow Error Happened, Please wait 3 seconds')
+            time.sleep(random.random())
+            ret_code = -1
+            ret_data = ''
         finally:
             res.close()
-        return page + 1
+        return page + 1,''
 
+    @retry()
     def get_content(self, url, enco):
         content = ''
         ret = -1
@@ -208,13 +294,13 @@ class SinanewsService(object):
         urlExist = self.mongodbutil.urlIsExist(url)
         if urlExist:
             logger.info('This url:{} has existed'.format(url))
-            return ret, content
+            return -2, content
 
         header = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
-        res = requests.get(url, headers=header, timeout=10)
-        res.encoding = enco
         try:
+            res = requests.get(url, headers=header, timeout=60)
+            res.encoding = enco
             res.raise_for_status()
             if res.status_code == 200:
                 soup = bs4.BeautifulSoup(res.text, 'lxml')
@@ -223,8 +309,25 @@ class SinanewsService(object):
                     content = elems[0].getText()
                     ret = 0
         except Exception as err:
-            time.sleep(4 * random.random())
+            #time.sleep(4 * random.random())
             logger.warning(err)
+        except requests.exceptions.ConnectTimeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.ReadTimeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.Timeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except:
+            logger.warning('Unfortunitely -- An Unknow Error Happened, Please wait 3 seconds')
+            time.sleep(random.random())
+            ret_code = -1
+            ret_data = ''
         finally:
             res.close()
         return ret, content

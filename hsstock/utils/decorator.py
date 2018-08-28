@@ -40,6 +40,26 @@ def rate_limit(act,retry_count=15,wait=3):
         return rate_limited
     return decorate
 
+
+def retry(retry_count=15,wait=2):
+    def decorate(func):
+        def retrying(*_args):
+            _ret_code, _ret_data = func(*_args)
+            if _ret_code == -1:
+                for retry in range(1,retry_count,1):
+                    time.sleep(wait)
+                    print("retry *******{}".format(retry))
+                    _ret_code, _ret_data = func(*_args)
+                    return _ret_code, _ret_data
+                print('reached maximized retry count')
+            else:
+                return _ret_code,_ret_data
+        return retrying
+    return decorate
+
+
+
+
 def table(table):
     def decorate(kclass):
         old_table
