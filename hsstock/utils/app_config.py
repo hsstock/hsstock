@@ -29,6 +29,12 @@ class AppConfig:
         AppConfig.custom_ft_stocks = AppConfig.config.get('custom_ft', 'stocks').split(',')
         #AppConfig.apollo_client = ApolloClient(AppConfig.config.get('apolloconfig', 'appid'), config_server_url=AppConfig.config.get('apolloconfig', 'config_server_url'))
         #AppConfig.apollo_client.start()
+        AppConfig.mongodb_ip = AppConfig.config.get('mongodb', 'ip')
+        AppConfig.mongodb_port = int(AppConfig.config.get('mongodb', 'port'))
+        AppConfig.mongodb_user = AppConfig.config.get('mongodb', 'user')
+        AppConfig.mongodb_password = AppConfig.config.get('mongodb', 'password')
+        AppConfig.mongodb_collection = AppConfig.config.get('mongodb', 'collection')
+
 
     @staticmethod
     def get_config():

@@ -13,3 +13,10 @@ pyecharts
 python3-gearman
 apscheduler
 sqlalchemy
+
+requests
+beautifulsoup4
+selenium
+python3-xlib
+lxml
+chardet

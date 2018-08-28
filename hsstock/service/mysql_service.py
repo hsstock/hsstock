@@ -127,6 +127,13 @@ class MysqlService():
             ret_codes.append(code)
         return ret_codes
 
+    def find_all_stockcodes_exclude_nodata(self):
+        ret_codes = []
+        subquery = self.mysqlStore.session.query(FTStockBasicInfoNoHistData.code)
+        for code,name in self.mysqlStore.session.query(FTStockBasicInfo.code,FTStockBasicInfo.name).filter_by(stock_type='STOCK').filter(~FTStockBasicInfo.code.in_(subquery)):
+            ret_codes.append(code)
+        return ret_codes
+
     def find_all_stocks(self):
         ret_arr = []
         subquery = self.mysqlStore.session.query(FTStockBasicInfoNoHistData.code)

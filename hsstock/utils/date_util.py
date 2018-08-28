@@ -70,6 +70,19 @@ class DateUtil():
         except:
             return False
 
+    @staticmethod
+    def format_date_us_history(strDate):
+        if DateUtil.isVaildDate(strDate):
+            return strDate
+        tupDate = strDate.partition("|")
+        chineseDate = tupDate[2] + ":00"
+        date = str(chineseDate)
+        date = date.replace("年", "-")
+        date = date.replace("月", "-")
+        date = date.replace("日", "")
+        date = date.strip()
+        return date
+
     # 把datetime转成字符串
     @staticmethod
     def datetime_toString(dt):
