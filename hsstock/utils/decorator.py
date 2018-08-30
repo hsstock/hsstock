@@ -50,8 +50,12 @@ def retry(retry_count=15,wait=2):
                     time.sleep(wait)
                     print("retry *******{}".format(retry))
                     _ret_code, _ret_data = func(*_args)
-                    return _ret_code, _ret_data
+                    if _ret_code == -1:
+                        _ret_code, _ret_data = func(*_args)
+                    else:
+                        return _ret_code, _ret_data
                 print('reached maximized retry count')
+                return -1,''
             else:
                 return _ret_code,_ret_data
         return retrying
@@ -63,6 +67,15 @@ def retry(retry_count=15,wait=2):
 def table(table):
     def decorate(kclass):
         old_table
+
+
+@retry()
+def test_retry():
+    return -1,''
+
+from hsstock.common.constant import *
+
+
 if __name__ == '__main__':
 
     @clock()
@@ -72,4 +85,8 @@ if __name__ == '__main__':
 
     for i in range(3):
         snooze(.123)
+
+
+    test_retry()
+
 

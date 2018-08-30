@@ -43,7 +43,7 @@ def job_once_global(*_args):
             curr += 1
 
             logger.info("current fetching entry progress {}/{} code:{} ".format(curr,total,code))
-            if curr < 4:
+            if curr < 1918:
                 continue
 
             market = code[0:2]

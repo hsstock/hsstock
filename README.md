@@ -337,6 +337,21 @@ rm -f $(find ./ -name *.lastUpdated)
 curl http://ip:5000/v2/_catalog
 curl http://ip:5000/v2/{image_name}/tags/list
 ```
+
+```
+docker run -d -p 9888:8888 image python /app/hsstock/app/collect/news/sina_app_catch_all_global.py
+
+```
 #### 数据资产
 
 [通联数据](https://app.wmcloud.com/cloud-portal/#/portal)
+
+
+#### Issues
+
+```angular2html
+encoding error : input conversion failed due to input error, bytes 0x88 0x00 0x00 0xC5
+
+```
+
+
