@@ -41,7 +41,7 @@ def rate_limit(act,retry_count=15,wait=3):
     return decorate
 
 
-def retry(retry_count=15,wait=2):
+def retry(retry_count=3,wait=1):
     def decorate(func):
         def retrying(*_args):
             _ret_code, _ret_data = func(*_args)

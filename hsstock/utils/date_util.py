@@ -10,9 +10,14 @@ class DateUtil():
         return date.today()
 
     @staticmethod
-    def getDatetimeToday2(self):
-        t = date.today()  # date类型
-        dt = datetime.strptime(str(t), '%Y-%m-%d')  # date转str再转datetime
+    def getDatetimeToday3():
+        today = datetime.today()
+        return today.strftime('%Y-%m-%d %H:%M:%S')
+
+    @staticmethod
+    def getDatetimeToday2():
+        t = date.today()
+        dt = datetime.strptime(str(t), '%Y-%m-%d %H:%M:%S')  # date转str再转datetime
         return dt
 
     @staticmethod

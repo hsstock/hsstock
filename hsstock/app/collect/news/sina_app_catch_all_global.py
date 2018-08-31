@@ -43,18 +43,22 @@ def job_once_global(*_args):
             curr += 1
 
             logger.info("current fetching entry progress {}/{} code:{} ".format(curr,total,code))
-            if curr < 1918:
+            if curr < 2432:
                 continue
 
             market = code[0:2]
             symbol = code[3:]
+
+            # if code != 'SH.600996':
+            #     logger.info("current fetching entry progress {}/{} code:{} ".format(curr, total, code))
+            #     continue
 
             sinanewshistory.clear_item_array()
             logger.info('Current Time:{}, code:{}, market:{}'.format(datetime.datetime.now(), symbol, market))
 
             page = 1
             type = '1'
-            while page != -1:
+            while page != -1 or page > 100:
                 if is_closing:
                     break
                 try:
@@ -72,6 +76,7 @@ def job_once_global(*_args):
                         logger.info("store items to mongodb ...")
                     else:
                         logger.info("all items exists")
+                        page = -1
                 except Exception as err:
                     time.sleep(4 * random.random())
                     logger.warning('my err:{}'.format(err))

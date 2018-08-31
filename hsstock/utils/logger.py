@@ -1,5 +1,7 @@
 import logging
 import os
+import shutil
+from hsstock.utils.date_util import DateUtil
 
 logname = ''.join((os.path.abspath(''.join((__file__, '../../'))), '/log.txt'))
 filehandler = logging.FileHandler(filename=logname, encoding="utf-8")
@@ -21,7 +23,8 @@ def warning(msg):
 
 
 def file_size_control():
-    if os.path.getsize(logname) > 104857600:
+    if os.path.getsize(logname) > 100000000:
+        shutil.move(logname, logname.replace('log.txt',"log-{}.txt".format(DateUtil.getDatetimeToday3())))
         file = open(logname, "w", encoding='utf-8', errors='ignore')
         file.seek(0)
         file.truncate()
