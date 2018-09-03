@@ -1,4 +1,8 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: GBK -*-
+import sys
+import importlib
+importlib.reload(sys)
+
 import signal
 import time
 import random
@@ -17,6 +21,8 @@ from hsstock.service.mysql_service import MysqlService
 from hsstock.utils.mongodbutil import MongodbUtil
 from hsstock.service.sinanews_service import SinanewsService
 from hsstock.utils.app_config import AppConfig
+
+
 
 
 # sched = BlockingScheduler()
@@ -43,7 +49,7 @@ def job_once_global(*_args):
             curr += 1
 
             logger.info("current fetching entry progress {}/{} code:{} ".format(curr,total,code))
-            if curr < 2432:
+            if curr < 2989:
                 continue
 
             market = code[0:2]
@@ -58,7 +64,7 @@ def job_once_global(*_args):
 
             page = 1
             type = '1'
-            while page != -1 or page > 100:
+            while page != -1 or (page > 0 and page < 100):
                 if is_closing:
                     break
                 try:
@@ -100,7 +106,7 @@ def signal_int_handler(signum, frame):
     # sched.shutdown(True)
 
 
-#SIGKILL ä¸å¯è¢«æ•èŽ·
+#SIGKILL ²»¿É±»²¶»ñ
 # def signal_kill_handler():
 #     global is_closing
 #     logger.info('killed, exiting...')
@@ -138,4 +144,3 @@ if __name__ == "__main__":
     signal.signal(signal.SIGTERM, signal_term_handler)
     catch_all_entry_urls()
     #sched.start()
-

@@ -24,10 +24,9 @@ class SinanewsService(object):
         try:
             res = requests.get(url,timeout=60)
             res.encoding = "gbk"
-
             res.raise_for_status()
             if res.status_code == 200 :
-                    contentSoup = bs4.BeautifulSoup(res.text,'lxml')
+                    contentSoup = bs4.BeautifulSoup(res.content,'lxml')
                     elems = contentSoup.select('#js_ggzx > li,.li_point > ul > li,.col02_22 > ul > li')
                     for elem in elems:
                         json = {}
@@ -120,7 +119,7 @@ class SinanewsService(object):
             res.encoding = "gbk"
             res.raise_for_status()
             if res.status_code == 200:
-                contentSoup = bs4.BeautifulSoup(res.text, 'lxml')
+                contentSoup = bs4.BeautifulSoup(res.content, 'lxml')
                 elems = contentSoup.select('#js_ggzx > li,.li_point > ul > li,.col02_22 > ul > li')
                 if len(elems) < 2:
                     return -1,''
@@ -187,7 +186,7 @@ class SinanewsService(object):
             res.encoding = "gbk"
             res.raise_for_status()
             if res.status_code == 200:
-                contentSoup = bs4.BeautifulSoup(res.text, 'lxml')
+                contentSoup = bs4.BeautifulSoup(res, 'lxml')
                 elems = contentSoup.select('.xb_news > ul > li')
                 if page >= 100:
                     if type.__eq__("1"):
@@ -248,7 +247,7 @@ class SinanewsService(object):
             res.encoding = "gbk"
             res.raise_for_status()
             if res.status_code == 200:
-                contentSoup = bs4.BeautifulSoup(res.text, 'lxml')
+                contentSoup = bs4.BeautifulSoup(res.content, 'lxml')
                 strList = str(contentSoup.select('.datelist > ul'))[10:-12]
                 elems = strList.split("<br/>")
                 if len(elems) < 2:
