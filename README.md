@@ -349,10 +349,28 @@ docker run -d -p 9888:8888 image python /app/hsstock/app/collect/news/sina_app_c
 
 #### Issues
 
+
+
 ```angular2html
 encoding error : input conversion failed due to input error, bytes 0x88 0x00 0x00 0xC5
 
 http://vip.stock.finance.sina.com.cn/corp/view/vCB_AllNewsStock.php?symbol=sh600996&Page=4127
 ```
 
+```angular2html
+ModuleNotFoundError: No module named 'MySQLdb'Mod
+
+
+解决方法：
+
+MySQLdb只支持Python2.*，还不支持3.*
+可以用PyMySQL代替。安装方法：pip install PyMySQL
+在
+
+from sqlalchemy import create_engine
+前加
+
+import pymysql
+pymysql.install_as_MySQLdb()
+```
 
