@@ -22,11 +22,13 @@ class SinanewsService(object):
         self.itemArray = []
 
         try:
-            res = requests.get(url,timeout=60)
-            res.encoding = "gbk"
+            res = requests.get(url, timeout=60, headers={'Content-type': 'text/html;charset=gb2312'})
+            if res.encoding == 'ISO-8859-1':
+                res.encoding = 'gbk'
+            html = res.text  # .encode(res.encoding)
             res.raise_for_status()
             if res.status_code == 200 :
-                    contentSoup = bs4.BeautifulSoup(res.content,'lxml')
+                    contentSoup = bs4.BeautifulSoup(html,'lxml')
                     elems = contentSoup.select('#js_ggzx > li,.li_point > ul > li,.col02_22 > ul > li')
                     for elem in elems:
                         json = {}
@@ -115,11 +117,13 @@ class SinanewsService(object):
         logger.info('fetch url: {}'.format(url))
 
         try:
-            res = requests.get(url, timeout=60)
-            res.encoding = "gbk"
+            res = requests.get(url, timeout=60, headers={'Content-type': 'text/html;charset=gb2312'})
+            if res.encoding == 'ISO-8859-1':
+                res.encoding = 'gbk'
+            html = res.text  # .encode(res.encoding)
             res.raise_for_status()
             if res.status_code == 200:
-                contentSoup = bs4.BeautifulSoup(res.content, 'lxml')
+                contentSoup = bs4.BeautifulSoup(html, 'lxml')
                 elems = contentSoup.select('#js_ggzx > li,.li_point > ul > li,.col02_22 > ul > li')
                 if len(elems) < 2:
                     return -1,''
@@ -182,11 +186,13 @@ class SinanewsService(object):
         url = url + type
         logger.info('fetch url: {}'.format(url))
         try:
-            res = requests.get(url, timeout=60)
-            res.encoding = "gbk"
+            res = requests.get(url, timeout=60, headers={'Content-type': 'text/html;charset=gb2312'})
+            if res.encoding == 'ISO-8859-1':
+                res.encoding = 'gbk'
+            html = res.text  # .encode(res.encoding)
             res.raise_for_status()
             if res.status_code == 200:
-                contentSoup = bs4.BeautifulSoup(res, 'lxml')
+                contentSoup = bs4.BeautifulSoup(html, 'lxml')
                 elems = contentSoup.select('.xb_news > ul > li')
                 if page >= 100:
                     if type.__eq__("1"):
@@ -243,11 +249,13 @@ class SinanewsService(object):
         url = self.generate_page_url(market, code, page)
         logger.info('fetch url: {}'.format(url))
         try:
-            res = requests.get(url, timeout=60)
-            res.encoding = "gbk"
+            res = requests.get(url, timeout=60, headers={'Content-type':'text/html;charset=gb2312'})
+            if res.encoding == 'ISO-8859-1':
+                res.encoding = 'gbk'
+            html = res.text #.encode(res.encoding)
             res.raise_for_status()
             if res.status_code == 200:
-                contentSoup = bs4.BeautifulSoup(res.content, 'lxml')
+                contentSoup = bs4.BeautifulSoup(html, 'lxml')
                 strList = str(contentSoup.select('.datelist > ul'))[10:-12]
                 elems = strList.split("<br/>")
                 if len(elems) < 2:
