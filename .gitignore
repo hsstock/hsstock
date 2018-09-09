@@ -1,5 +1,6 @@
 .idea
 data/app.config
+data/app_local.config
 .idea
 futuquant
 *.pyc

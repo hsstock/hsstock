@@ -20,3 +20,4 @@ selenium
 python3-xlib
 lxml
 chardet
+ConfigParser

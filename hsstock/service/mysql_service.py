@@ -2,6 +2,9 @@
 
 from abc import ABC
 import logging
+import pymysql
+pymysql.install_as_MySQLdb()
+
 from sqlalchemy import create_engine
 from sqlalchemy import and_
 from sqlalchemy import text
