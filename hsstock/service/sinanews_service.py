@@ -13,6 +13,26 @@ class SinanewsService(object):
         self.itemArray = []
         self.mongodbutil = mongodbutil
 
+    def generate_url(market, code):
+        """
+        US: http://stock.finance.sina.com.cn/usstock/quotes/ntes.html
+        HK: http://stock.finance.sina.com.cn/hkstock/quotes/00771.html
+        SH: http://finance.sina.com.cn/realstock/company/sh603722/nc.shtml
+        SZ: http://finance.sina.com.cn/realstock/company/sz000782/nc.shtml
+        :param market:
+        :param code:
+        :return:
+        """
+        if market == 'US':
+            return 'http://stock.finance.sina.com.cn/usstock/quotes/' + code + '.html'
+        if market == 'HK':
+            return 'http://stock.finance.sina.com.cn/hkstock/quotes/' + code + '.html'
+        if market == 'SH':
+            return 'http://finance.sina.com.cn/realstock/company/' + str.lower(market) + code + '/nc.shtml'
+        if market == 'SZ':
+            return 'http://finance.sina.com.cn/realstock/company/' + str.lower(market) + code + '/nc.shtml'
+        else:
+            return "url not found"
 
     @retry()
     def get_page(self,market, code,url):

@@ -53,7 +53,7 @@ def job_once_global_m5(worker):
             #9 - (27096~28123不含) MyISAM engine, ft_history_kline_9
             #10 - (28123~31918) MyISAM engine, ft_history_kline_10
             logging.info("current fetching progress {}/{} ".format(curr,total))
-            if curr < 35000:
+            if curr < 1:
                 continue
 
             if listing_date.year == 1970:
