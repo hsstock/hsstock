@@ -148,12 +148,12 @@ class LF(object):
             print(ret_data)
             #exit()
         # print(ret_data)
-        table = 'ft_history_kline'
+        table = 'ft_kline'
         for item in ret_data:
             self.storeservice.insert_many(table, item, 'append')
         return ret_code, ret_data
 
-    def get_history_kline(self, code, start=None, end=None, ktype=KLType.K_DAY, autype=AuType.QFQ,fields=KL_FIELD.ALL):
+    def get_history_kline(self, code, tindex=None ,start=None, end=None, ktype=KLType.K_DAY, autype=AuType.QFQ,fields=KL_FIELD.ALL):
         ''' 获取历史K线
 
         :param code: 股票代码
@@ -221,17 +221,34 @@ class LF(object):
         if not isinstance(ret_data,str):
             if len(ret_data) > 0 :
 
-                if ktype == KLType.K_DAY:
-                    table = 'ft_history_kline'
-                    tindex = self.storeservice.find_tindex(code, 'hk')
-                    if tindex != -1:
-                        table += ('_' + str(tindex))
-                else:
-                    table = 'ft_history_kline_' + ktype
-                    if ktype == KLType.K_5M:
-                        tindex = self.storeservice.find_tindex(code, 'hk_5m')
+                if tindex == None:
+                    if ktype == KLType.K_DAY:
+                        table = 'ft_kline'
+                        tindex = self.storeservice.find_tindex(code, 'hk')
                         if tindex != -1:
                             table += ('_' + str(tindex))
+                    elif ktype == KLType.K_5M:
+                        table = 'ft_5M'
+                        if ktype == KLType.K_5M:
+                            tindex = self.storeservice.find_tindex(code, 'hk_5m')
+                            if tindex != -1:
+                                table += ('_' + str(tindex))
+                    else:
+                        table = 'ft_1M'
+                        if ktype == KLType.K_1M:
+                            tindex = self.storeservice.find_tindex(code, 'hk_1m')
+                            if tindex != -1:
+                                table += ('_' + str(tindex))
+                else:
+                    if ktype == KLType.K_DAY:
+                        table = 'ft_kline'
+                        table += ('_' + str(tindex))
+                    elif ktype == KLType.K_5M:
+                        table = 'ft_5M'
+                        table += ('_' + str(tindex))
+                    else:
+                        table = 'ft_1M'
+                        table += ('_' + str(tindex))
                 lastdate = ret_data['time_key'][len(ret_data)-1]
                 self.storeservice.insert_many(table, ret_data, 'append')
         return ret_code, ret_data, lastdate

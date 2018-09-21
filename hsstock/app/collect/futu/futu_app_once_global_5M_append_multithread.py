@@ -22,7 +22,7 @@ from hsstock.common.constant import *
 from hsstock.service.quote_service import Subscribe
 from hsstock.service.trade_service import *
 from hsstock.utils.lang_util import *
-from hsstock.model.mysql.ft_history_kline import *
+from hsstock.model.mysql.ft_kline import *
 
 
 sched = BlockingScheduler()

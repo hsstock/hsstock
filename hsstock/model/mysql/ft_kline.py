@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
-class FTHistoryBase(object):
+class FTBase(object):
 
     code = Column(String, primary_key=True)
     time_key = Column(DateTime)
@@ -25,55 +25,55 @@ class FTHistoryBase(object):
         return "({},{},{},{},{},{},{},{},{},{},{},{})".format(self.code,*self.time_key,self.open,self.close,self.high,self.low,self.pe_ratio,self.turnover_rate,self.volume,self.turnover,self.change_rate,self.last_close)
 
 
-class FTHistoryKlineAll(Base,FTHistoryBase):
-    __tablename__ = 'ft_history_kline'
+class FTKlineAll(Base,FTBase):
+    __tablename__ = 'ft_kline'
 
 
-class FTHistoryKline1(Base,FTHistoryBase):
-    __tablename__ = 'ft_history_kline_1'
+class FTKline1(Base,FTBase):
+    __tablename__ = 'ft_kline_1'
 
 
-class FTHistoryKline2(Base,FTHistoryBase):
-    __tablename__ = 'ft_history_kline_2'
+class FTKline2(Base,FTBase):
+    __tablename__ = 'ft_kline_2'
 
-class FTHistoryKline3(Base,FTHistoryBase):
-    __tablename__ = 'ft_history_kline_3'
+class FTKline3(Base,FTBase):
+    __tablename__ = 'ft_kline_3'
 
-class FTHistoryKline4(Base, FTHistoryBase):
-    __tablename__ = 'ft_history_kline_4'
+class FTKline4(Base, FTBase):
+    __tablename__ = 'ft_kline_4'
 
-class FTHistoryKline5(Base,FTHistoryBase):
-    __tablename__ = 'ft_history_kline_5'
+class FTKline5(Base,FTBase):
+    __tablename__ = 'ft_kline_5'
 
-class FTHistoryKline6(Base,FTHistoryBase):
-    __tablename__ = 'ft_history_kline_6'
+class FTKline6(Base,FTBase):
+    __tablename__ = 'ft_kline_6'
 
-class FTHistoryKline7(Base,FTHistoryBase):
-    __tablename__ = 'ft_history_kline_7'
+class FTKline7(Base,FTBase):
+    __tablename__ = 'ft_kline_7'
 
-class FTHistoryKline8(Base,FTHistoryBase):
-    __tablename__ = 'ft_history_kline_8'
+class FTKline8(Base,FTBase):
+    __tablename__ = 'ft_kline_8'
 
-class FTHistoryKline9(Base,FTHistoryBase):
-    __tablename__ = 'ft_history_kline_9'
+class FTKline9(Base,FTBase):
+    __tablename__ = 'ft_kline_9'
 
-class FTHistoryKline10(Base,FTHistoryBase):
-    __tablename__ = 'ft_history_kline_10'
+class FTKline10(Base,FTBase):
+    __tablename__ = 'ft_kline_10'
 
-class FTHistoryKline11(Base,FTHistoryBase):
-    __tablename__ = 'ft_history_kline_11'
+class FTKline11(Base,FTBase):
+    __tablename__ = 'ft_kline_11'
 
 def getClassByIndex(tindex):
-    return globals()['FTHistoryKline{}'.format(tindex)]
+    return globals()['FTKline{}'.format(tindex)]
 
 if __name__ == '__main__':
-    print(locals()['FTHistoryKline1'])
-    cls = locals()['FTHistoryKline1']
+    print(locals()['FTKline1'])
+    cls = locals()['FTKline1']
     print(cls.__table__)
-    print(FTHistoryKline1.__table__)
+    print(FTKline1.__table__)
 
 # pip3 install flask-sqlalchemy
-# class FTHistoryKline(object):
+# class FTKline(object):
 #
 #     _mapper = {}
 #
@@ -81,17 +81,17 @@ if __name__ == '__main__':
 #     def model(code, dtype, storeservice):
 #         table_index = storeservice.find_tindex(code,dtype)
 #
-#         class_name = 'FTHistoryKline_%d' % table_index
+#         class_name = 'FTKline_%d' % table_index
 #
-#         ModelClass = FTHistoryKline._mapper.get(class_name,None)
+#         ModelClass = FTKline._mapper.get(class_name,None)
 #         if ModelClass is None:
 #             ModelClass = type(class_name, (db.Model,),{
 #                 '__module__': __name__,
 #                 '__name__': class_name,
-#                 '__tablename__': ('ft_history_kline_%d' % table_index)
+#                 '__tablename__': ('ft_kline_%d' % table_index)
 #             })
 #
-#             FTHistoryKline._mapper[class_name] = ModelClass
+#             FTKline._mapper[class_name] = ModelClass
 #
 #             cls = ModelClass()
 #             cls.code = code

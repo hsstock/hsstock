@@ -19,8 +19,8 @@ from sqlalchemy import update
 from hsstock.utils.app_config import AppConfig
 from hsstock.model.mysql.ft_stock_basicinfo import FTStockBasicInfo
 from hsstock.model.mysql.sys_sharding import SysSharding
-from hsstock.model.mysql.ft_history_kline import *
-from hsstock.model.mysql.ft_history_kline_K_5M import *
+from hsstock.model.mysql.ft_kline import *
+from hsstock.model.mysql.ft_5M import *
 from hsstock.model.mysql.ft_plate_list import FTPlateList
 from hsstock.model.mysql.ft_plate_stock import FTPlateStock
 
@@ -202,9 +202,11 @@ class MysqlService():
 
     def find_tindex(self,code,dtype):
         #TODO , now 17 as the last kl_K_5M table, 11 as the last kl table
-        tindex = 17
+        tindex = 34
         if dtype == 'hk_5m':
-            tindex = 17
+            tindex = 34
+        elif dtype == 'hk_1m':
+            tindex = 170
         else:
             tindex = 11
 
