@@ -13,7 +13,7 @@ class SinanewsService(object):
         self.itemArray = []
         self.mongodbutil = mongodbutil
 
-    def generate_url(market, code):
+    def generate_url(self,market, code):
         """
         US: http://stock.finance.sina.com.cn/usstock/quotes/ntes.html
         HK: http://stock.finance.sina.com.cn/hkstock/quotes/00771.html

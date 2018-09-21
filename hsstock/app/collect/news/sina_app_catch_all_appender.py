@@ -59,7 +59,7 @@ def job_appender(*_args):
             curr += 1
 
             logger.info("current fetching entry progress {}/{} code:{} ".format(curr,total,code))
-            if curr < 1:
+            if curr < 2375:
                 continue
 
             market = code[0:2]
