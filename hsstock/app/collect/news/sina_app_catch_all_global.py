@@ -49,7 +49,7 @@ def job_once_global(*_args):
             curr += 1
 
             logger.info("current fetching entry progress {}/{} code:{} ".format(curr,total,code))
-            if curr < 6500:
+            if curr < 469:
                 continue
 
             market = code[0:2]
@@ -64,7 +64,7 @@ def job_once_global(*_args):
 
             page = 1
             type = '1'
-            while page != -1 or (page > 0 and page < 100):
+            while page != -1 or (page > 0 and page < 2):
                 if is_closing:
                     break
                 try:
@@ -78,7 +78,7 @@ def job_once_global(*_args):
                     items = sinanewshistory.get_item_array()
                     if len(items) > 0:
                         sinanewshistory.mongodbutil.insertItems(items)
-                        # time.sleep(4 * random.random())
+                        time.sleep(random.random())
                         logger.info("store items to mongodb ...")
                     else:
                         logger.info("all items exists")

@@ -1,9 +1,11 @@
 import logging
 import os
 import shutil
+import os
+
 from hsstock.utils.date_util import DateUtil
 
-logname = ''.join((os.path.abspath(''.join((__file__, '../../'))), '/log.txt'))
+logname = ''.join((os.path.abspath(''.join((__file__, '..{}..{}'.format(os.sep,os.sep,os.sep)))), '{}log.txt'.format(os.sep)))
 filehandler = logging.FileHandler(filename=logname, encoding="utf-8")
 fmter = logging.Formatter(fmt="%(asctime)s %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
 filehandler.setFormatter(fmter)
