@@ -45,16 +45,17 @@ def job_once_global_m5(worker):
         tindex_kline = 1
         tindex_5M = 1
         tindex_1M = 1
-        tindex_kline_count = 0
-        tindex_5M_count = 0
-        tindex_1M_count = 0
+        tindex_kline_count = 4207054
+        tindex_5M_count = 4933842
+        tindex_1M_count = 1990438
 
         for code, listing_date in ret_arr:
             curr += 1
 
-            logging.info("current fetching progress {}/{} ".format(curr,total))
-            if curr < 2:
+            logging.info("current fetching progress {}/{} tindex_kline={} tindex_5M={} tindex_1M={} tindex_kline_count={} tindex_5M_count={} tindex_1M_count={}".format(curr,total, tindex_kline,tindex_5M,tindex_1M,tindex_kline_count,tindex_5M_count,tindex_1M_count))
+            if curr < 2353:
                 continue
+
 
             if listing_date.year == 1970:
                 listing_date = listing_date.replace(year=1997)
