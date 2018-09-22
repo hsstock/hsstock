@@ -115,6 +115,13 @@ class MysqlService():
         self.mysqlStore = MysqlStore(self.mysql_engine)
 
 
+    def executeSql(self,sql):
+        with self.mysql_engine.connect() as con:
+            result = con.execute(sql)
+            if result.returns_rows == True:
+                for r in result:
+                    print(r)
+
     def insert_one(self, item):
         pass
 
