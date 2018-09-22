@@ -26,7 +26,8 @@ def warning(msg):
 
 def file_size_control():
     if os.path.getsize(logname) > 100000000:
-        shutil.move(logname, logname.replace('log.txt',"log-{}.txt".format(DateUtil.getDatetimeToday3())))
+        filehandler.close()
+        os.rename(logname, logname.replace('log.txt',"log-{}.txt".format(DateUtil.getDatetimeToday4())))
         file = open(logname, "w", encoding='utf-8', errors='ignore')
         file.seek(0)
         file.truncate()

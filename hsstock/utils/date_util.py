@@ -15,6 +15,12 @@ class DateUtil():
         return today.strftime('%Y-%m-%d %H:%M:%S')
 
     @staticmethod
+    def getDatetimeToday4():
+        today = datetime.today()
+        return today.strftime('%Y-%m-%d %H-%M-%S')
+
+
+    @staticmethod
     def getDatetimeToday2():
         t = date.today()
         dt = datetime.strptime(str(t), '%Y-%m-%d %H:%M:%S')  # date转str再转datetime

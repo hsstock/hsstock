@@ -33,6 +33,7 @@ def job_once_global_m5(worker):
     :return:
     '''
     global is_closing
+    MAX_COUNT_ONE_TABLE = 8000000
 
     while not is_closing:
         begin = time.time()
@@ -40,20 +41,19 @@ def job_once_global_m5(worker):
         todayStr = DateUtil.getTodayStr()
         total = len(ret_arr)
         curr = 0
+
+        tindex_kline = 1
+        tindex_5M = 1
+        tindex_1M = 1
+        tindex_kline_count = 0
+        tindex_5M_count = 0
+        tindex_1M_count = 0
+
         for code, listing_date in ret_arr:
             curr += 1
-            #1 - (1~2998包含)
-            #2 - (2999~15918不含）
-            #3 - （15918~18986不含）
-            #4 - （18986~19430不含）default InnoDB,
-            #5 -  (19430~21898不含) MyISAM engine,ft_history_kline_5
-            #6 - (21898~24768不含) MyISAM engine,ft_history_kline_6
-            #7 - (24768~26347不含） MyISAM engine, ft_history_kline_7
-            #8 - (26347~27096不含) MyISAM engine, ft_history_kline_8， trigged by docker upgrade
-            #9 - (27096~28123不含) MyISAM engine, ft_history_kline_9
-            #10 - (28123~31918) MyISAM engine, ft_history_kline_10
+
             logging.info("current fetching progress {}/{} ".format(curr,total))
-            if curr < 1:
+            if curr < 2:
                 continue
 
             if listing_date.year == 1970:
@@ -70,7 +70,10 @@ def job_once_global_m5(worker):
                         break
 
                     b1 = time.time()
-                    worker.get_history_kline(code, start, end, ktype=KLType.K_5M)
+                    _,ret_data,_ = worker.get_history_kline(code,tindex_5M, start, end, ktype=KLType.K_5M)
+                    if not isinstance(ret_data, str):
+                        if len(ret_data) > 0:
+                            tindex_5M_count += len(ret_data)
                     e1 = time.time()
                     logging.info(
                         "fetching {} K_5M_LINE listing_date:{} start: {} end:{} cost time {}".format(code, listing_date, start, end,e1-b1))
@@ -78,8 +81,25 @@ def job_once_global_m5(worker):
                     if is_closing is True:
                         break
 
+                    b1 = time.time()
+                    _, ret_data, _ = worker.get_history_kline(code, tindex_1M, start, end, ktype=KLType.K_1M)
+                    if not isinstance(ret_data, str):
+                        if len(ret_data) > 0:
+                            tindex_1M_count += len(ret_data)
+                    e1 = time.time()
+                    logging.info(
+                        "fetching {} K_1M_LINE listing_date:{} start: {} end:{} cost time {}".format(code, listing_date,
+                                                                                                     start, end,
+                                                                                                     e1 - b1))
+
+                    if is_closing is True:
+                        break
+
                     b2 = time.time()
-                    worker.get_history_kline(code, start, end, ktype=KLType.K_DAY)
+                    _, ret_data, _ = worker.get_history_kline(code,tindex_kline, start, end, ktype=KLType.K_DAY)
+                    if not isinstance(ret_data, str):
+                        if len(ret_data) > 0:
+                            tindex_kline_count += len(ret_data)
                     e2 = time.time()
                     logging.info(
                         "fetching {} K_DAY listing_date: {} start: {} end:{} cost time {}".format(code, listing_date, start, end, e2-b2))
@@ -87,6 +107,15 @@ def job_once_global_m5(worker):
                     start = DateUtil.getDatetimeFutureStr(DateUtil.string_toDate(end),1)
                 except StopIteration as e:
                     print(e)
+                    if tindex_5M_count > MAX_COUNT_ONE_TABLE:
+                        tindex_5M += 1
+                        tindex_5M_count = 0
+                    if tindex_1M_count > MAX_COUNT_ONE_TABLE:
+                        tindex_1M += 1
+                        tindex_1M_count = 0
+                    if tindex_kline_count > MAX_COUNT_ONE_TABLE:
+                        tindex_kline += 1
+                        tindex_kline_count = 0
                     break
                 # if is_closing is True:
                 #     break

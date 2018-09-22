@@ -11,24 +11,24 @@ def main():
     storeservice = MysqlService()
 
     schemaArr = [
-        {
-            "table": "ft_stat_week_probability",
-            "dtype": {
-                "id":sa.types.BIGINT,
-                "code": sa.types.NVARCHAR(20),
-                "up_count": sa.types.SMALLINT,
-                "down_count": sa.types.SMALLINT,
-                "up_probability": sa.types.Float,
-                "down_probability": sa.types.Float,
-                "week_of_day": sa.types.SMALLINT,
-            },
-            "clauses": [
-                'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`)',
-                'ALTER TABLE `{0}` ADD INDEX (`code`);',
-                'ALTER TABLE `{0}` ADD INDEX (`week_of_day`);',
-                'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';',
-            ]
-        },
+        # {
+        #     "table": "ft_stat_week_probability",
+        #     "dtype": {
+        #         "id":sa.types.BIGINT,
+        #         "code": sa.types.NVARCHAR(20),
+        #         "up_count": sa.types.SMALLINT,
+        #         "down_count": sa.types.SMALLINT,
+        #         "up_probability": sa.types.Float,
+        #         "down_probability": sa.types.Float,
+        #         "week_of_day": sa.types.SMALLINT,
+        #     },
+        #     "clauses": [
+        #         'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`)',
+        #         'ALTER TABLE `{0}` ADD INDEX (`code`);',
+        #         'ALTER TABLE `{0}` ADD INDEX (`week_of_day`);',
+        #         'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';',
+        #     ]
+        # },
         # {
         #     "table": "ft_stock_basicinfo",
         #     "dtype": {
@@ -534,7 +534,7 @@ def main():
         #     "dtype": {
         #         "id": sa.types.BIGINT,
         #         "code": sa.types.NVARCHAR(20),
-        #         "dtype": sa.types.Enum('hk','hk_5m'),
+        #         "dtype": sa.types.Enum('hk','hk_5m','hk_1m'),
         #         "tindex": sa.types.SMALLINT,
         #         "lastdate": sa.types.DATE,
         #     },
@@ -544,6 +544,7 @@ def main():
         #         'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\';'
         #         'ALTER TABLE `{0}` MODIFY COLUMN code VARCHAR(20) COMMENT  \'股票代码\';'
         #         'ALTER TABLE `{0}` MODIFY COLUMN tindex SMALLINT COMMENT  \'表索引\';'
+        #         'ALTER TABLE `{0}` MODIFY COLUMN lastdate SMALLINT COMMENT  \'最后更新时间\';'
         #         'ALTER TABLE `{0}` ENGINE = InnoDB;'
         #     ]
         # },
@@ -568,8 +569,8 @@ def main():
     else:
         logging.info('init schema success')
 
+
+
 if __name__ == "__main__":
     setup_logging()
     main()
-
-
