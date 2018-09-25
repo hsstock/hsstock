@@ -34,7 +34,7 @@ class SinanewsService(object):
         else:
             return "url not found"
 
-    @retry()
+    @retry(wait=30)
     def get_page(self,market, code,url):
 
         ret_code = -1
@@ -42,7 +42,9 @@ class SinanewsService(object):
         self.itemArray = []
 
         try:
-            res = requests.get(url, timeout=60, headers={'Content-type': 'text/html;charset=gb2312'})
+            res = requests.get(url, timeout=60, headers={
+                'Content-type': 'text/html;charset=gb2312'
+            })
             if res.encoding == 'ISO-8859-1':
                 res.encoding = 'gbk'
             html = res.text  # .encode(res.encoding)

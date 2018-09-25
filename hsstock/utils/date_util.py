@@ -15,9 +15,9 @@ class DateUtil():
         return today.strftime('%Y-%m-%d %H:%M:%S')
 
     @staticmethod
-    def getDatetimeToday4():
+    def getDatetimeToday3():
         today = datetime.today()
-        return today.strftime('%Y-%m-%d %H-%M-%S')
+        return today.strftime('%Y-%m-%d %H:%M:%S')
 
 
     @staticmethod
