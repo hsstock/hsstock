@@ -228,6 +228,7 @@ update sys_sharding set tindex = 16  where  dtype = 'hk_5m' and code in
 		)	tmp2
 )
 
+update sys_sharding set lastdate
 select * from sys_sharding where code = 'US.PACE'
 
 # Lost  connection to mysql server during query
@@ -298,3 +299,27 @@ select * from ft_stock_basicinfo where stock_type ='IDX'
 select * from ft_stock_basicinfo where stock_type ='WARRANT'
 select * from ft_stock_basicinfo where stock_type ='STOCK'es
 
+
+
+select a.*
+     from ft_kline_1 a
+     inner join
+     (select code,
+             max(time_key) 'maxgdtime'
+      from ft_kline_1
+      group by code) b on a.code=b.code and a.time_key=b.
+
+
+             select code, max(time_key) 'maxgdtime'
+      from ft_kline_1
+      group by code
+
+
+-- 方法2
+    select a.*
+     from table1 a
+     inner join
+     (select name,
+             max(gdtime) 'maxgdtime'
+      from table1
+      group by name) b on a.name=b.name and a.gdtime=b.maxgdtime

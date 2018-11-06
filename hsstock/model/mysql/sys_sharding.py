@@ -8,7 +8,7 @@ class SysSharding(Base):
     __tablename__ = 'sys_sharding'
 
     code = Column(String,primary_key=True)
-    dtype = Column(Enum('hk','hk_5m'))
+    dtype = Column(Enum('hk','hk_5m','hk_1m'))
     tindex = Column(SMALLINT)
     lastdate = Column(DateTime)
 

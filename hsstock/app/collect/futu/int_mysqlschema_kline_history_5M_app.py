@@ -10,8 +10,8 @@ def main():
 
     storeservice = MysqlService()
 
-
-    kline_5m_tables_number = 35
+    # The total number of history_5M tables is 80, but last table is 63
+    kline_5m_tables_number = 81
     schemaArr = [
         {
             "table": "ft_5M_{0}",
@@ -46,26 +46,26 @@ def main():
         },
     ]
 
-    try:
-        logging.info("create sub kline 5m schema,  starting")
-
-        for  index in range(1,kline_5m_tables_number,1):
-            for schema in schemaArr:
-                df = pd.DataFrame(None, columns=schema['dtype'].keys())
-                table = schema['table'].format(index)
-                logging.info(table)
-                logging.info('table:{0}'.format(table))
-                clauses = []
-                for clause in schema['clauses']:
-                    clause = clause.format(table)
-                    clauses.append(clause)
-                storeservice.init_schema(table, df, schema['dtype'], clauses)
-
-        logging.info("create sub kline 5m, end")
-    except IOError as err:
-        logging.error("OS|error: {0}".format(err))
-    else:
-        logging.info('create sub kline success')
+    # try:
+    #     logging.info("create sub kline 5m schema,  starting")
+    #
+    #     for  index in range(61,kline_5m_tables_number,1):
+    #         for schema in schemaArr:
+    #             df = pd.DataFrame(None, columns=schema['dtype'].keys())
+    #             table = schema['table'].format(index)
+    #             logging.info(table)
+    #             logging.info('table:{0}'.format(table))
+    #             clauses = []
+    #             for clause in schema['clauses']:
+    #                 clause = clause.format(table)
+    #                 clauses.append(clause)
+    #             storeservice.init_schema(table, df, schema['dtype'], clauses)
+    #
+    #     logging.info("create sub kline 5m, end")
+    # except IOError as err:
+    #     logging.error("OS|error: {0}".format(err))
+    # else:
+    #     logging.info('create sub kline success')
 
 
     union_table = [('ft_5M_{0}'.format(table)) for table in range(1, kline_5m_tables_number, 1)]

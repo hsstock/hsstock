@@ -164,14 +164,200 @@ class FT5M33(Base,FT5MBase):
 
 class FT5M34(Base,FT5MBase):
 	__tablename__ = 'ft_5M_34'
-    
+
+class FT5M35(Base,FT5MBase):
+	__tablename__ = 'ft_5M_35'
+
+
+class FT5M36(Base,FT5MBase):
+	__tablename__ = 'ft_5M_36'
+
+
+class FT5M37(Base,FT5MBase):
+	__tablename__ = 'ft_5M_37'
+
+
+class FT5M38(Base,FT5MBase):
+	__tablename__ = 'ft_5M_38'
+
+
+class FT5M39(Base,FT5MBase):
+	__tablename__ = 'ft_5M_39'
+
+
+class FT5M40(Base,FT5MBase):
+	__tablename__ = 'ft_5M_40'
+
+
+class FT5M41(Base,FT5MBase):
+	__tablename__ = 'ft_5M_41'
+
+
+class FT5M42(Base,FT5MBase):
+	__tablename__ = 'ft_5M_42'
+
+
+class FT5M43(Base,FT5MBase):
+	__tablename__ = 'ft_5M_43'
+
+
+class FT5M44(Base,FT5MBase):
+	__tablename__ = 'ft_5M_44'
+
+
+class FT5M45(Base,FT5MBase):
+	__tablename__ = 'ft_5M_45'
+
+
+class FT5M46(Base,FT5MBase):
+	__tablename__ = 'ft_5M_46'
+
+
+class FT5M47(Base,FT5MBase):
+	__tablename__ = 'ft_5M_47'
+
+
+class FT5M48(Base,FT5MBase):
+	__tablename__ = 'ft_5M_48'
+
+
+class FT5M49(Base,FT5MBase):
+	__tablename__ = 'ft_5M_49'
+
+
+class FT5M50(Base,FT5MBase):
+	__tablename__ = 'ft_5M_50'
+
+
+class FT5M51(Base,FT5MBase):
+	__tablename__ = 'ft_5M_51'
+
+
+class FT5M52(Base,FT5MBase):
+	__tablename__ = 'ft_5M_52'
+
+
+class FT5M53(Base,FT5MBase):
+	__tablename__ = 'ft_5M_53'
+
+
+class FT5M54(Base,FT5MBase):
+	__tablename__ = 'ft_5M_54'
+
+
+class FT5M55(Base,FT5MBase):
+	__tablename__ = 'ft_5M_55'
+
+
+class FT5M56(Base,FT5MBase):
+	__tablename__ = 'ft_5M_56'
+
+
+class FT5M57(Base,FT5MBase):
+	__tablename__ = 'ft_5M_57'
+
+
+class FT5M58(Base,FT5MBase):
+	__tablename__ = 'ft_5M_58'
+
+
+class FT5M59(Base,FT5MBase):
+	__tablename__ = 'ft_5M_59'
+
+
+class FT5M60(Base,FT5MBase):
+	__tablename__ = 'ft_5M_60'
+
+
+class FT5M61(Base,FT5MBase):
+	__tablename__ = 'ft_5M_61'
+
+
+class FT5M62(Base,FT5MBase):
+	__tablename__ = 'ft_5M_62'
+
+
+class FT5M63(Base,FT5MBase):
+	__tablename__ = 'ft_5M_63'
+
+
+class FT5M64(Base,FT5MBase):
+	__tablename__ = 'ft_5M_64'
+
+
+class FT5M65(Base,FT5MBase):
+	__tablename__ = 'ft_5M_65'
+
+
+class FT5M66(Base,FT5MBase):
+	__tablename__ = 'ft_5M_66'
+
+
+class FT5M67(Base,FT5MBase):
+	__tablename__ = 'ft_5M_67'
+
+
+class FT5M68(Base,FT5MBase):
+	__tablename__ = 'ft_5M_68'
+
+
+class FT5M69(Base,FT5MBase):
+	__tablename__ = 'ft_5M_69'
+
+
+class FT5M70(Base,FT5MBase):
+	__tablename__ = 'ft_5M_70'
+
+
+class FT5M71(Base,FT5MBase):
+	__tablename__ = 'ft_5M_71'
+
+
+class FT5M72(Base,FT5MBase):
+	__tablename__ = 'ft_5M_72'
+
+
+class FT5M73(Base,FT5MBase):
+	__tablename__ = 'ft_5M_73'
+
+
+class FT5M74(Base,FT5MBase):
+	__tablename__ = 'ft_5M_74'
+
+
+class FT5M75(Base,FT5MBase):
+	__tablename__ = 'ft_5M_75'
+
+
+class FT5M76(Base,FT5MBase):
+	__tablename__ = 'ft_5M_76'
+
+
+class FT5M77(Base,FT5MBase):
+	__tablename__ = 'ft_5M_77'
+
+
+class FT5M78(Base,FT5MBase):
+	__tablename__ = 'ft_5M_78'
+
+
+class FT5M79(Base,FT5MBase):
+	__tablename__ = 'ft_5M_79'
+
+
+class FT5M80(Base,FT5MBase):
+	__tablename__ = 'ft_5M_80'
+
+def get5MClassByIndex(tindex):
+    return globals()['FT5M{}'.format(tindex)]
+
 if __name__ == '__main__':
     print(locals()['FT5M1'])
     cls = locals()['FT5M1']
     print(cls.__table__)
     print(FT5M1.__table__)
 
-    tables = 35
+    tables = 81
     for index in range(1,tables,1):
         print('class FT5M{0}(Base,FT5MBase):'.format(index))
         print('\t__tablename__ = \'ft_5M_{0}\'\n\n'.format(index))

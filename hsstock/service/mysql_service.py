@@ -21,6 +21,7 @@ from hsstock.model.mysql.ft_stock_basicinfo import FTStockBasicInfo
 from hsstock.model.mysql.sys_sharding import SysSharding
 from hsstock.model.mysql.ft_kline import *
 from hsstock.model.mysql.ft_5M import *
+from hsstock.model.mysql.ft_1M import *
 from hsstock.model.mysql.ft_plate_list import FTPlateList
 from hsstock.model.mysql.ft_plate_stock import FTPlateStock
 
@@ -29,6 +30,9 @@ from hsstock.utils.date_util import DateUtil
 
 from sqlalchemy.sql import func
 
+'''
+MyISAM:  大量插入是，不要查询
+'''
 class Store(ABC):
     def __init__(self,engine):
         self.engine = engine
@@ -208,39 +212,68 @@ class MysqlService():
         return ret
 
     def find_tindex(self,code,dtype):
-        #TODO , now 17 as the last kl_K_5M table, 11 as the last kl table
-        tindex = 34
-        if dtype == 'hk_5m':
-            tindex = 34
-        elif dtype == 'hk_1m':
-            tindex = 170
-        else:
-            tindex = 11
+        tindex = 1
 
         syssharding = self.mysqlStore.session.query(SysSharding).filter_by(code=code,dtype=dtype).first()
         if syssharding is not None:
             tindex = syssharding.tindex
         return tindex
 
-    def find_lastdate(self,code,lastdate):
-        try:
-            tindex = self.find_tindex(code,'hk')
-            cls = getClassByIndex(tindex)
-            time_keys = self.mysqlStore.session.query(cls.time_key).filter_by(code=code).filter(cls.time_key > lastdate).order_by(cls.time_key.desc()).limit(1).first()
-            if time_keys is not None :
-                for time in time_keys:
-                    return time
-        except IOError as err:
-            logging.error("OS|error: {0}".format(err))
-        else:
-            pass
-        return None
+    # def _find_lastdate(self, code, dtype,lastdate='2018-09-01'):
+    #     '''
+    #     hk,1m, 5m表里取得最后日期
+    #     :param code:
+    #     :param dtype:
+    #     :param lastdate:
+    #     :return:
+    #     '''
+    #     try:
+    #         tindex = self.find_tindex(code,dtype)
+    #
+    #         if dtype == 'hk_5m':
+    #             cls = get5MClassByIndex(tindex)
+    #         elif dtype == 'hk_1m':
+    #             cls = get1MClassByIndex(tindex)
+    #         else:
+    #             cls = getHKClassByIndex(tindex)
+    #
+    #         time_keys = self.mysqlStore.session.query(cls.time_key).filter_by(code=code).filter(cls.time_key > lastdate).order_by(cls.time_key.desc()).limit(1).first()
+    #         if time_keys is not None :
+    #             for time in time_keys:
+    #                 return time
+    #     except IOError as err:
+    #         logging.error("OS|error: {0}".format(err))
+    #     else:
+    #         pass
+    #     return None
 
-    def find_lastdate2(self,code,dtype):
+    def _get_last_index(self,dtype):
+        '''
+        ToDO
+        最后一个表填满后，即需要修改
+        :param dtype:
+        :return:
+        '''
+        if dtype == 'hk_5m':
+            return 63
+        elif dtype == 'hk_1m':
+            return 230
+        else:
+            return 9
+
+    def find_lastdate(self,code,dtype):
+        '''
+        sys_sharding表里取得最后时间
+        :param code:
+        :param dtype:
+        :return:
+        '''
         try:
             time_keys = self.mysqlStore.session.query(SysSharding.lastdate).filter(and_(SysSharding.code==code,SysSharding.dtype==dtype)).limit(1).first()
             if time_keys is not None :
                 for time in time_keys:
+                    # if time is None:
+                    #     time = self._find_lastdate(code,dtype)
                     return time
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
@@ -248,15 +281,23 @@ class MysqlService():
             pass
         return None
 
-
-    def find_lastdate_5M(self, code,lastdate):
+    def find_lastdate_and_tindex(self,code,dtype):
+        '''
+        sys_sharding表里取得最后时间和索引
+        :param code:
+        :param dtype:
+        :return:
+        '''
         try:
-            tindex = self.find_tindex(code, 'hk_5m')
-            cls = getClass5mByIndex(tindex)
-            time_keys = self.mysqlStore.session.query(cls.time_key).filter_by(code=code).filter(cls.time_key > lastdate).order_by(cls.time_key.desc()).limit(1).first()
-            if time_keys is not None:
-                for time in time_keys:
-                    return time
+            records  = self.mysqlStore.session.query(SysSharding.lastdate,SysSharding.tindex).filter(and_(SysSharding.code==code,SysSharding.dtype==dtype)).limit(1).first()
+            if records is not None:
+                lastdate,tindex = records
+                # if lastdate is None:
+                #     lastdate =  self._find_lastdate(code,dtype)
+            else:
+                return None, self._get_last_index(dtype)
+
+            return lastdate, tindex
         except IOError as err:
             logging.error("OS|error: {0}".format(err))
         else:
@@ -264,6 +305,13 @@ class MysqlService():
         return None
 
     def update_lastdate(self, code, dtype, lastest_date):
+        '''
+        update sys_sharding table for setting lastdate
+        :param code:
+        :param dtype:
+        :param lastest_date:
+        :return:
+        '''
         try:
             #MyISAM work ok, but failed after changing the storage engine to InnoDB
             #需要注意的是，update和delete在做批量操作的时候（使用 where…in(…)）操作，需要指定synchronize_session的值。

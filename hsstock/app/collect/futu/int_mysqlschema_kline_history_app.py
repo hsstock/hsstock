@@ -11,7 +11,8 @@ def main():
     storeservice = MysqlService()
 
 
-    kline_tables_number = 12
+    # The total number of history tables is 16, but last table is 9
+    kline_tables_number = 17
     schemaArr = [
         {
             "table": "ft_kline_{0}",
@@ -46,26 +47,26 @@ def main():
         },
     ]
 
-    try:
-        logging.info("create sub kline schema,  starting")
-
-        for  index in range(1,kline_tables_number,1):
-            for schema in schemaArr:
-                df = pd.DataFrame(None, columns=schema['dtype'].keys())
-                table = schema['table'].format(index)
-                logging.info(table)
-                logging.info('table:{0}'.format(table))
-                clauses = []
-                for clause in schema['clauses']:
-                    clause = clause.format(table)
-                    clauses.append(clause)
-                storeservice.init_schema(table, df, schema['dtype'], clauses)
-
-        logging.info("create sub kline, end")
-    except IOError as err:
-        logging.error("OS|error: {0}".format(err))
-    else:
-        logging.info('create sub kline success')
+    # try:
+    #     logging.info("create sub kline schema,  starting")
+    #
+    #     for  index in range(1,kline_tables_number,1):
+    #         for schema in schemaArr:
+    #             df = pd.DataFrame(None, columns=schema['dtype'].keys())
+    #             table = schema['table'].format(index)
+    #             logging.info(table)
+    #             logging.info('table:{0}'.format(table))
+    #             clauses = []
+    #             for clause in schema['clauses']:
+    #                 clause = clause.format(table)
+    #                 clauses.append(clause)
+    #             storeservice.init_schema(table, df, schema['dtype'], clauses)
+    #
+    #     logging.info("create sub kline, end")
+    # except IOError as err:
+    #     logging.error("OS|error: {0}".format(err))
+    # else:
+    #     logging.info('create sub kline success')
 
 
     union_table = [('ft_kline_{0}'.format(table)) for table in range(1, kline_tables_number, 1)]

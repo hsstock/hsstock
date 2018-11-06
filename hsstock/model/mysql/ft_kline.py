@@ -63,7 +63,24 @@ class FTKline10(Base,FTBase):
 class FTKline11(Base,FTBase):
     __tablename__ = 'ft_kline_11'
 
-def getClassByIndex(tindex):
+class FTKline12(Base,FTBase):
+    __tablename__ = 'ft_kline_12'
+
+class FTKline13(Base,FTBase):
+    __tablename__ = 'ft_kline_13'
+
+class FTKline14(Base,FTBase):
+    __tablename__ = 'ft_kline_14'
+
+class FTKline15(Base, FTBase):
+    __tablename__ = 'ft_kline_15'
+
+class FTKline16(Base,FTBase):
+    __tablename__ = 'ft_kline_16'
+
+
+
+def getHKClassByIndex(tindex):
     return globals()['FTKline{}'.format(tindex)]
 
 if __name__ == '__main__':

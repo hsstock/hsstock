@@ -23,6 +23,9 @@ class FT1MBase(object):
         return "<ft_1M(code={},time_key={},open={},close={})>".format(self.code, self.time_key,
                                                                                       self.open, self.close)
 
+class FT1MAll(Base,FT1MBase):
+    __tablename__ = 'ft_1m'
+
 class FT1M1(Base,FT1MBase):
 	__tablename__ = 'ft_1M_1'
 
@@ -702,14 +705,400 @@ class FT1M169(Base,FT1MBase):
 class FT1M170(Base,FT1MBase):
 	__tablename__ = 'ft_1M_170'
 
-    
-if __name__ == '__main__':
-    print(locals()['FT1M1'])
-    cls = locals()['FT1M1']
-    print(cls.__table__)
-    print(FT1M1.__table__)
 
-    tables = 171
+class FT1M171(Base,FT1MBase):
+	__tablename__ = 'ft_1M_171'
+
+
+class FT1M172(Base,FT1MBase):
+	__tablename__ = 'ft_1M_172'
+
+
+class FT1M173(Base,FT1MBase):
+	__tablename__ = 'ft_1M_173'
+
+
+class FT1M174(Base,FT1MBase):
+	__tablename__ = 'ft_1M_174'
+
+
+class FT1M175(Base,FT1MBase):
+	__tablename__ = 'ft_1M_175'
+
+
+class FT1M176(Base,FT1MBase):
+	__tablename__ = 'ft_1M_176'
+
+
+class FT1M177(Base,FT1MBase):
+	__tablename__ = 'ft_1M_177'
+
+
+class FT1M178(Base,FT1MBase):
+	__tablename__ = 'ft_1M_178'
+
+
+class FT1M179(Base,FT1MBase):
+	__tablename__ = 'ft_1M_179'
+
+
+class FT1M180(Base,FT1MBase):
+	__tablename__ = 'ft_1M_180'
+
+
+class FT1M181(Base,FT1MBase):
+	__tablename__ = 'ft_1M_181'
+
+
+class FT1M182(Base,FT1MBase):
+	__tablename__ = 'ft_1M_182'
+
+
+class FT1M183(Base,FT1MBase):
+	__tablename__ = 'ft_1M_183'
+
+
+class FT1M184(Base,FT1MBase):
+	__tablename__ = 'ft_1M_184'
+
+
+class FT1M185(Base,FT1MBase):
+	__tablename__ = 'ft_1M_185'
+
+
+class FT1M186(Base,FT1MBase):
+	__tablename__ = 'ft_1M_186'
+
+
+class FT1M187(Base,FT1MBase):
+	__tablename__ = 'ft_1M_187'
+
+
+class FT1M188(Base,FT1MBase):
+	__tablename__ = 'ft_1M_188'
+
+
+class FT1M189(Base,FT1MBase):
+	__tablename__ = 'ft_1M_189'
+
+
+class FT1M190(Base,FT1MBase):
+	__tablename__ = 'ft_1M_190'
+
+
+class FT1M191(Base,FT1MBase):
+	__tablename__ = 'ft_1M_191'
+
+
+class FT1M192(Base,FT1MBase):
+	__tablename__ = 'ft_1M_192'
+
+
+class FT1M193(Base,FT1MBase):
+	__tablename__ = 'ft_1M_193'
+
+
+class FT1M194(Base,FT1MBase):
+	__tablename__ = 'ft_1M_194'
+
+
+class FT1M195(Base,FT1MBase):
+	__tablename__ = 'ft_1M_195'
+
+
+class FT1M196(Base,FT1MBase):
+	__tablename__ = 'ft_1M_196'
+
+
+class FT1M197(Base,FT1MBase):
+	__tablename__ = 'ft_1M_197'
+
+
+class FT1M198(Base,FT1MBase):
+	__tablename__ = 'ft_1M_198'
+
+
+class FT1M199(Base,FT1MBase):
+	__tablename__ = 'ft_1M_199'
+
+
+class FT1M200(Base,FT1MBase):
+	__tablename__ = 'ft_1M_200'
+
+
+class FT1M201(Base,FT1MBase):
+	__tablename__ = 'ft_1M_201'
+
+
+class FT1M202(Base,FT1MBase):
+	__tablename__ = 'ft_1M_202'
+
+
+class FT1M203(Base,FT1MBase):
+	__tablename__ = 'ft_1M_203'
+
+
+class FT1M204(Base,FT1MBase):
+	__tablename__ = 'ft_1M_204'
+
+
+class FT1M205(Base,FT1MBase):
+	__tablename__ = 'ft_1M_205'
+
+
+class FT1M206(Base,FT1MBase):
+	__tablename__ = 'ft_1M_206'
+
+
+class FT1M207(Base,FT1MBase):
+	__tablename__ = 'ft_1M_207'
+
+
+class FT1M208(Base,FT1MBase):
+	__tablename__ = 'ft_1M_208'
+
+
+class FT1M209(Base,FT1MBase):
+	__tablename__ = 'ft_1M_209'
+
+
+class FT1M210(Base,FT1MBase):
+	__tablename__ = 'ft_1M_210'
+
+
+class FT1M211(Base,FT1MBase):
+	__tablename__ = 'ft_1M_211'
+
+
+class FT1M212(Base,FT1MBase):
+	__tablename__ = 'ft_1M_212'
+
+
+class FT1M213(Base,FT1MBase):
+	__tablename__ = 'ft_1M_213'
+
+
+class FT1M214(Base,FT1MBase):
+	__tablename__ = 'ft_1M_214'
+
+
+class FT1M215(Base,FT1MBase):
+	__tablename__ = 'ft_1M_215'
+
+
+class FT1M216(Base,FT1MBase):
+	__tablename__ = 'ft_1M_216'
+
+
+class FT1M217(Base,FT1MBase):
+	__tablename__ = 'ft_1M_217'
+
+
+class FT1M218(Base,FT1MBase):
+	__tablename__ = 'ft_1M_218'
+
+
+class FT1M219(Base,FT1MBase):
+	__tablename__ = 'ft_1M_219'
+
+
+class FT1M220(Base,FT1MBase):
+	__tablename__ = 'ft_1M_220'
+
+
+class FT1M221(Base,FT1MBase):
+	__tablename__ = 'ft_1M_221'
+
+
+class FT1M222(Base,FT1MBase):
+	__tablename__ = 'ft_1M_222'
+
+
+class FT1M223(Base,FT1MBase):
+	__tablename__ = 'ft_1M_223'
+
+
+class FT1M224(Base,FT1MBase):
+	__tablename__ = 'ft_1M_224'
+
+
+class FT1M225(Base,FT1MBase):
+	__tablename__ = 'ft_1M_225'
+
+
+class FT1M226(Base,FT1MBase):
+	__tablename__ = 'ft_1M_226'
+
+
+class FT1M227(Base,FT1MBase):
+	__tablename__ = 'ft_1M_227'
+
+
+class FT1M228(Base,FT1MBase):
+	__tablename__ = 'ft_1M_228'
+
+
+class FT1M229(Base,FT1MBase):
+	__tablename__ = 'ft_1M_229'
+
+
+class FT1M230(Base,FT1MBase):
+	__tablename__ = 'ft_1M_230'
+
+
+class FT1M231(Base,FT1MBase):
+	__tablename__ = 'ft_1M_231'
+
+
+class FT1M232(Base,FT1MBase):
+	__tablename__ = 'ft_1M_232'
+
+
+class FT1M233(Base,FT1MBase):
+	__tablename__ = 'ft_1M_233'
+
+
+class FT1M234(Base,FT1MBase):
+	__tablename__ = 'ft_1M_234'
+
+
+class FT1M235(Base,FT1MBase):
+	__tablename__ = 'ft_1M_235'
+
+
+class FT1M236(Base,FT1MBase):
+	__tablename__ = 'ft_1M_236'
+
+
+class FT1M237(Base,FT1MBase):
+	__tablename__ = 'ft_1M_237'
+
+
+class FT1M238(Base,FT1MBase):
+	__tablename__ = 'ft_1M_238'
+
+
+class FT1M239(Base,FT1MBase):
+	__tablename__ = 'ft_1M_239'
+
+
+class FT1M240(Base,FT1MBase):
+	__tablename__ = 'ft_1M_240'
+
+
+class FT1M241(Base,FT1MBase):
+	__tablename__ = 'ft_1M_241'
+
+
+class FT1M242(Base,FT1MBase):
+	__tablename__ = 'ft_1M_242'
+
+
+class FT1M243(Base,FT1MBase):
+	__tablename__ = 'ft_1M_243'
+
+
+class FT1M244(Base,FT1MBase):
+	__tablename__ = 'ft_1M_244'
+
+
+class FT1M245(Base,FT1MBase):
+	__tablename__ = 'ft_1M_245'
+
+
+class FT1M246(Base,FT1MBase):
+	__tablename__ = 'ft_1M_246'
+
+
+class FT1M247(Base,FT1MBase):
+	__tablename__ = 'ft_1M_247'
+
+
+class FT1M248(Base,FT1MBase):
+	__tablename__ = 'ft_1M_248'
+
+
+class FT1M249(Base,FT1MBase):
+	__tablename__ = 'ft_1M_249'
+
+
+class FT1M250(Base,FT1MBase):
+	__tablename__ = 'ft_1M_250'
+
+
+class FT1M251(Base,FT1MBase):
+	__tablename__ = 'ft_1M_251'
+
+
+class FT1M252(Base,FT1MBase):
+	__tablename__ = 'ft_1M_252'
+
+
+class FT1M253(Base,FT1MBase):
+	__tablename__ = 'ft_1M_253'
+
+
+class FT1M254(Base,FT1MBase):
+	__tablename__ = 'ft_1M_254'
+
+
+class FT1M255(Base,FT1MBase):
+	__tablename__ = 'ft_1M_255'
+
+
+class FT1M256(Base,FT1MBase):
+	__tablename__ = 'ft_1M_256'
+
+
+class FT1M257(Base,FT1MBase):
+	__tablename__ = 'ft_1M_257'
+
+
+class FT1M258(Base,FT1MBase):
+	__tablename__ = 'ft_1M_258'
+
+
+class FT1M259(Base,FT1MBase):
+	__tablename__ = 'ft_1M_259'
+
+
+class FT1M260(Base,FT1MBase):
+	__tablename__ = 'ft_1M_260'
+
+
+class FT1M261(Base,FT1MBase):
+	__tablename__ = 'ft_1M_261'
+
+
+class FT1M262(Base,FT1MBase):
+	__tablename__ = 'ft_1M_262'
+
+
+class FT1M263(Base,FT1MBase):
+	__tablename__ = 'ft_1M_263'
+
+
+class FT1M264(Base,FT1MBase):
+	__tablename__ = 'ft_1M_264'
+
+
+class FT1M265(Base,FT1MBase):
+	__tablename__ = 'ft_1M_265'
+
+
+class FT1M266(Base,FT1MBase):
+	__tablename__ = 'ft_1M_266'
+
+def get1MClassByIndex(tindex):
+    return globals()['FT1M{}'.format(tindex)]
+
+if __name__ == '__main__':
+    # print(locals()['FT1M1'])
+    # cls = locals()['FT1M1']
+    # print(cls.__table__)
+    # print(FT1M1.__table__)
+
+    tables = 267
     for index in range(1,tables,1):
         print('class FT1M{0}(Base,FT1MBase):'.format(index))
         print('\t__tablename__ = \'ft_1M_{0}\'\n\n'.format(index))

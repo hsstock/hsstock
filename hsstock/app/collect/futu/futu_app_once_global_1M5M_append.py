@@ -21,7 +21,7 @@ from hsstock.common.constant import *
 from hsstock.service.quote_service import Subscribe
 from hsstock.service.trade_service import *
 from hsstock.utils.lang_util import *
-from hsstock.model.mysql.ft_kline import FTHistoryKlineAll
+from hsstock.model.mysql.ft_kline import FTKlineAll
 
 
 sched = BlockingScheduler()
@@ -52,12 +52,12 @@ def job_once_global_m5_append(*_args):
             curr += 1
 
             logging.info("current fetching progress {}/{} code:{} ".format(curr,total,code))
-            if curr < 1:
+            if curr < 1026:
                 continue
 
             # KLType.K_DAY
             start = None
-            ld = worker.storeservice.find_lastdate2(code,'hk')
+            ld,tindex = worker.storeservice.find_lastdate_and_tindex(code,'hk')
             lastdate = last_fetchdate if ld == None else ld
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr( lastdate.date(),1 )
@@ -77,7 +77,7 @@ def job_once_global_m5_append(*_args):
                         break
 
                     b2 = time.time()
-                    _, _, lastest_date = worker.get_history_kline(code, start, end, ktype=KLType.K_DAY)
+                    _, _, lastest_date = worker.get_history_kline(code,tindex, start, end, ktype=KLType.K_DAY)
                     if lastest_date is not None:
                         worker.storeservice.update_lastdate(code, 'hk', DateUtil.string_toDatetime(lastest_date))
                     e2 = time.time()
@@ -91,7 +91,7 @@ def job_once_global_m5_append(*_args):
 
             # KLType.K_5M
             start = None
-            ld = worker.storeservice.find_lastdate2(code,'hk_5m')
+            ld,tindex = worker.storeservice.find_lastdate_and_tindex(code,'hk_5m')
             lastdate = last_fetchdate if ld == None else ld
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr(lastdate.date(), 1)
@@ -111,7 +111,7 @@ def job_once_global_m5_append(*_args):
                         break
 
                     b1 = time.time()
-                    _,_,lastest_date = worker.get_history_kline(code, start, end, ktype=KLType.K_5M)
+                    _,_,lastest_date = worker.get_history_kline(code,tindex, start, end, ktype=KLType.K_5M)
                     if lastest_date is not None:
                         worker.storeservice.update_lastdate(code, 'hk_5m',lastest_date)
                     e1 = time.time()
@@ -125,6 +125,41 @@ def job_once_global_m5_append(*_args):
                     print(e)
                     break
 
+            # KLType.K_1M
+            start = None
+            ld,tindex = worker.storeservice.find_lastdate_and_tindex(code, 'hk_1m')
+            lastdate = last_fetchdate if ld == None else ld
+            if lastdate is not None and lastdate.date() > listing_date:
+                start = DateUtil.getDatetimeFutureStr(lastdate.date(), 1)
+            else:
+                # if listing_date.year == 1970:
+                #     listing_date = listing_date.replace(year=1997)
+                # start = DateUtil.date_toString(listing_date)
+                start = DateUtil.date_toString(last_fetchdate)
+            end = todayStr
+            gen = DateUtil.getNextHalfYear(DateUtil.string_toDate(start), DateUtil.string_toDate(end))
+            b = time.time()
+            while True:
+                try:
+                    end = next(gen)
+
+                    if is_closing is True:
+                        break
+
+                    b1 = time.time()
+                    _, _, lastest_date = worker.get_history_kline(code,tindex, start, end, ktype=KLType.K_1M)
+                    if lastest_date is not None:
+                        worker.storeservice.update_lastdate(code, 'hk_1m', lastest_date)
+                    e1 = time.time()
+                    logging.info(
+                        "fetching {} K_1M_LINE listing_date:{} start: {} end:{} cost time {}".format(code,
+                                                                                                     listing_date,
+                                                                                                     start, end,
+                                                                                                     e1 - b1))
+                    start = DateUtil.getDatetimeFutureStr(DateUtil.string_toDate(end), 1)
+                except StopIteration as e:
+                    print(e)
+                    break
 
             e = time.time()
             logging.info("position {} fetching {} const time {}".format(curr, code, e - b))
@@ -213,7 +248,7 @@ if __name__ == "__main__":
     #signal.signal(signal.SIGKILL, signal_term_handler)
     signal.signal(signal.SIGTERM, signal_term_handler)
     setup_logging()
-    #download_chs()
+    download_chs()
     #download_us()
     sched.start()
 

@@ -71,7 +71,7 @@ def job_once_global_m5_append_multithread(*_args):
 
             # KLType.K_DAY
             start = None
-            ld = worker.storeservice.find_lastdate2(code, 'hk')
+            ld = worker.storeservice.find_lastdate(code, 'hk')
             lastdate = last_fetchdate if ld == None else ld
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr( lastdate.date(),1 )
@@ -105,7 +105,7 @@ def job_once_global_m5_append_multithread(*_args):
 
             # KLType.K_5M
             start = None
-            ld = worker.storeservice.find_lastdate2(code, 'hk_5m')
+            ld = worker.storeservice.find_lastdate(code, 'hk_5m')
             lastdate = last_fetchdate if ld == None else ld
             if lastdate is not None and lastdate.date() > listing_date:
                 start = DateUtil.getDatetimeFutureStr(lastdate.date(), 1)
