@@ -219,33 +219,33 @@ class MysqlService():
             tindex = syssharding.tindex
         return tindex
 
-    # def _find_lastdate(self, code, dtype,lastdate='2018-09-01'):
-    #     '''
-    #     hk,1m, 5m表里取得最后日期
-    #     :param code:
-    #     :param dtype:
-    #     :param lastdate:
-    #     :return:
-    #     '''
-    #     try:
-    #         tindex = self.find_tindex(code,dtype)
-    #
-    #         if dtype == 'hk_5m':
-    #             cls = get5MClassByIndex(tindex)
-    #         elif dtype == 'hk_1m':
-    #             cls = get1MClassByIndex(tindex)
-    #         else:
-    #             cls = getHKClassByIndex(tindex)
-    #
-    #         time_keys = self.mysqlStore.session.query(cls.time_key).filter_by(code=code).filter(cls.time_key > lastdate).order_by(cls.time_key.desc()).limit(1).first()
-    #         if time_keys is not None :
-    #             for time in time_keys:
-    #                 return time
-    #     except IOError as err:
-    #         logging.error("OS|error: {0}".format(err))
-    #     else:
-    #         pass
-    #     return None
+    def find_lastdate_from_origin(self, code, dtype,lastdate='2018-09-01'):
+        '''
+        hk,1m, 5m表里取得最后日期
+        :param code:
+        :param dtype:
+        :param lastdate:
+        :return:
+        '''
+        try:
+            tindex = self.find_tindex(code,dtype)
+
+            if dtype == 'hk_5m':
+                cls = get5MClassByIndex(tindex)
+            elif dtype == 'hk_1m':
+                cls = get1MClassByIndex(tindex)
+            else:
+                cls = getHKClassByIndex(tindex)
+
+            time_keys = self.mysqlStore.session.query(cls.time_key).filter_by(code=code).filter(cls.time_key > lastdate).order_by(cls.time_key.desc()).limit(1).first()
+            if time_keys is not None :
+                for time in time_keys:
+                    return time
+        except IOError as err:
+            logging.error("OS|error: {0}".format(err))
+        else:
+            pass
+        return None
 
     def _get_last_index(self,dtype):
         '''
