@@ -240,6 +240,6 @@ if __name__ == "__main__":
     signal.signal(signal.SIGTERM, signal_term_handler)
     setup_logging()
     #download_chs()
-    download_us()
+    #download_us()
     sched.start()
 

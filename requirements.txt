@@ -13,6 +13,7 @@ pyecharts
 python3-gearman
 apscheduler
 sqlalchemy
+pymysql
 
 requests
 beautifulsoup4
