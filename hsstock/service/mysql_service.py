@@ -201,7 +201,14 @@ class MysqlService():
 
     def find_history_kline(self,code,dtype,start,end):
         tindex = self.find_tindex(code, dtype)
-        cls = getClassByIndex(tindex)
+
+        if dtype == 'hk_5m':
+            cls = get5MClassByIndex(tindex)
+        elif dtype == 'hk_1m':
+            cls = get1MClassByIndex(tindex)
+        else:
+            cls = getHKClassByIndex(tindex)
+
         ret = []
         #for item in self.mysqlStore.session.query(FTHistoryKline6).filter(cls.code == code).filter(and_(text('time_key>:start'),text('time_key<:end')).params(start=start,end=end)).all():
         #,cls.code,cls.time_key,cls.open,cls.close,cls.high,cls.low,cls.pe_ratio,cls.turnover_rate,cls.volume,cls.turnover,cls.change_rate,cls.last_close

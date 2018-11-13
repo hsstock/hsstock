@@ -53,13 +53,11 @@ class QueryHistory(object):
         dt_last = datetime.now()
         ret_list = []
         ret, data_start = self.quote_context.get_multi_points_history_kline(list_stocks, [start],
-                                                                 [KL_FIELD.DATE_TIME, KL_FIELD.CLOSE], 'K_DAY', 'None',
-                                                                       KL_NO_DATA_MODE_BACKWARD)
+                                                                 [KL_FIELD.DATE_TIME, KL_FIELD.CLOSE], 'K_DAY', 'None')
         if ret != 0:
             return ret, data_start
         ret, data_end = self.quote_context.get_multi_points_history_kline(list_stocks, [end],
-                                                                 [KL_FIELD.DATE_TIME, KL_FIELD.CLOSE], 'K_DAY', 'None',
-                                                                 KL_NO_DATA_MODE_FORWARD)
+                                                                 [KL_FIELD.DATE_TIME, KL_FIELD.CLOSE], 'K_DAY', 'None')
         if ret != 0:
             return ret, data_end
 

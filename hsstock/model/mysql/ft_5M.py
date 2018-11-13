@@ -95,9 +95,6 @@ class FT5M17(Base,FT5MBase):
     __tablename__ = 'ft_5M_17'
 
 
-def getClass5mByIndex(tindex):
-    return globals()['FT5M{}'.format(tindex)]
-
 class FT5M18(Base,FT5MBase):
 	__tablename__ = 'ft_5M_18'
 

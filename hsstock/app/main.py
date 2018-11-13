@@ -22,6 +22,9 @@ class MainHandler(RequestHandler):
                                 change_max=None, stock_type='STOCK', ascend=True):
 '''
 class QueryHistoryHandler(RequestHandler):
+    '''
+
+    '''
     def get(self):
         markets = self.get_argument('markets')
         start = self.get_argument('start')
@@ -36,6 +39,9 @@ class QueryHistoryHandler(RequestHandler):
         self.write(pd_frame.to_html())
 
 class FTHistoryKlineHandler(RequestHandler):
+    '''
+    查找历史K线数据
+    '''
     def set_default_headers(self):
         print("setting headers!!!")
         self.set_header("Access-Control-Allow-Origin", "*")  # 这个地方可以写域名
