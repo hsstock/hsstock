@@ -77,7 +77,7 @@ def append_one_stock(worker,code,dtype,ktype,listing_date):
             print(e)
             break
 
-def job_once_global_m5_append(*_args):
+def job_history_append(*_args):
     '''
     线程工作：低频数据接口
     :return:
@@ -124,7 +124,7 @@ def job_once_global_m5_append(*_args):
 
         break
 
-def job_once_global_setup_lastdate(*_args):
+def job_setup_lastdate(*_args):
     '''
     线程工作：init the field lastdate in sys_sharding
     :return:
@@ -199,8 +199,8 @@ def try_exit():
         # clean up here
         logging.info('exit success')
 
-def once_global_m5_task(thread_name,arr,worker):
-    tfn = MyThread2(thread_name,job_once_global_m5_append,worker,arr)
+def once_task(thread_name, arr, worker):
+    tfn = MyThread2(thread_name,job_history_append,worker,arr)
     tfn.start()
 
 def gen_one_worker():
@@ -221,25 +221,33 @@ def gen_one_worker():
 @sched.scheduled_job('cron',day_of_week='mon-fri',hour='17', minute='05',second='00')
 def download_chs():
     worker = gen_one_worker()
-    ret_arr = worker.storeservice.find_chs_stocks(False)
+    ret_arr = worker.storeservice.find_chs_stocks(True)
     thread_name = 'crawler for chs market'
-    once_global_m5_task(thread_name, ret_arr, worker)
+    once_task(thread_name, ret_arr, worker)
 
 hour='09'
 minute='05'
 @sched.scheduled_job('cron',day_of_week='tue-sat',hour=hour, minute=minute,second='00')
 def download_us():
     worker = gen_one_worker()
-    ret_arr = worker.storeservice.find_chs_stocks(True)
+    ret_arr = worker.storeservice.find_chs_stocks(False)
     thread_name = 'crawler for us market'
-    once_global_m5_task(thread_name,ret_arr, worker)
+    once_task(thread_name, ret_arr, worker)
 
+def setup_lastdate():
+    worker = gen_one_worker()
+    ret_arr = worker.storeservice.find_all_stocks()
+    thread_name = 'setup lastdate thread...'
+    once_task(thread_name, ret_arr, worker)
+    
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_int_handler)
     #signal.signal(signal.SIGKILL, signal_term_handler)
     signal.signal(signal.SIGTERM, signal_term_handler)
     setup_logging()
-    #download_chs()
+    download_chs()
     #download_us()
-    sched.start()
+    #sched.start()
+
+    #setup_lastdate()
 

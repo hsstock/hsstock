@@ -104,6 +104,11 @@ class DateUtil():
     def string_toDatetime(string):
         return datetime.strptime(string, "%Y-%m-%d %H:%M:%S")
 
+    # 把字符串转成datetime
+    @staticmethod
+    def string_toDatetime2(string):
+        return datetime.strptime(string, "%Y-%m-%d %H:%M")
+
     @staticmethod
     def date_toString(dt):
         return dt.strftime("%Y-%m-%d")

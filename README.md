@@ -375,4 +375,8 @@ from sqlalchemy import create_engine
 import pymysql
 pymysql.install_as_MySQLdb()
 ```
+```angular2html
+_NUMEXPR_INSTALLED
+conda install numexpr
 
+```

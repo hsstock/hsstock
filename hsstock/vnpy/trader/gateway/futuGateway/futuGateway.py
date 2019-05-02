@@ -5,6 +5,9 @@
 '''
 
 import json
+
+from hsstock.futuquant import *
+
 from collections import OrderedDict
 from threading import Thread
 from time import sleep
@@ -12,7 +15,9 @@ from datetime import datetime
 from copy import copy
 
 import hsstock.futuquant as ft
-from hsstock.futuquant.open_context import (RET_ERROR, RET_OK, PriceRegularMode,
+
+
+from hsstock.futuquant import (RET_ERROR, RET_OK, PriceRegularMode,
                                     StockQuoteHandlerBase, OrderBookHandlerBase,
                                     USTradeOrderHandlerBase, USTradeDealHandlerBase,
                                     HKTradeOrderHandlerBase, HKTradeDealHandlerBase)

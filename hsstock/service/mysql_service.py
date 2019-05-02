@@ -161,13 +161,13 @@ class MysqlService():
         if is_chs is True:
             for code, listing_date in self.mysqlStore.session.query(FTStockBasicInfo.code,
                                                                     FTStockBasicInfo.listing_date).filter(
-                ~FTStockBasicInfo.code.in_(subquery)).filter(FTStockBasicInfo.code.like('%US.%')):
+                ~FTStockBasicInfo.code.in_(subquery)).filter(~FTStockBasicInfo.code.like('%US.%')):
                 ret_arr.append((code, listing_date))
         else:
             ret_arr = []
             for code, listing_date in self.mysqlStore.session.query(FTStockBasicInfo.code,
                                                                     FTStockBasicInfo.listing_date).filter(
-                ~FTStockBasicInfo.code.in_(subquery)).filter(~FTStockBasicInfo.code.like('%US.%')):
+                ~FTStockBasicInfo.code.in_(subquery)).filter(FTStockBasicInfo.code.like('%US.%')):
                 ret_arr.append((code, listing_date))
             return ret_arr
         return ret_arr
