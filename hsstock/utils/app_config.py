@@ -34,6 +34,7 @@ class AppConfig:
         AppConfig.mongodb_user = AppConfig.config.get('mongodb', 'user')
         AppConfig.mongodb_password = AppConfig.config.get('mongodb', 'password')
         AppConfig.mongodb_collection = AppConfig.config.get('mongodb', 'collection')
+        AppConfig.mongodb_collection_futunnlive = AppConfig.config.get('mongodb','collection_futunn')
 
 
     @staticmethod

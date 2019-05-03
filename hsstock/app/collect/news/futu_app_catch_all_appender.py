@@ -129,6 +129,16 @@ def job_info_appender(*_args):
             time.sleep(4 * random.random())
             logger.warning(err)
 
+
+        try:
+            ret_code, ret_data = futunews.get_futunn_live()
+
+        except Exception as err:
+            time.sleep(4 * random.random())
+            logger.warning(err)
+
+
+
         if is_closing is True:
             break
 
@@ -219,7 +229,8 @@ def once_appender_byapi_task(thread_name,arr,store,futunewsshistory):
 
 storeservice = MysqlService()
 mongodbutil = MongodbUtil(AppConfig.mongodb_ip, AppConfig.mongodb_port, AppConfig.mongodb_collection)
-futunews = FutunnService(mongodbutil)
+mongodbutil_futunnlive = MongodbUtil(AppConfig.mongodb_ip, AppConfig.mongodb_port, AppConfig.mongodb_collection_futunnlive)
+futunews = FutunnService(mongodbutil,mongodbutil_futunnlive)
 ret_arr = storeservice.find_all_stockcodes_exclude_nodata()
 thread_name = 'catch all stock entry url'
 
@@ -236,8 +247,8 @@ def scheduled_job():
     logger.info('scheduled_job..')
     if working == False:
         sched.remove_job(timerid)
-        catch_lastest_news()
-        #catch_futunn_news()
+        catch_lastest_news() # near to live
+        #catch_futunn_news() # Ò»´ÎÐÔ
     else:
         logger.info('pre-timer is working')
 

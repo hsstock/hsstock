@@ -3,17 +3,20 @@ import requests
 import bs4
 import time
 import random
+import json
+import copy
+
 import hsstock.utils.logger as logger
 from hsstock.utils.date_util import DateUtil
 from hsstock.utils.decorator import retry
 
 
 class FutunnService(object):
-    def __init__(self, mongodbutil):
+    def __init__(self, mongodbutil,mongodbutil_live):
         self.itemArray = []
         self.mongodbutil = mongodbutil
+        self.mongodbutil_live = mongodbutil_live
         self.url = 'https://news.futunn.com/main'
-
 
     @retry(wait=30)
     def get_info(self):
@@ -21,6 +24,8 @@ class FutunnService(object):
         ret_code = -1
         ret_data = ''
         self.itemArray = []
+
+        lasttime = DateUtil.string_toDatetime2('2019-05-01 09:00')
 
         try:
             res = requests.get(self.url)
@@ -41,6 +46,11 @@ class FutunnService(object):
                         time = newstime[len(newstime) - 1].getText()
                         json['date'] = DateUtil.string_toDatetime2(time)
                         s = json['date']
+
+                        if s < lasttime :
+                            continue
+                        else:
+                            lasttime = s
 
                         h3 = elem.select('h3')
                         json['title'] = h3[len(h3) - 1].getText()
@@ -169,6 +179,67 @@ class FutunnService(object):
                         logger.info("store items to mongodb ...")
                         self.clear_item_array()
 
+
+            except Exception as err:
+                #time.sleep(4 * random.random())
+                logger.warning(err)
+            except requests.exceptions.ConnectTimeout as err:
+                logger.warning(err)
+                ret_code = -1
+                ret_data = err
+            except requests.exceptions.ReadTimeout as err:
+                logger.warning(err)
+                ret_code = -1
+                ret_data = err
+            except requests.exceptions.Timeout as err:
+                logger.warning(err)
+                ret_code = -1
+                ret_data = err
+            except:
+                logger.warning('Unfortunitely -- An Unknow Error Happened, Please wait 3 seconds')
+                time.sleep(random.random())
+                ret_code = -1
+                ret_data = ''
+            finally:
+                res.close()
+
+        return 1, 'ok'
+
+    def get_futunn_live(self):
+
+        lasttime = DateUtil.string_toDatetime(self.mongodbutil_live.getLastLivetime())
+
+        for i in range(0,-1,-1):
+            p = int(1000*time.mktime(time.localtime())) + i
+            url = 'https://news.futunn.com/main/live-list?page={0}page_size=50&_=1556778263374'.format(i,p)
+
+            logger.info("address current url {0}...".format(url))
+
+            arr = []
+            header = {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+            try:
+                res = requests.get(url, headers=header, timeout=60)
+                res.raise_for_status()
+                if res.status_code == 200:
+                    data = res.text
+                    js = json.loads(data)
+
+                    list = js['data']['list']
+                    for elem in list:
+                        itemTime = DateUtil.string_toDatetime(elem['time'])
+
+                        if itemTime > lasttime:
+                            arr.append( elem )
+                            logger.info(elem)
+                        else:
+                            continue
+
+                    if len(arr) > 0 :
+                        self.mongodbutil_live.insertItems(arr)
+                        logger.info("store items to mongodb ...")
+                    else:
+                        logger.info("still have no new live message")
 
             except Exception as err:
                 #time.sleep(4 * random.random())

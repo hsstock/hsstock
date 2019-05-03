@@ -22,3 +22,8 @@ class MongodbUtil(object):
             return True
         return False
 
+    def getLastLivetime(self):
+        items = self.collection.find().sort("time", -1)
+        for item in items:
+            return item["time"]
+        return '2018-05-01 09:00'
