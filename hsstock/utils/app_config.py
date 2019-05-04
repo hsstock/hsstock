@@ -35,6 +35,13 @@ class AppConfig:
         AppConfig.mongodb_password = AppConfig.config.get('mongodb', 'password')
         AppConfig.mongodb_collection = AppConfig.config.get('mongodb', 'collection')
         AppConfig.mongodb_collection_futunnlive = AppConfig.config.get('mongodb','collection_futunn')
+        AppConfig.mongodb_collection_calendar = AppConfig.config.get('mongodb', 'collection_futunn_calendar')
+        AppConfig.mongodb_collection_cash = AppConfig.config.get('mongodb', 'collection_futunn_cash')
+        AppConfig.mongodb_collection_balancesheet = AppConfig.config.get('mongodb', 'collection_futunn_balancesheet')
+        AppConfig.mongodb_collection_companyinfo = AppConfig.config.get('mongodb', 'collection_futunn_companyinfo')
+        AppConfig.mongodb_collection_income = AppConfig.config.get('mongodb', 'collection_futunn_income')
+        AppConfig.mongodb_collection_dividend = AppConfig.config.get('mongodb', 'collection_futunn_dividend')
+
 
 
     @staticmethod
