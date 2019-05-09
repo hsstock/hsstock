@@ -73,12 +73,77 @@ def job_once_individuals(*_args):
                 items = futunews.get_item_array()
                 if len(items) > 0:
                     futunews.mongodbutil.insertItems(items)
-                    logger.info("store items to mongodb ...")
+                    logger.info("store items to mongodb news ...")
                 else:
-                    logger.info("all items exists")
+                    logger.info("all news items exists")
             except Exception as err:
                 time.sleep(4 * random.random())
                 logger.warning(err)
+
+
+            # try:
+            #     futunews.get_individual_balancesheet(market, symbol)
+            #     items = futunews.get_item_array()
+            #     if len(items) > 0:
+            #         futunews.mongodbutil_balancesheet.insertItems(items)
+            #         logger.info("store items to mongodb  balancesheet...")
+            #     else:
+            #         logger.info("all balance sheet items exists")
+            # except Exception as err:
+            #     time.sleep(4 * random.random())
+            #     logger.warning(err)
+            #
+            #
+            # try:
+            #     futunews.get_individual_cashflow(market, symbol)
+            #     items = futunews.get_item_array()
+            #     if len(items) > 0:
+            #         futunews.mongodbutil_cash.insertItems(items)
+            #         logger.info("store items to mongodb  cashflow...")
+            #     else:
+            #         logger.info("all cash flow items exists")
+            # except Exception as err:
+            #     time.sleep(4 * random.random())
+            #     logger.warning(err)
+            #
+            # try:
+            #     futunews.get_individual_income(market, symbol)
+            #     items = futunews.get_item_array()
+            #     if len(items) > 0:
+            #         futunews.mongodbutil_income.insertItems(items)
+            #         logger.info("store items to mongodb  income...")
+            #     else:
+            #         logger.info("all income items exists")
+            # except Exception as err:
+            #     time.sleep(4 * random.random())
+            #     logger.warning(err)
+            #
+            # try:
+            #     futunews.get_individual_companyinfo(market, symbol)
+            #     items = futunews.get_item_array()
+            #     if len(items) > 0:
+            #         futunews.mongodbutil_companyinfo.insertItems(items)
+            #         logger.info("store items to mongodb  companyinfo...")
+            #     else:
+            #         logger.info("all companyinfo items exists")
+            # except Exception as err:
+            #     time.sleep(4 * random.random())
+            #     logger.warning(err)
+            #
+            # try:
+            #     futunews.get_individual_dividend(market, symbol)
+            #     items = futunews.get_item_array()
+            #     if len(items) > 0:
+            #         futunews.mongodbutil_dividend.insertItems(items)
+            #         logger.info("store items to mongodb  dividend...")
+            #     else:
+            #         logger.info("all dividend items exists")
+            # except Exception as err:
+            #     time.sleep(4 * random.random())
+            #     logger.warning(err)
+
+
+
 
             if is_closing is True:
                 break
@@ -320,8 +385,8 @@ def scheduled_job():
     logger.info('scheduled_job..')
     if working == False:
         sched.remove_job(timerid)
-        #catch_lastest_news() # near to live
-        catch_futu_individuals()
+        catch_lastest_news() # near to live
+        #catch_futu_individuals() # 一次性
         #catch_futunn_news() # 一次性
         #job_catch_calendar() # catch calendar , schedule
     else:

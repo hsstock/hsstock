@@ -25,7 +25,6 @@ class FutunnService(object):
         self.mongodbutil_dividend = mongodbutil_dividend
         self.url = 'https://news.futunn.com/main'
 
-
     def get_individual_news(self,market, code):
         ret_code = -1
         ret_data = ''
@@ -97,6 +96,335 @@ class FutunnService(object):
         finally:
             res.close()
         return ret_code, ret_data
+
+
+    def get_individual_cashflow(self,market, code):
+        ret_code = -1
+        ret_data = ''
+        self.itemArray = []
+
+        url = "https://finance.futunn.com/api/finance/cash-flow?code={0}&label={1}&quarter=0&page=0".format(code.upper(),market.lower())
+
+        try:
+            header = {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36',
+                'Accept': 'application/json,text/javascript,*.*;q=0.01',
+                'Origin': 'https://www.futunn.com',
+                'Referer': 'https://www.futunn.com/quote/stock-info?m={0}&code={1}&type=finance_analyse'.format(market.lower(),code.upper)
+            }
+            res = requests.get(url, headers=header)
+            if res.encoding == 'ISO-8859-1':
+                res.encoding = 'gbk'
+            res.raise_for_status()
+
+            if res.status_code == 200:
+                data = res.text
+                js = json.loads(data)
+
+                obj = js['data']['list']
+
+                for v in obj['values']:
+                    o = {}
+                    idx = 0
+
+                    for item in v:
+                        o[obj['keys'][idx]] = item['value']
+                        idx += 1
+
+                    o['title'] = obj['title']
+                    o['enterpriseType'] = obj['enterpriseType']
+                    o['market'] = market
+                    o['code'] = code
+
+                    self.itemArray.append(o)
+
+                ret_code = 0
+                ret_data = ''
+        except Exception as err:
+            # time.sleep(4 * random.random())
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.ConnectTimeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.ReadTimeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.Timeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except:
+            logger.warning('Unfortunitely -- An Unknow Error Happened, Please wait 3 seconds')
+            time.sleep(random.random())
+            ret_code = -1
+            ret_data = ''
+        finally:
+            res.close()
+        return ret_code, ret_data
+
+
+    def get_individual_balancesheet(self,market, code):
+        ret_code = -1
+        ret_data = ''
+        self.itemArray = []
+
+        url = "https://finance.futunn.com/api/finance/balance-sheet?code={0}&label={1}&quarter=0&page=0".format(code.upper(),market.lower())
+
+        try:
+            header = {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36',
+                'Accept': 'application/json,text/javascript,*.*;q=0.01',
+                'Origin': 'https://www.futunn.com',
+                'Referer': 'https://www.futunn.com/quote/stock-info?m={0}&code={1}&type=finance_analyse'.format(market.lower(),code.upper)
+            }
+            res = requests.get(url, headers=header)
+            if res.encoding == 'ISO-8859-1':
+                res.encoding = 'gbk'
+            res.raise_for_status()
+
+            if res.status_code == 200:
+                data = res.text
+                js = json.loads(data)
+
+                obj = js['data']['list']
+
+                for v in obj['values']:
+                    o = {}
+                    idx = 0
+
+                    for item in v:
+                        o[obj['keys'][idx]] = item['value']
+                        idx += 1
+
+                    o['title'] = obj['title']
+                    o['enterpriseType'] = obj['enterpriseType']
+                    o['market'] = market
+                    o['code'] = code
+
+                    self.itemArray.append(o)
+
+                ret_code = 0
+                ret_data = ''
+        except Exception as err:
+            # time.sleep(4 * random.random())
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.ConnectTimeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.ReadTimeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.Timeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except:
+            logger.warning('Unfortunitely -- An Unknow Error Happened, Please wait 3 seconds')
+            time.sleep(random.random())
+            ret_code = -1
+            ret_data = ''
+        finally:
+            res.close()
+        return ret_code, ret_data
+
+    def get_individual_income(self, market, code):
+        ret_code = -1
+        ret_data = ''
+        self.itemArray = []
+
+        url = "https://finance.futunn.com/api/finance/balance-sheet?code={0}&label={1}&quarter=0&page=0".format(code.upper(), market.lower())
+
+        try:
+            header = {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36',
+                'Accept': 'application/json,text/javascript,*.*;q=0.01',
+                'Origin': 'https://www.futunn.com',
+                'Referer': 'https://www.futunn.com/quote/stock-info?m={0}&code={1}&type=finance_analyse'.format(
+                    market.lower(), code.upper)
+            }
+            res = requests.get(url, headers=header)
+            if res.encoding == 'ISO-8859-1':
+                res.encoding = 'gbk'
+            res.raise_for_status()
+
+            if res.status_code == 200:
+                data = res.text
+                js = json.loads(data)
+
+                obj = js['data']['list']
+
+                for v in obj['values']:
+                    o = {}
+                    idx = 0
+
+                    for item in v:
+                        o[obj['keys'][idx]] = item['value']
+                        idx += 1
+
+                    o['title'] = obj['title']
+                    o['enterpriseType'] = obj['enterpriseType']
+                    o['market'] = market
+                    o['code'] = code
+
+                    self.itemArray.append(o)
+
+                ret_code = 0
+                ret_data = ''
+        except Exception as err:
+            # time.sleep(4 * random.random())
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.ConnectTimeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.ReadTimeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.Timeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except:
+            logger.warning('Unfortunitely -- An Unknow Error Happened, Please wait 3 seconds')
+            time.sleep(random.random())
+            ret_code = -1
+            ret_data = ''
+        finally:
+            res.close()
+        return ret_code, ret_data
+
+    def get_individual_companyinfo(self, market, code):
+        ret_code = -1
+        ret_data = ''
+        self.itemArray = []
+
+        url = "https://finance.futunn.com/api/finance/company-info?code={0}&label={1}".format(code.upper(), market.lower())
+
+        try:
+            header = {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36',
+                'Accept': 'application/json,text/javascript,*.*;q=0.01',
+                'Origin': 'https://www.futunn.com',
+                'Referer': 'https://www.futunn.com/quote/stock-info?m={0}&code={1}&type=finance_analyse'.format(
+                    market.lower(), code.upper)
+            }
+            res = requests.get(url, headers=header)
+            if res.encoding == 'ISO-8859-1':
+                res.encoding = 'gbk'
+            res.raise_for_status()
+
+            if res.status_code == 200:
+                data = res.text
+                js = json.loads(data)
+
+
+                obj = js['data']
+                if len(obj) != 0:
+                    obj['market'] = market
+                    obj['code'] = code
+
+                    self.itemArray.append(obj)
+
+                ret_code = 0
+                ret_data = ''
+        except Exception as err:
+            # time.sleep(4 * random.random())
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.ConnectTimeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.ReadTimeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.Timeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except:
+            logger.warning('Unfortunitely -- An Unknow Error Happened, Please wait 3 seconds')
+            time.sleep(random.random())
+            ret_code = -1
+            ret_data = ''
+        finally:
+            res.close()
+        return ret_code, ret_data
+
+
+    def get_individual_dividend(self, market, code):
+        ret_code = -1
+        ret_data = ''
+        self.itemArray = []
+
+        url = "https://finance.futunn.com/api/finance/dividend?code={0}&label={1}".format(code.upper(), market.lower())
+
+        try:
+            header = {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36',
+                'Accept': 'application/json,text/javascript,*.*;q=0.01',
+                'Origin': 'https://www.futunn.com',
+                'Referer': 'https://www.futunn.com/quote/stock-info?m={0}&code={1}&type=finance_analyse'.format(
+                    market.lower(), code.upper)
+            }
+            res = requests.get(url, headers=header)
+            if res.encoding == 'ISO-8859-1':
+                res.encoding = 'gbk'
+            res.raise_for_status()
+
+            if res.status_code == 200:
+                data = res.text
+                js = json.loads(data)
+
+                obj = js['data']
+                if len(obj) != 0:
+                    obj['market'] = market
+                    obj['code'] = code
+
+                    self.itemArray.append(obj)
+
+                ret_code = 0
+                ret_data = ''
+        except Exception as err:
+            # time.sleep(4 * random.random())
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.ConnectTimeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.ReadTimeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except requests.exceptions.Timeout as err:
+            logger.warning(err)
+            ret_code = -1
+            ret_data = err
+        except:
+            logger.warning('Unfortunitely -- An Unknow Error Happened, Please wait 3 seconds')
+            time.sleep(random.random())
+            ret_code = -1
+            ret_data = ''
+        finally:
+            res.close()
+        return ret_code, ret_data
+
+
 
     @retry(wait=30)
     def get_info(self):
@@ -175,7 +503,7 @@ class FutunnService(object):
         return ret_code,ret_data
 
 
-    @retry()
+    #@retry()
     def get_content(self, url, enco):
         content = ''
         ret = -1

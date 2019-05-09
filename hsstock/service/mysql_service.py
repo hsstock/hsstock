@@ -123,8 +123,9 @@ class MysqlService():
         with self.mysql_engine.connect() as con:
             result = con.execute(sql)
             if result.returns_rows == True:
-                for r in result:
-                    print(r)
+                # for r in result:
+                #     print(r)
+                return result
 
     def insert_one(self, item):
         pass

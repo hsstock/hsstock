@@ -97,7 +97,7 @@ def job_history_append(*_args):
             curr += 1
 
             logging.info("current fetching progress {}/{} code:{} ".format(curr,total,code))
-            if curr < 1:
+            if curr < 6384:
                 continue
 
             b = time.time()
@@ -116,6 +116,7 @@ def job_history_append(*_args):
             e = time.time()
             logging.info("position {} fetching {} const time {}".format(curr, code, e - b))
 
+            time.sleep(1)
             if is_closing is True:
                 break
 
@@ -245,9 +246,9 @@ if __name__ == "__main__":
     #signal.signal(signal.SIGKILL, signal_term_handler)
     signal.signal(signal.SIGTERM, signal_term_handler)
     setup_logging()
-    #download_chs()
+    download_chs()
     #download_us()
-    sched.start()
+    #sched.start()
 
     #setup_lastdate()
 

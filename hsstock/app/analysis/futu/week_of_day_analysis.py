@@ -22,7 +22,6 @@ from hsstock.common.constant import *
 from hsstock.service.quote_service import Subscribe
 from hsstock.service.trade_service import *
 from hsstock.utils.lang_util import *
-from hsstock.model.mysql.ft_kline import FTHistoryKlineAll
 
 
 sched = BlockingScheduler()
@@ -51,7 +50,7 @@ def job_once_global_day_analysis(*_args):
             curr += 1
 
             logging.info("current fetching progress {}/{} code:{} ".format(curr, total, code))
-            if curr < 1:
+            if curr <  2716:
                 continue
 
             b1 = time.time()
@@ -173,7 +172,7 @@ def gen_one_worker():
 #@sched.scheduled_job('cron',day_of_week='mon-fri',hour='17', minute='05',second='00')
 def analysis_chs():
     worker = gen_one_worker()
-    ret_arr = worker.storeservice.find_chs_stocks(False)
+    ret_arr = worker.storeservice.find_chs_stocks(True)
     thread_name = 'analysis for chs market'
     once_global_m5_task(thread_name, ret_arr, worker)
 
@@ -182,7 +181,7 @@ def analysis_chs():
 # @sched.scheduled_job('cron',day_of_week='tue-sat',hour=hour, minute=minute,second='00')
 def analysis_us():
     worker = gen_one_worker()
-    ret_arr = worker.storeservice.find_chs_stocks(True)
+    ret_arr = worker.storeservice.find_chs_stocks(False)
     thread_name = 'analysis for us market'
     once_global_m5_task(thread_name,ret_arr, worker)
 
@@ -191,7 +190,7 @@ if __name__ == "__main__":
     #signal.signal(signal.SIGKILL, signal_term_handler)
     signal.signal(signal.SIGTERM, signal_term_handler)
     setup_logging()
-    analysis_chs()
-    #analysis_us()
+    #analysis_chs()
+    analysis_us()
     sched.start()
 
