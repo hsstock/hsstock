@@ -13,13 +13,13 @@ def main():
 
 
     from_table = 230
-    to_table = 231
+    to_table = 233
 
 
-    migrate_num = 300
+    migrate_num = 5
 
     try:
-        for index in range(260,migrate_num,1):
+        for index in range(0,50,1):
             logger.info('addressing {0} ....'.format(index))
             # step 1: fetch one code
             sql = 'select distinct(code) from ft_1M_{0} limit {1}'.format(from_table,migrate_num)
