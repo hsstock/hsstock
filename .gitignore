@@ -19,3 +19,4 @@ tests/echarts/render.html
 hsstock/utils/log.txt
 hsstock/utils/*.txt
 .*
+_gsdata_/

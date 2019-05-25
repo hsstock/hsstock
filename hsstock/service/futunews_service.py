@@ -427,7 +427,7 @@ class FutunnService(object):
 
 
     @retry(wait=30)
-    def get_info(self):
+    def get_live_info(self):
 
         ret_code = -1
         ret_data = ''
@@ -552,7 +552,7 @@ class FutunnService(object):
 
     def get_futunn_news(self):
 
-        for i in range(69000,100000,1):
+        for i in range(94471,94480,1):
             url = 'https://news.futunn.com/market/{0}?src=3'.format(i)
 
             urlExist = self.mongodbutil.urlIsExist(url)

@@ -12,14 +12,14 @@ def main():
     storeservice = MysqlService()
 
 
-    from_table = 230
-    to_table = 233
+    from_table = 233
+    to_table = 234
 
 
     migrate_num = 5
 
     try:
-        for index in range(0,50,1):
+        for index in range(0,30,1):
             logger.info('addressing {0} ....'.format(index))
             # step 1: fetch one code
             sql = 'select distinct(code) from ft_1M_{0} limit {1}'.format(from_table,migrate_num)
@@ -48,6 +48,29 @@ def main():
         logger.info(err)
 
 
+def counter_statistics():
+
+    storeservice = MysqlService()
+
+
+    index = 0
+    to_table = 234
+
+
+    try:
+        for index in range(1,250,1):
+            logger.info('addressing {0} ....'.format(index))
+            # step 1: fetch one code
+            sql = 'select count(code) from ft_1M_{0}'.format(index)
+            result = storeservice.executeSql(sql)
+            print(result.cursor._result.rows[0])
+
+    except Exception as err:
+        logger.info(err)
+
+
+
 if __name__ == "__main__":
     setup_logging()
-    main()
+    #main()
+    counter_statistics()

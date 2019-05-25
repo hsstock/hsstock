@@ -15,7 +15,7 @@ class DateUtil():
         return today.strftime('%Y-%m-%d %H:%M:%S')
 
     @staticmethod
-    def getDatetimeToday3():
+    def getDatetimeToday4():
         today = datetime.today()
         return today.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -160,6 +160,17 @@ class DateUtil():
         :return: 返回int 0-6分别代表周一到周日
         """
         return datetime.strptime(date_str, fmt).weekday()
+
+    @staticmethod
+    def year_of_date(date_str, fmt=K_DEFAULT_DT_FMT):
+        """
+        输入'2016-01-01' 转换为星期几，返回int 0-6分别代表周一到周日
+        :param date_str: 式时间日期str对象
+        :param fmt: 如date_str不是%Y-%m-%d形式，对应的格式str对象
+        :param fix: 是否修复日期不规范的写法，eg. 2016-1-1 fix 2016-01-01
+        :return: 返回int 0-6分别代表周一到周日
+        """
+        return datetime.strptime(date_str, fmt).year
 
 
 

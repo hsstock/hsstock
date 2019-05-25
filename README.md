@@ -380,3 +380,9 @@ _NUMEXPR_INSTALLED
 conda install numexpr
 
 ```
+
+* anaconda 环境下工作
+
+、、、
+conda install --yes --file requirements.txt
+、、、

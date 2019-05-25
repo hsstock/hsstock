@@ -323,3 +323,6 @@ select a.*
              max(gdtime) 'maxgdtime'
       from table1
       group by name) b on a.name=b.name and a.gdtime=b.maxgdtime
+
+
+    select  count(*) from sys_sharding  where lastdate is null order by code

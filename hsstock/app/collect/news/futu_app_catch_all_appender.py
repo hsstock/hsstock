@@ -180,7 +180,7 @@ def job_info_appender(*_args):
         logger.info('Current Time:{}, info'.format(datetime.datetime.now()))
 
         try:
-            ret_code, ret_data = futunews.get_info()
+            ret_code, ret_data = futunews.get_live_info()
             items = futunews.get_item_array()
             if len(items) > 0:
                 futunews.mongodbutil.insertItems(items)
@@ -206,7 +206,7 @@ def job_info_appender(*_args):
 
         working = False
         if not is_closing:
-            sched.add_job(scheduled_job, 'interval', seconds=random.randint(10,20), id=timerid)
+            sched.add_job(scheduled_job2, 'interval', seconds=random.randint(30,50), id=timerid)
 
         end = time.time()
         logger.info("fetching for one  period , cost time: {}".format((end - begin)))
@@ -370,7 +370,7 @@ def catch_lastest_news():
     thread_name = 'catch lastest news'
     once_appender_task(thread_name,ret_arr, storeservice,futunews)
 
-def catch_futunn_news():
+def catch_futunn_news_byapi():
     ret_arr = storeservice.find_all_stockcodes_exclude_nodata()
     thread_name = 'catch all news'
     once_appender_byapi_task(thread_name, ret_arr, storeservice, futunews)
@@ -387,10 +387,30 @@ def scheduled_job():
         sched.remove_job(timerid)
         catch_lastest_news() # near to live
         #catch_futu_individuals() # 一次性
-        #catch_futunn_news() # 一次性
+        #catch_futunn_news_byapi() # 一次
         #job_catch_calendar() # catch calendar , schedule
     else:
         logger.info('pre-timer is working')
+
+def scheduled_job2():
+    logger.info('scheduled_job2222..')
+    if working == False:
+        sched.remove_job(timerid)
+        catch_lastest_news() # near to live
+    else:
+        logger.info('pre-timer is working')
+
+
+hour='09'
+minute='12'
+@sched.scheduled_job('cron',day_of_week='mon-sun',hour=hour, minute=minute,second='00')
+def scheduled_job3():
+    logger.info('scheduled_job333..')
+    if working == False:
+        catch_futu_individuals()  # 一次性
+    else:
+        logger.info('pre-timer is working')
+
 
 
 hour='00'
@@ -400,7 +420,7 @@ def job_catch_calendar():
     ret_arr = storeservice.find_all_stockcodes_exclude_nodata()
     thread_name = 'catch calendar'
     appender_calendar_task(thread_name, ret_arr, storeservice, futunews)
-
+    catch_futu_individuals()  # 一次性
 
 
 if __name__ == "__main__":

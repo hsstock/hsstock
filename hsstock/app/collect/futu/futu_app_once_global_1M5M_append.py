@@ -97,7 +97,7 @@ def job_history_append(*_args):
             curr += 1
 
             logging.info("current fetching progress {}/{} code:{} ".format(curr,total,code))
-            if curr < 6384:
+            if curr < 1:
                 continue
 
             b = time.time()
@@ -145,7 +145,7 @@ def job_setup_lastdate(*_args):
             curr += 1
 
             logging.info("current fetching progress {}/{} code:{} ".format(curr,total,code))
-            if curr < 1:
+            if curr < 2584:
                 continue
 
             # KLType.K_DAY
@@ -202,6 +202,8 @@ def try_exit():
 
 def once_task(thread_name, arr, worker):
     tfn = MyThread2(thread_name,job_history_append,worker,arr)
+    #tfn = MyThread2(thread_name, job_setup_lastdate, worker, arr)
+
     tfn.start()
 
 def gen_one_worker():
@@ -238,6 +240,7 @@ def download_us():
 def setup_lastdate():
     worker = gen_one_worker()
     ret_arr = worker.storeservice.find_all_stocks()
+
     thread_name = 'setup lastdate thread...'
     once_task(thread_name, ret_arr, worker)
     
@@ -247,8 +250,8 @@ if __name__ == "__main__":
     signal.signal(signal.SIGTERM, signal_term_handler)
     setup_logging()
     download_chs()
-    #download_us()
-    #sched.start()
+    # download_us()
+    sched.start()
 
-    #setup_lastdate()
+    setup_lastdate()
 

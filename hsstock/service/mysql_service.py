@@ -214,8 +214,11 @@ class MysqlService():
         #for item in self.mysqlStore.session.query(FTHistoryKline6).filter(cls.code == code).filter(and_(text('time_key>:start'),text('time_key<:end')).params(start=start,end=end)).all():
         #,cls.code,cls.time_key,cls.open,cls.close,cls.high,cls.low,cls.pe_ratio,cls.turnover_rate,cls.volume,cls.turnover,cls.change_rate,cls.last_close
         #(code, time_key, open, close, high, low, pe_ratio, turnover_rate, volume, turnover, change_rate, last_close)
+        # for code, time_key, open, close, high, low, pe_ratio, turnover_rate, volume, turnover, change_rate, last_close in self.mysqlStore.session.query(cls.code, cls.time_key,cls.open,cls.close,cls.high,cls.low,cls.pe_ratio,cls.turnover_rate,cls.volume,cls.turnover,cls.change_rate,cls.last_close).filter(cls.code == code).filter(and_(cls.time_key>=start, cls.time_key<=end)).order_by(cls.time_key).all():
+        #     item = (code, DateUtil.datetime_toString(time_key), open, close, high, low, pe_ratio, turnover_rate, volume, turnover, change_rate, last_close)
+        #     ret.append(item)
         for code, time_key, open, close, high, low, pe_ratio, turnover_rate, volume, turnover, change_rate, last_close in self.mysqlStore.session.query(cls.code, cls.time_key,cls.open,cls.close,cls.high,cls.low,cls.pe_ratio,cls.turnover_rate,cls.volume,cls.turnover,cls.change_rate,cls.last_close).filter(cls.code == code).filter(and_(cls.time_key>=start, cls.time_key<=end)).order_by(cls.time_key).all():
-            item = (code, DateUtil.datetime_toString(time_key), open, close, high, low, pe_ratio, turnover_rate, volume, turnover, change_rate, last_close)
+            item = (code, time_key, open, close, high, low, pe_ratio, turnover_rate, volume, turnover, change_rate, last_close)
             ret.append(item)
         return ret
 
