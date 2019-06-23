@@ -82,7 +82,7 @@ def job_history_append(*_args):
             curr += 1
 
             logging.info("current fetching progress {}/{} code:{} ".format(curr,total,code))
-            if curr < 2267:
+            if curr < 40:
                 continue
 
             b = time.time()

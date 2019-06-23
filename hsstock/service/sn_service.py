@@ -230,17 +230,16 @@ class SNService(object):
         kl_pd = SNUSParser(code,start,resp.json()).df
 
         if kl_pd is not None and len(kl_pd) > 0:
-            table = 'ft4_kline'
+            table = 'ft_kline'
             tindex = self.storeservice.find_tindex(code, 'hk')
             if tindex != -1:
                 table += ('_' + str(tindex))
-            table = 'ft_kline_1_1'
+            #table = 'ft_kline_1_1'
             lastdate = kl_pd['time_key'][len(kl_pd)-1]
             self.storeservice.insert_many(table, kl_pd, 'append')
             print(lastdate)
             return lastdate
         else:
-            print(lastdate)
             return None
 
 
