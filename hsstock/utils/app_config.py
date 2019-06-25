@@ -34,6 +34,7 @@ class AppConfig:
         AppConfig.mongodb_user = AppConfig.config.get('mongodb', 'user')
         AppConfig.mongodb_password = AppConfig.config.get('mongodb', 'password')
         AppConfig.mongodb_collection = AppConfig.config.get('mongodb', 'collection')
+        AppConfig.collection_news_second = AppConfig.config.get('mongodb', 'collection_news_second')
         AppConfig.mongodb_collection_futunnlive = AppConfig.config.get('mongodb','collection_futunn')
         AppConfig.mongodb_collection_calendar = AppConfig.config.get('mongodb', 'collection_futunn_calendar')
         AppConfig.mongodb_collection_cash = AppConfig.config.get('mongodb', 'collection_futunn_cash')

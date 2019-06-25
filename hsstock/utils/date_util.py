@@ -102,9 +102,15 @@ class DateUtil():
         return dt.strftime("%Y-%m-%d %H:%M:%S")
 
     # 把字符串转成datetime
+    # '2018-06-14\xa014:09\xa0\xa0</a>:00' does not match format '%Y-%m-%d %H:%M:%S'
     @staticmethod
     def string_toDatetime(string):
-        return datetime.strptime(string, "%Y-%m-%d %H:%M:%S")
+        dt = None
+        try:
+            dt = datetime.strptime(string, "%Y-%m-%d %H:%M:%S")
+        except:
+            print('1')
+        return dt
 
     # 把字符串转成datetime
     @staticmethod

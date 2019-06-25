@@ -61,6 +61,10 @@ class SinanewsService(object):
                         ele = elem.select('span')
                         json['date'] = DateUtil.format_date(ele[0].getText()[1:-1])
                         s = json['date']
+                        json['date'] = s.replace('  </a>', '')
+                        date = DateUtil.string_toDatetime(json['date'])
+                        json['date'] = date
+
                         ele = elem.select('a')
                         json['title'] = ele[len(ele)-1].getText()
                         logger.info("date:{},title:{}".format(s, json['title']))
