@@ -115,7 +115,12 @@ class DateUtil():
     # 把字符串转成datetime
     @staticmethod
     def string_toDatetime2(string):
-        return datetime.strptime(string, "%Y-%m-%d %H:%M")
+        dt = None
+        try:
+            dt = datetime.strptime(string, "%Y-%m-%d %H:%M")
+        except:
+            print('11')
+        return dt
 
     @staticmethod
     def date_toString(dt):

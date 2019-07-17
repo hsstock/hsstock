@@ -37,8 +37,8 @@ if __name__ == '__main__':
         url = str(s['href'])
         if isinstance(s['date'], str):
             date = None
+            strDate = s['date']
             try:
-                strDate =  s['date']
                 strDate = strDate.replace('  </a>','')
                 date = DateUtil.string_toDatetime(strDate)
             except:
@@ -48,8 +48,16 @@ if __name__ == '__main__':
             if date is not None:
                 connection.update_one({"_id": s['_id']}, {"$set": {"date": date}})
             else:
-                print(s['date'])
-                connection.delete_one({"_id": s['_id']})
+                try:
+                    date = DateUtil.string_toDatetime2(strDate)
+
+                    if date is not None:
+                        connection.update_one({"_id": s['_id']}, {"$set": {"date": date}})
+                    else:
+                        connection.delete_one({"_id": s['_id']})
+                except:
+                    print('3')
+
 
         else:
             isDateCount = isDateCount+1
