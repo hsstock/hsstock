@@ -8,7 +8,7 @@ from hsstock.utils.app_logging import setup_logging
 
 def main():
 
-    storeservice = MysqlService()
+    storeservice = MysqlService(2)
 
     # The total number of history_5M tables is 80, but last table is 63
     kline_5m_tables_number = 81
@@ -32,8 +32,7 @@ def main():
             },
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
-                'ALTER TABLE `{0}` ADD INDEX (`code`);',
-                'ALTER TABLE `{0}` ADD INDEX (`time_key`);',
+                'ALTER TABLE `{0}` ADD UNIQUE INDEX (`code`,`time_key`);',
                 'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\'',
                 'ALTER TABLE `{0}` MODIFY COLUMN pe_ratio FLOAT COMMENT  \'市盈率\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN turnover_rate FLOAT COMMENT  \'换手率\';',
@@ -90,8 +89,7 @@ def main():
             },
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
-                'ALTER TABLE `{0}` ADD INDEX (`code`);',
-                'ALTER TABLE `{0}` ADD INDEX (`time_key`);',
+                'ALTER TABLE `{0}` ADD UNIQUE INDEX (`code`,`time_key`);',
                 'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\'',
                 'ALTER TABLE `{0}` MODIFY COLUMN pe_ratio FLOAT COMMENT  \'市盈率\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN turnover_rate FLOAT COMMENT  \'换手率\';',

@@ -326,9 +326,51 @@ def fmt_date(convert_date):
             raise ValueError('fmt_date: convert_date fmt error {}'.format(convert_date))
     return convert_date
 
+#如:03:10AM, 10:35PM 转换成date
+
+def abbr_to_normal(time):
+    time = time.strip()
+    """
+    I don't know this issue.
+    12:24:35AM -> 0:24:35
+    12:24:35PM -> 12:24:35
+    """
+    if time.find("AM") >= 0:
+        time = time.strip("AM")
+        if time == "12:00":
+            time = "00:00"
+
+        time = time.split(':')
+
+        hh = int(time[0])
+        mm = int(time[1])
+        ss = int(0)
+        if hh == 12 and (mm > 0 or ss > 0):
+            hh = 0
+
+
+        today = date.today()
+        timestr = ("%04d-%02d-%02d %02d:%02d:%02d" % (today.year,today.month, today.day,hh, mm, ss))
+        dt = datetime.strptime(timestr, "%Y-%m-%d %H:%M:%S")
+    else:
+
+        time = time.strip("PM")
+        time = time.split(':')
+
+        hh = int(time[0])
+        mm = int(time[1])
+        ss = int(0)
+
+        if hh != 12:
+            hh = hh + 12
+
+        today = date.today()
+        timestr = ("%04d-%02d-%02d %02d:%02d:%02d" % (today.year,today.month, today.day,hh, mm, ss))
+        dt = datetime.strptime(timestr, "%Y-%m-%d %H:%M:%S")
+    return dt
 
 if __name__ == "__main__":
-    print( DateUtil.getTodayStr() )
+    print(DateUtil.getTodayStr() )
     print(DateUtil.getDatetimeToday())
     print(DateUtil.getDatetimeYesterdayStr( DateUtil.getDatetimeToday()))
     print(DateUtil.format_date('07-02 06:00'))
@@ -338,6 +380,8 @@ if __name__ == "__main__":
     print(DateUtil.timestamp_toString(DateUtil.string_toTimestamp(DateUtil.format_date('07-02 06:00'))))
     print(DateUtil.date_str_to_int('2007-07-07'))
     print(DateUtil.date_to_millisecond(str(DateUtil.date_str_to_int('2007-07-07'))))
+    print(abbr_to_normal('03:35AM'))
+
 
     gen = DateUtil.getNextHalfYear( DateUtil.string_toDate('2016-01-01'),DateUtil.string_toDate('2018-01-01') )
     while True:

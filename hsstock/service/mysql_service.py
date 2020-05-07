@@ -109,12 +109,12 @@ class MysqlStore(Store):
 
 
 class MysqlService():
-    def __init__(self):
+    def __init__(self,sel=1):
         '''
         Store Engine Init
         '''
         self.config = AppConfig.get_config()
-        self.connect_url = self.config.get('mysql', 'connecturl')
+        self.connect_url = self.config.get('mysql', 'connecturl') if  sel == 1 else self.config.get('mysql', 'connecturl2')
         self.mysql_engine = create_engine(self.connect_url,poolclass=QueuePool,pool_pre_ping=True,pool_recycle=3600,pool_size=20)
         self.mysqlStore = MysqlStore(self.mysql_engine)
 
@@ -140,6 +140,12 @@ class MysqlService():
         ret_codes = []
         for code,name in self.mysqlStore.session.query(FTStockBasicInfo.code,FTStockBasicInfo.name):
             ret_codes.append(code)
+        return ret_codes
+
+    def find_all_stock_codeandname(self):
+        ret_codes = []
+        for code,name in self.mysqlStore.session.query(FTStockBasicInfo.code,FTStockBasicInfo.name):
+            ret_codes.append((code,name))
         return ret_codes
 
     def find_all_stockcodes_exclude_nodata(self):

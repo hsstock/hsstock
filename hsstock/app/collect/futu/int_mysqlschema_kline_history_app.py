@@ -8,7 +8,7 @@ from hsstock.utils.app_logging import setup_logging
 
 def main():
 
-    storeservice = MysqlService()
+    storeservice = MysqlService(2)
 
 
     # The total number of history tables is 16, but last table is 9
@@ -33,8 +33,7 @@ def main():
             },
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
-                'ALTER TABLE `{0}` ADD INDEX (`code`);',
-                'ALTER TABLE `{0}` ADD INDEX (`time_key`);',
+                'ALTER TABLE `{0}` ADD UNIQUE INDEX (`code`,`time_key`);',
                 'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\'',
                 'ALTER TABLE `{0}` MODIFY COLUMN pe_ratio FLOAT COMMENT  \'市盈率\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN turnover_rate FLOAT COMMENT  \'换手率\';',
@@ -47,26 +46,26 @@ def main():
         },
     ]
 
-    # try:
-    #     logging.info("create sub kline schema,  starting")
-    #
-    #     for  index in range(1,kline_tables_number,1):
-    #         for schema in schemaArr:
-    #             df = pd.DataFrame(None, columns=schema['dtype'].keys())
-    #             table = schema['table'].format(index)
-    #             logging.info(table)
-    #             logging.info('table:{0}'.format(table))
-    #             clauses = []
-    #             for clause in schema['clauses']:
-    #                 clause = clause.format(table)
-    #                 clauses.append(clause)
-    #             storeservice.init_schema(table, df, schema['dtype'], clauses)
-    #
-    #     logging.info("create sub kline, end")
-    # except IOError as err:
-    #     logging.error("OS|error: {0}".format(err))
-    # else:
-    #     logging.info('create sub kline success')
+    try:
+        logging.info("create sub kline schema,  starting")
+
+        for  index in range(1,kline_tables_number,1):
+            for schema in schemaArr:
+                df = pd.DataFrame(None, columns=schema['dtype'].keys())
+                table = schema['table'].format(index)
+                logging.info(table)
+                logging.info('table:{0}'.format(table))
+                clauses = []
+                for clause in schema['clauses']:
+                    clause = clause.format(table)
+                    clauses.append(clause)
+                storeservice.init_schema(table, df, schema['dtype'], clauses)
+
+        logging.info("create sub kline, end")
+    except IOError as err:
+        logging.error("OS|error: {0}".format(err))
+    else:
+        logging.info('create sub kline success')
 
 
     union_table = [('ft_kline_{0}'.format(table)) for table in range(1, kline_tables_number, 1)]
@@ -91,8 +90,7 @@ def main():
             },
             "clauses": [
                 'ALTER TABLE `{0}` ADD PRIMARY  KEY (`id`);',
-                'ALTER TABLE `{0}` ADD INDEX (`code`);',
-                'ALTER TABLE `{0}` ADD INDEX (`time_key`);',
+                'ALTER TABLE `{0}` ADD UNIQUE INDEX (`code`,`time_key`);',
                 'ALTER TABLE `{0}` MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT COMMENT  \'id\'',
                 'ALTER TABLE `{0}` MODIFY COLUMN pe_ratio FLOAT COMMENT  \'市盈率\';',
                 'ALTER TABLE `{0}` MODIFY COLUMN turnover_rate FLOAT COMMENT  \'换手率\';',

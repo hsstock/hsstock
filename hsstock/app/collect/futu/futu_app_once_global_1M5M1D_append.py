@@ -97,7 +97,7 @@ def job_history_append(*_args):
             curr += 1
 
             logging.info("current fetching progress {}/{} code:{} ".format(curr,total,code))
-            if curr < 1:
+            if curr < 3702:
                 continue
 
             b = time.time()
@@ -145,7 +145,7 @@ def job_setup_lastdate(*_args):
             curr += 1
 
             logging.info("current fetching progress {}/{} code:{} ".format(curr,total,code))
-            if curr < 2584:
+            if curr < 3654:
                 continue
 
             # KLType.K_DAY

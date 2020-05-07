@@ -48,10 +48,11 @@ def append_one_stock(service,code,dtype,listing_date):
 
             b2 = time.time()
             days = DateUtil.diff(start,end)
-            lastest_date = service.get_history_data(code[3:], start, days)
+            lastest_date = service.get_hisft_klinetory_data(code[3:], start, days)
 
             if lastest_date is not None:
                 service.storeservice.update_lastdate(code, dtype, DateUtil.string_toDatetime(DateUtil.datetime_toString(lastest_date)))
+                logging.info('********I')
             e2 = time.time()
             logging.info(
                 "fetching {} dtype {}  listing_date: {} start: {} end:{} cost time {}".format(code, dtype, listing_date, start,
@@ -82,19 +83,22 @@ def job_history_append(*_args):
             curr += 1
 
             logging.info("current fetching progress {}/{} code:{} ".format(curr,total,code))
-            if curr < 40:
+            if curr < 1:
                 continue
 
             b = time.time()
 
             # KLType.K_DAY
-            append_one_stock(service,code,'hk', listing_date)
+            try:
+                append_one_stock(service,code,'hk', listing_date)
+            except:
+                print('eeeeee')
 
 
             e = time.time()
             logging.info("position {} fetching {} const time {}".format(curr, code, e - b))
 
-            time.sleep(1)
+            #time.sleep(1)
             if is_closing is True:
                 break
 

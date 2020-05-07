@@ -23,7 +23,7 @@ def scheduled_job():
     crawler = Crawler('##')
     storeservice = MysqlService()
 
-    pos = 2331
+    pos = 0
     while pos < 7101:
         print(pos)
         url = 'http://finviz.com/screener.ashx?v=152&r=' + str(
